@@ -1,31 +1,59 @@
+:warning-caption: Pozor
+
 = Ekristijan
 
-image:https://img.shields.io/badge/vert.x-4.3.1-purple.svg[link="https://vertx.io"]
+Progresivna spletna aplikacija za pomoč šolskim delavcem, da obvestijo učitelje podaljšanega bivanja, kdaj morajo
+poslati otroke domov.
 
-This application was generated using http://start.vertx.io
+== Delovanje
 
-== Building
+Aplikacija je narejena s spletnimi tehnologijami, večina procesiranja pa se odvija na klientih (server zgolj posreduje
+sporočila med klienti). Za delovanje je nujna HTTPS povezava, saj le na ta način delujejo napredne PWA funkcionalnosti.
 
-To launch your tests:
+
+== Osprednji del / frontend
+
+Logika same aplikacije se večinoma odvija na frontendu. Ta se nahaja v mapi `src/frontend`.
+
+WARNING: frontend se zaenkrat ne zgradi avtomatsko pred deployem aplikacije - ta korak je nujno narediti ročno!
+
+=== Predpogoji za zagon
+ * node.js 16.15.0+ (priporočena namestitev z https://github.com/nvm-sh/nvm[NVM])
+ * yarn (deluje tudi NPM, a so ukazi v tej dokumentaciji spisani za yarn)
+
+=== Lokalni razvoj
+Najprej namestite vse zahtevane knjižnjice s pomočjo ukaza `yarn install`. Za lokalni razvoj se strežnik postavi z ukazom `yarn serve`, aplikacija bo privzeto dostopna na portu 3000.
+
+WARNING: Za delovanje naprednih funkcionalnosti brskalniki zahtevajo uporabo HTTPS povezave - razvoj stilov brez HTTPS je sicer možen, a podatkovna povezava ne bo delovala!
+
+Za delovanje HTTPS povezave je potreben veljaven certifikat, pridobljen z https://letsencrypt.org/[Let's Encrypt], https://github.com/FiloSottile/mkcert[mkcert] ali s katerokoli drugo storitvijo za ta namen. Poti do certifikata in pripadajočega ključa je potrebno navesti v okoljskih spremenljivkah `HTTPS_KEY` in `HTTPS_CERT`, najlažje tako, da se jih vnese v datoteko `.env` (vzorec je priložen k projektu) - ta datoteka je značilna za vaš računalnik in se ne vključuje v git!
+
+Da bo podatkovna povezava med večimi instancami frontenda delovala, mora biti prižgan tudi zaledni strežnik. Če želite uporabiti zunanji, že delujoči zaledni strežnik, lahko njegov naslov vpišete v datoteko `vite.config.ts` (ključ `server.proxy./sock.target`).
+
+=== Izgradnja produkcijske verzije
+
+```
+yarn build
+```
+
+== Zaledni sistem / backend
+
+Backend je zelo preprosta https://vertx.io[Vert.x] aplikacija, ki zgolj posreduje sporočila med klienti ter servira datoteke frontend aplikacije.
+
+=== Predpogoji za zagon
+ * Java JRE ali JDK 8+
+
+=== Zagon testov (zaradi preprostosti aplikacije trenutno še ni nobenega):
 ```
 ./gradlew clean test
 ```
 
-To package your application:
+=== Izgradnja produkcijske verzije
 ```
 ./gradlew clean assemble
 ```
 
-To run your application:
+=== Lokalni zagon:
 ```
-./gradlew clean run
+./gradlew run
 ```
-
-== Help
-
-* https://vertx.io/docs/[Vert.x Documentation]
-* https://stackoverflow.com/questions/tagged/vert.x?sort=newest&pageSize=15[Vert.x Stack Overflow]
-* https://groups.google.com/forum/?fromgroups#!forum/vertx[Vert.x User Group]
-* https://gitter.im/eclipse-vertx/vertx-users[Vert.x Gitter]
-
-
