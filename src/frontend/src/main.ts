@@ -1,9 +1,12 @@
 import { createApp } from 'vue';
-import App from './App.vue';
 import SockJS from 'sockjs-client';
 import { type SendPupil, isSendPupil, eventBus } from './events';
+import router from '@/router';
+import RootComponent from '@/components/RootComponent.vue';
 
-const app = createApp(App).mount('#app')
+const app = createApp(RootComponent)
+app.use(router)
+app.mount('#app')
 
 
 let sock: WebSocket;

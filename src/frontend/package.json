@@ -15,7 +15,8 @@
     "sass": "^1.51.0",
     "sass-loader": "^12.6.0",
     "sockjs-client": "^1.6.1",
-    "vue": "^3.2.33"
+    "vue": "^3.2.33",
+    "vue-router": "4"
   },
   "devDependencies": {
     "@types/node": "^16.11.27",
