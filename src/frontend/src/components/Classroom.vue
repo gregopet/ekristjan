@@ -35,8 +35,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import {computed, defineComponent, onMounted, ref} from "vue";
 import fakestate, { type Data, type Pupil } from "../data";
 import { type SendPupil, eventBus } from '../events';
 import { format } from 'date-fns';
@@ -46,89 +46,78 @@ import { removePupil } from "../data";
 import { notification } from "../swInterop";
 import logo from "../assets/francetabevka.jpg"
 
+onMounted(() => {
+  eventBus.on("SendPupil", (ev) => {
+    callPupil(ev as SendPupil);
+  })
+})
+
+// Formatting
+function formatDate(date: Date) {
+  return format(date, "H.mm");
+}
+
+// Class selection
+const classes = ref(["1A"]);
+const selectedClasses = computed(() => Array.from(fakestate.classes.keys()).filter( (cls) => classes.value.indexOf(cls) >= 0))
+const nonSelectedClasses = computed( () => Array.from(fakestate.classes.keys()).filter( (cls) => classes.value.indexOf(cls) < 0))
+function selectClass(forClass: string) { classes.value.push(forClass) }
+function removeClass(forClass: string) {
+  const idx = classes.value.findIndex( (cl) => cl === forClass);
+  if (idx >= 0) classes.value.splice(idx, 1);
+}
+function pupilsHere(forClass: string): Pupil[] {
+  return fakestate.classes.get(forClass)!.pupils;
+}
+
+// Pupil calls
 interface SendPupilUI extends SendPupil {
   atTime: Date,
   color: Palette,
   random: number,
 }
+const colors = new ColorChoice();
+const calledPupils = ref([] as SendPupilUI[])
 
-export default defineComponent({
-    mounted() {
-      eventBus.on("SendPupil", (ev) => {
-        this.callPupil(ev as SendPupil);
+function callPupil(pupil: SendPupil) {
+  if (selectedClasses.value.indexOf(pupil.fromClass) >= 0) {
+    calledPupils.value.unshift({
+      ...pupil,
+      atTime: new Date(),
+      color: colors.nextColor(),
+      random: Math.random(),
+    });
+    if (("Notification" in window) && Notification.permission === "granted") {
+      const title = `${pupil.pupil.name} - ${pupil.fromClass}`
+      notification(title, {
+        icon: logo,
+        renotify: true,
+        tag: title,
+        body: "odhod domov"
       })
-    },
-    data() {
-        return {
-            classes: ["1A"],
-            state: fakestate,
-            colors: new ColorChoice(),
-            calledPupils: [] as SendPupilUI[],
-        }
-    },
-    computed: {
-        selectedClasses(): string[] {
-            return Array.from(fakestate.classes.keys()).filter( (cls) => this.classes.indexOf(cls) >= 0);
-        },
-        nonSelectedClasses(): string[] {
-            return Array.from(fakestate.classes.keys()).filter( (cls) => this.classes.indexOf(cls) < 0);
-        }
-    },
-    methods: {
-        pupilsHere(forClass: string): Pupil[] {
-            return fakestate.classes.get(forClass)!.pupils;
-        },
-        addClass(forClass: string) {
-            this.classes.push(forClass);
-        },
-        selectClass(forClass: string) {
-            this.classes.push(forClass);
-        },
-        removeClass(forClass: string) {
-            const idx = this.classes.findIndex( (cl) => cl === forClass);
-            if (idx >= 0) this.classes.splice(idx, 1);
-        },
-        formatDate(date: Date) {
-          return format(date, "H.mm");
-        },
-        callPupil(pupil: SendPupil) {
-          if (this.selectedClasses.indexOf(pupil.fromClass) >= 0) {
-            this.calledPupils.unshift({
-              ...pupil,
-              atTime: new Date(),
-              color: this.colors.nextColor(),
-              random: Math.random(),
-            });
-            if (("Notification" in window) && Notification.permission === "granted") {
-              notification(`${pupil.pupil.name} - ${pupil.fromClass}`, {
-                body: "Učenec na vratih",
-                image: logo,
-                renotify: true,
-              })
-            } else {
-              const audio = new Audio(notificationSound);
-              audio.play();
-              if (window.navigator?.vibrate) {
-                window.navigator.vibrate(600);
-              }
-            }
-          } else {
-            console.log("Pupil not from this class")
-          }
-        },
-        removeCalledPupil(pupil: SendPupil) {
-          removePupil(pupil.fromClass, pupil.pupil);
-          while(true) {
-            const idx = this.calledPupils.findIndex((p) => p.fromClass == pupil.fromClass && p.pupil.name == pupil.pupil.name)
-            if (idx >= 0) {
-              this.calledPupils.splice(idx, 1);
-            } else {
-              break;
-            }
-          }
-        },
+    } else {
+      const audio = new Audio(notificationSound);
+      audio.play();
+      if (window.navigator?.vibrate) {
+        window.navigator.vibrate(600);
+      }
     }
-})
+  } else {
+    console.log("Pupil not from this class")
+  }
+}
+
+function removeCalledPupil(pupil: SendPupil) {
+  removePupil(pupil.fromClass, pupil.pupil);
+  while(true) {
+    const idx = calledPupils.value.findIndex((p) => p.fromClass == pupil.fromClass && p.pupil.name == pupil.pupil.name)
+    if (idx >= 0) {
+      calledPupils.value.splice(idx, 1);
+    } else {
+      break;
+    }
+  }
+}
 </script>
 
 <style scoped lang="scss">
