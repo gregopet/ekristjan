@@ -1,122 +1,73 @@
 <template>
-    <div v-if="selectedClass">
+      <h4>Poišči učenca</h4>
+      <input v-model="search" ref="searchElement" autofocus>
+      <button @click="resetSearch">Prekliči</button>
       <ul class="selectPupil">
-        <li v-for="pupil in pupils">
-          <a href="#" @click.prevent="sendPupil(pupil)">{{ pupil.name }}</a>
+        <li v-for="[cls, pupils] in filtered">
+          <h3>{{cls}}</h3>
+          <ul>
+            <li v-for="pupil in pupils">
+              <a href="#" @click.prevent="sendPupil(pupil, cls)">{{ pupil.name }}</a>
+            </li>
+          </ul>
         </li>
       </ul>
-      <button @click="cancel">Prekini</button>
-    </div>
-    <div v-else>
-        <h4>Iz katerega razreda je učenec?</h4>
-        <ul class="selectClass">
-            <li v-for="cls in classes">
-                <a href="#" @click.prevent="selectClass(cls)">{{ cls }}</a>
-            </li>
-        </ul>
-    </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import fakestate, { type Data, type Pupil } from "../data";
+<script setup lang="ts">
+import {computed, type Ref, ref} from "vue";
+import fakestate, { type Data, type Pupil} from "../data";
 import {sendMessage} from '../main';
 import type { SendPupil } from '../events';
+import { refDebounced } from '@vueuse/core';
 
-export default defineComponent({
-    data() {
-        return {
-            numeral: '',
-            selectedClass: '',
-        }
-    },
-    computed: {
-        currentPin() {
-            let stars = '';
-            for (let a = 0; a < this.numeral.length; a++) {
-                stars += '*';
-            }
-            return stars;
-        },
-        classes() {
-            return Array.from(fakestate.classes.keys());
-        },
-        pupils(): Pupil[] {
-            return fakestate.classes.get(this.selectedClass)!.pupils;
-        }
-    },
-    methods: {
-        press(numeral: string, event: Event) {
-            (event.target as HTMLElement).classList.add("blink");
-            this.numeral += numeral;
-        },
-        cancel() {
-            this.selectedClass = '';
-        },
-        selectClass(cls: string) {
-            this.selectedClass = cls;
-            this.numeral = '';
-        },
-        animationEnded(event: Event) {
-            (event.target as HTMLElement).classList.remove("blink");
-        },
-        sendPupil(pupil: Pupil) {
-          const payload: SendPupil = {
-            pupil, fromClass: this.selectedClass
-          };
-          sendMessage(JSON.stringify(payload))
-          this.cancel()
-        }
-    }
+const search = ref('');
+const searchDebounced = refDebounced(search, 200)
+const searchElement = ref(null) as Ref<HTMLElement | null>
+const filtered: Ref<[string, Pupil[]][]> = computed(() => {
+  if (!searchDebounced.value) {
+    return []
+  }
+  const searchWordsLowercase = searchDebounced.value.toLocaleLowerCase().split(" ").filter( w => !!w)
+  const searchFn = (pupil: Pupil) => studentMatches(searchWordsLowercase, pupil)
+
+  return Array.from(fakestate.classes)
+    .map( ([clazz, pupList]) => [clazz, pupList.pupils.filter(searchFn)] as [string, Pupil[]])
+    .filter( (entry) => entry[1].length > 0)
 })
+
+function resetSearch() {
+  search.value = ''
+  searchElement.value?.focus()
+}
+
+/** Sends notification that this pupil should come to the door */
+function sendPupil(pupil: Pupil, fromClass: string) {
+  const payload: SendPupil = { pupil, fromClass };
+  sendMessage(JSON.stringify(payload))
+  resetSearch()
+}
+
+/** Matches pupils by string */
+function studentMatches(searchWordsLowercase: string[], pupil: Pupil) {
+  for (let term of searchWordsLowercase) {
+    if (pupil.name.toLowerCase().indexOf(term) < 0) { return false }
+  }
+  return true
+}
 </script>
 
 
 <style lang="scss" scoped>
 
-ul.selectClass {
-  list-style-type: none;
-  font-size: 23px;
-  li {
-    margin: 0.25em 0.25em;
-  }
-}
-
-.selectPupil {
+ul.selectPupil {
   list-style-type: none;
   li {
     margin: 0.25em 0.25em;
-  }
-}
-
-
-.keypad {
-    display: flex;
-    flex-direction: column;
-    width: 600px;
-    justify-content: center;
-
-
-    .row {
-        display: flex;
-        flex-direction: row;
-
-        .key {
-            text-align: center;
-            width: 60px;
-            height: 60px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation-play-state: paused;
-
-            &.blink {
-                animation: blink 0.15s ease-in-out 1;
-                animation-play-state: running;
-            }
-        }
+    ul {
+      list-style-type: none;
     }
+  }
 }
 
 @keyframes blink{
