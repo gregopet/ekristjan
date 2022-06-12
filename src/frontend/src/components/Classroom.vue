@@ -1,4 +1,7 @@
 <template>
+  <p>
+    <router-link to="/">Nazaj</router-link>
+  </p>
   <div class="all">
     <div class="settings">
       <h5>Prisotni učenci:</h5>

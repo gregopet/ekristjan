@@ -1,4 +1,7 @@
 <template>
+      <p>
+        <router-link to="/">Nazaj</router-link>
+      </p>
       <h4>Poišči učenca</h4>
       <input v-model="search" ref="searchElement" autofocus>
       <button @click="resetSearch">Prekliči</button>
