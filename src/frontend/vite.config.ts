@@ -32,9 +32,13 @@ export default defineConfig( ({ command, mode }) => {
       },
       manifest: {
         name: "e-kristijan",
+        short_name: 'e-kristijan',
         icons: [
-          { sizes: 'any', src: "francetabevka.jpg" }
-        ]
+          { sizes: 'any', src: "/assets/francetabevka.58da755a.jpg", type: "image/jpeg" }
+        ],
+        background_color: 'white',
+        display: 'standalone',
+        start_url: '/',
       }
     })],
     resolve: {
