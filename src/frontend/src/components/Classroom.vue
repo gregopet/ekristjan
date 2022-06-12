@@ -41,8 +41,10 @@ import fakestate, { type Data, type Pupil } from "../data";
 import { type SendPupil, eventBus } from '../events';
 import { format } from 'date-fns';
 import { type Palette, ColorChoice } from "@/components/palette";
-import notification from'../assets/message-ringtone-magic.mp3';
+import notificationSound from'../assets/message-ringtone-magic.mp3';
 import { removePupil } from "../data";
+import { notification } from "../swInterop";
+import logo from "../assets/francetabevka.jpg"
 
 interface SendPupilUI extends SendPupil {
   atTime: Date,
@@ -97,10 +99,18 @@ export default defineComponent({
               color: this.colors.nextColor(),
               random: Math.random(),
             });
-            const audio = new Audio(notification);
-            audio.play();
-            if (window.navigator?.vibrate) {
-              window.navigator.vibrate(600);
+            if (("Notification" in window) && Notification.permission === "granted") {
+              notification(`${pupil.pupil.name} - ${pupil.fromClass}`, {
+                body: "Učenec na vratih",
+                image: logo,
+                renotify: true,
+              })
+            } else {
+              const audio = new Audio(notificationSound);
+              audio.play();
+              if (window.navigator?.vibrate) {
+                window.navigator.vibrate(600);
+              }
             }
           } else {
             console.log("Pupil not from this class")
