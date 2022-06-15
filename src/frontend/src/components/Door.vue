@@ -6,37 +6,28 @@
       <input v-model="search" ref="searchElement" autofocus>
       <button @click="resetSearch">Prekliči</button>
       <ul class="selectPupil">
-        <li v-for="[cls, pupils] in filtered">
-          <h3>{{cls}}</h3>
-          <ul>
-            <li v-for="pupil in pupils">
-              <a href="#" @click.prevent="sendPupil(pupil, cls)">{{ pupil.name }}</a>
-            </li>
-          </ul>
+        <li v-for="pupil in filtered">
+          <a href="#" @click.prevent="sendPupil(pupil)">{{ pupil.name }}, {{ pupil.fromClass }}</a>
         </li>
       </ul>
 </template>
 
 <script setup lang="ts">
 import {computed, type Ref, ref} from "vue";
-import fakestate, { type Data, type Pupil} from "../data";
-import {sendMessage} from '../main';
-import type { SendPupil } from '../events';
+import fakestate from "../data";
 import { refDebounced } from '@vueuse/core';
 
 const search = ref('');
 const searchDebounced = refDebounced(search, 200)
 const searchElement = ref(null) as Ref<HTMLElement | null>
-const filtered: Ref<[string, Pupil[]][]> = computed(() => {
+const filtered: Ref<dto.Pupil[]> = computed(() => {
   if (!searchDebounced.value) {
     return []
   }
   const searchWordsLowercase = searchDebounced.value.toLocaleLowerCase().split(" ").filter( w => !!w)
-  const searchFn = (pupil: Pupil) => studentMatches(searchWordsLowercase, pupil)
+  const searchFn = (pupil: dto.Pupil) => studentMatches(searchWordsLowercase, pupil)
 
-  return Array.from(fakestate.classes)
-    .map( ([clazz, pupList]) => [clazz, pupList.pupils.filter(searchFn)] as [string, Pupil[]])
-    .filter( (entry) => entry[1].length > 0)
+  return fakestate.filter(searchFn)
 })
 
 function resetSearch() {
@@ -45,14 +36,19 @@ function resetSearch() {
 }
 
 /** Sends notification that this pupil should come to the door */
-function sendPupil(pupil: Pupil, fromClass: string) {
-  const payload: SendPupil = { pupil, fromClass };
-  sendMessage(JSON.stringify(payload))
+async function sendPupil(pupil: dto.Pupil) {
+  await fetch("/pupils/leave", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(pupil)
+  })
   resetSearch()
 }
 
 /** Matches pupils by string */
-function studentMatches(searchWordsLowercase: string[], pupil: Pupil) {
+function studentMatches(searchWordsLowercase: string[], pupil: dto.Pupil) {
   for (let term of searchWordsLowercase) {
     if (pupil.name.toLowerCase().indexOf(term) < 0) { return false }
   }

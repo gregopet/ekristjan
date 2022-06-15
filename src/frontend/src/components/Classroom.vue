@@ -27,7 +27,7 @@
       <TransitionGroup tag="ul" name="departures">
         <li v-for="departure in calledPupils" :style="{ ...departure.color }" @click="removeCalledPupil(departure)" :key="departure.random">
           <span class="name">
-            {{ departure.pupil.name }}
+            {{ departure.name }}
           </span>
           <span class="time">
             {{ formatDate(departure.atTime) }}
@@ -40,18 +40,20 @@
 
 <script setup lang="ts">
 import {computed, defineComponent, onMounted, ref} from "vue";
-import fakestate, { type Data, type Pupil } from "../data";
-import { type SendPupil, eventBus } from '../events';
+import fakestate from "../data";
+import { eventBus } from '../events';
 import { format } from 'date-fns';
 import { type Palette, ColorChoice } from "@/components/palette";
 import notificationSound from'../assets/message-ringtone-magic.mp3';
 import { removePupil } from "../data";
 import { notification } from "../swInterop";
 import logo from "../assets/francetabevka.jpg"
+import {getServerKey, subscribeOnClient, subscribeOnServer} from "@/subscription";
+import {usePermission, useWebNotification} from "@vueuse/core";
 
 onMounted(() => {
   eventBus.on("SendPupil", (ev) => {
-    callPupil(ev as SendPupil);
+    callPupil(ev as dto.Pupil);
   })
 })
 
@@ -61,20 +63,44 @@ function formatDate(date: Date) {
 }
 
 // Class selection
-const classes = ref(["1A"]);
-const selectedClasses = computed(() => Array.from(fakestate.classes.keys()).filter( (cls) => classes.value.indexOf(cls) >= 0))
-const nonSelectedClasses = computed( () => Array.from(fakestate.classes.keys()).filter( (cls) => classes.value.indexOf(cls) < 0))
-function selectClass(forClass: string) { classes.value.push(forClass) }
-function removeClass(forClass: string) {
-  const idx = classes.value.findIndex( (cl) => cl === forClass);
-  if (idx >= 0) classes.value.splice(idx, 1);
+const selectedClasses = ref<string[]>([]);
+//const selectedClasses = computed(() => Array.from(fakestate.classes.keys()).filter( (cls) => classes.value.indexOf(cls) >= 0))
+const nonSelectedClasses = computed( () => Array.from(allAvailableClasses().filter( (cls) => selectedClasses.value.indexOf(cls) < 0)))
+async function selectClass(forClass: string) {
+  selectedClasses.value.push(forClass)
+  await pushClassSubscriptions()
+  // TODO: handle multiple open tabs case
 }
-function pupilsHere(forClass: string): Pupil[] {
-  return fakestate.classes.get(forClass)!.pupils;
+async function removeClass(forClass: string) {
+  const idx = selectedClasses.value.findIndex( (cl) => cl === forClass);
+  if (idx >= 0) {
+    selectedClasses.value.splice(idx, 1);
+    await pushClassSubscriptions()
+    // TODO: handle multiple open tabs case
+  }
+}
+
+// TODO: ask about these two?
+const { isSupported, show } = useWebNotification()
+const pushAccessInitial = usePermission("push")
+
+async function pushClassSubscriptions() {
+  const key = await getServerKey()
+  const subscription = await subscribeOnClient(key)
+  await subscribeOnServer(subscription, selectedClasses.value);
+}
+
+
+function pupilsHere(forClass: string): dto.Pupil[] {
+  return fakestate.filter( p => p.fromClass == forClass);
+}
+
+function allAvailableClasses(): string[] {
+  return [ ...new Set(fakestate.map( p => p.fromClass )) ]
 }
 
 // Pupil calls
-interface SendPupilUI extends SendPupil {
+interface SendPupilUI extends dto.Pupil {
   atTime: Date,
   color: Palette,
   random: number,
@@ -82,8 +108,10 @@ interface SendPupilUI extends SendPupil {
 const colors = new ColorChoice();
 const calledPupils = ref([] as SendPupilUI[])
 
-function callPupil(pupil: SendPupil) {
+function callPupil(pupil: dto.Pupil) {
+  console.log("Call pupil", pupil)
   if (selectedClasses.value.indexOf(pupil.fromClass) >= 0) {
+    console.log("Notifying..", pupil)
     calledPupils.value.unshift({
       ...pupil,
       atTime: new Date(),
@@ -91,12 +119,13 @@ function callPupil(pupil: SendPupil) {
       random: Math.random(),
     });
     if (("Notification" in window) && Notification.permission === "granted") {
-      const title = `${pupil.pupil.name} - ${pupil.fromClass}`
+      const title = `${pupil.name} - ${pupil.fromClass}`
       notification(title, {
         icon: logo,
         renotify: true,
         tag: title,
-        body: "odhod domov"
+        body: "odhod domov",
+        silent: false,
       })
     } else {
       const audio = new Audio(notificationSound);
@@ -110,10 +139,10 @@ function callPupil(pupil: SendPupil) {
   }
 }
 
-function removeCalledPupil(pupil: SendPupil) {
-  removePupil(pupil.fromClass, pupil.pupil);
+function removeCalledPupil(pupil: dto.Pupil) {
+  removePupil(pupil.fromClass, pupil);
   while(true) {
-    const idx = calledPupils.value.findIndex((p) => p.fromClass == pupil.fromClass && p.pupil.name == pupil.pupil.name)
+    const idx = calledPupils.value.findIndex((p) => p.fromClass == pupil.fromClass && p.name == pupil.name)
     if (idx >= 0) {
       calledPupils.value.splice(idx, 1);
     } else {

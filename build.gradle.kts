@@ -13,6 +13,7 @@ version = "1.0.0-SNAPSHOT"
 
 repositories {
   mavenCentral()
+  maven("https://jitpack.io")
 }
 
 val vertxVersion = "4.3.1"
@@ -21,7 +22,7 @@ val junitJupiterVersion = "5.7.0"
 val mainVerticleName = "co.petrin.ekristijan.MainVerticle"
 val launcherClassName = "io.vertx.core.Launcher"
 
-val watchForChange = "src/**/*"
+val watchForChange = "src/main/*"
 val doOnChange = "${projectDir}/gradlew classes"
 
 application {
@@ -31,14 +32,17 @@ application {
 dependencies {
   implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
   implementation("io.vertx:vertx-web")
-  implementation("io.vertx:vertx-stomp")
   implementation("io.vertx:vertx-lang-kotlin")
-  implementation("io.vertx:vertx-sockjs-service-proxy")
-  implementation("io.vertx:vertx-tcp-eventbus-bridge")
   implementation("io.vertx:vertx-lang-kotlin-coroutines")
   implementation(kotlin("stdlib-jdk8"))
+  implementation("nl.martijndwars:web-push:5.1.1")
+  implementation("org.bouncycastle:bcprov-jdk15on:1.70") // required for web push
   testImplementation("io.vertx:vertx-junit5")
+  implementation("com.fasterxml.jackson.core:jackson-databind:2.11.4")
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.2")
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
+  implementation("com.github.ntrrgc:ts-generator:1.1.1") // generate typescript definition files
+  runtimeOnly("ch.qos.logback:logback-classic:1.2.3")
 }
 
 val compileKotlin: KotlinCompile by tasks
@@ -61,4 +65,23 @@ tasks.withType<Test> {
 
 tasks.withType<JavaExec> {
   args = listOf("run", mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$launcherClassName", "--on-redeploy=$doOnChange")
+}
+
+
+buildscript {
+  repositories {
+
+    mavenCentral()
+  }
+  dependencies {
+
+  }
+}
+
+tasks.create<JavaExec>(name = "generateDTO") {
+  group = "build"
+  description = "Generate TypeScript definitions of DTO classes"
+  classpath = sourceSets["main"].runtimeClasspath
+  mainClass.set("co.petrin.ekristijan.dto.GenerateDTOKt")
+  args = listOf(file("$projectDir/src/frontend/dto.d.ts").absolutePath)
 }

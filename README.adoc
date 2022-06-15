@@ -8,7 +8,7 @@ poslati otroke domov.
 == Delovanje
 
 Aplikacija je narejena s spletnimi tehnologijami, večina procesiranja pa se odvija na klientih (server zgolj posreduje
-sporočila med klienti). Za delovanje je nujna HTTPS povezava, saj le na ta način delujejo napredne PWA funkcionalnosti.
+sporočila med klienti s pomočjo web push tehnologije). Za delovanje je nujna HTTPS povezava, saj le na ta način delujejo napredne PWA funkcionalnosti.
 
 
 == Osprednji del / frontend
@@ -38,7 +38,9 @@ yarn build
 
 == Zaledni sistem / backend
 
-Backend je zelo preprosta https://vertx.io[Vert.x] aplikacija, ki zgolj posreduje sporočila med klienti ter servira datoteke frontend aplikacije.
+Backend skrbi za posredovanje push dogodkov aplikaciji.
+
+Za frontend zna zgraditi definicije razredov za prenos podatkov: generator se sproži z ukazom `./gradlew generateDTO` (oziroma `gradlew.bat generateDTO` na operacijskem sistemi Windows).
 
 === Predpogoji za zagon
  * Java JRE ali JDK 8+
