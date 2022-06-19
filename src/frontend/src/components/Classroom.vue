@@ -64,7 +64,6 @@ function formatDate(date: Date) {
 
 // Class selection
 const selectedClasses = ref<string[]>([]);
-//const selectedClasses = computed(() => Array.from(fakestate.classes.keys()).filter( (cls) => classes.value.indexOf(cls) >= 0))
 const nonSelectedClasses = computed( () => Array.from(allAvailableClasses().filter( (cls) => selectedClasses.value.indexOf(cls) < 0)))
 async function selectClass(forClass: string) {
   selectedClasses.value.push(forClass)
@@ -108,6 +107,7 @@ interface SendPupilUI extends dto.Pupil {
 const colors = new ColorChoice();
 const calledPupils = ref([] as SendPupilUI[])
 
+
 function callPupil(pupil: dto.Pupil) {
   console.log("Call pupil", pupil)
   if (selectedClasses.value.indexOf(pupil.fromClass) >= 0) {
@@ -138,6 +138,8 @@ function callPupil(pupil: dto.Pupil) {
     console.log("Pupil not from this class")
   }
 }
+
+
 
 function removeCalledPupil(pupil: dto.Pupil) {
   removePupil(pupil.fromClass, pupil);
