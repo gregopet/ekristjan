@@ -1,3 +1,5 @@
 <template>
   <router-view></router-view>
-</template>
+</template>useTitle("eKristian")
+import {useTitle} from "@vueuse/core";
+useTitle("eKristian")
