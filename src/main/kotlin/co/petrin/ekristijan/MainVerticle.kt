@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import nl.martijndwars.webpush.Notification
 import nl.martijndwars.webpush.PushAsyncService
 import nl.martijndwars.webpush.Subscription
+import nl.martijndwars.webpush.Urgency
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.slf4j.LoggerFactory
 import java.security.Security
@@ -81,7 +82,7 @@ class MainVerticle : CoroutineVerticle() {
             val (subscription, subData) = next()
             if (subData.fromClasses.contains(pupil.fromClass)) {
               LOG.debug("Sending push notification to ${subscription.endpoint}")
-              val response = pushService.send(Notification(subscription, payload)).get()
+              val response = pushService.send(Notification(subscription, payload, Urgency.HIGH)).get()
               LOG.trace("Result had status code ${response.statusCode}")
               if (response.statusCode == 410) {
                 remove()
