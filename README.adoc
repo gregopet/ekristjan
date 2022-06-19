@@ -10,6 +10,10 @@ poslati otroke domov.
 Aplikacija je narejena s spletnimi tehnologijami, večina procesiranja pa se odvija na klientih (server zgolj posreduje
 sporočila med klienti s pomočjo web push tehnologije). Za delovanje je nujna HTTPS povezava, saj le na ta način delujejo napredne PWA funkcionalnosti.
 
+WARNING: Aplikacija trenutno ni zaščitena z nobenim geslom - na proxy strežniku je potrebno urediti npr. HTTP Basic avtentikacijo ali kaj podobnega.
+
+Aplikacija zaenkrat deluje brez baze podatkov. Učenci so našteti v konfiguracijski datoteki, ki je lahko
+bodisi v JSON bodisi v https://github.com/lightbend/config/blob/main/HOCON.md[HOCON] formatu - vzorec se nahaja v datoteki `src/main/resources/config.hocon`, ob zagonu pa je možno podati pot do svoje konfiguracijske datoteke s pomočjo parametra `--config <pot do konfiguracije>`.
 
 == Osprednji del / frontend
 

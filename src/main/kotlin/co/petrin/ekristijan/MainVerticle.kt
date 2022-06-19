@@ -32,7 +32,6 @@ class MainVerticle : CoroutineVerticle() {
 
   init {
     Security.addProvider(BouncyCastleProvider())
-    DatabindCodec.mapper().registerModule(KotlinModule.Builder().build())
   }
 
   val vapid = Vapid()
@@ -41,34 +40,31 @@ class MainVerticle : CoroutineVerticle() {
   /** All push targets we want to send to - indexed by the subscription URL */
   val pushSubscriptions = mutableMapOf<String, SubscribedClient>()
 
+  lateinit var parsedConfig: Config
+
   override suspend fun start() {
+
+    parsedConfig = config.mapTo(Config::class.java)
+    vertx.eventBus().consumer<JsonObject>(CONFIG_CHANGE_HANDLER_ADDRESS) { newConfig ->
+      LOG.debug("Reloading config")
+      parsedConfig = newConfig.body().mapTo(Config::class.java)
+      LOG.info("Config reloaded")
+    }
 
     val router = Router.router(vertx)
     router.get("/push/key").handler(this::pushPublicKey)
     router.put("/push/subscribe").handler(BodyHandler.create()).handler(this::subscribe)
     router.post("/pupils/leave").handler(BodyHandler.create()).handler(this::pupilLeaves)
-    router.get("/pupils").handler(this::listPupils)
+    router.get("/pupils").handler { ctx -> ctx.json(parsedConfig.pupils) }
     router.route().handler(StaticHandler.create("src/frontend/dist"))
+
+    LOG.info("Main verticle listening on port ${parsedConfig.port}")
 
     vertx
       .createHttpServer()
       .requestHandler(router::handle)
-      .listen(8888)
+      .listen(parsedConfig.port)
       .await()
-  }
-
-  private fun listPupils(ctx: RoutingContext) {
-    ctx.json(
-      listOf(
-        Pupil("Jan Hrušca", "1A"),
-        Pupil("Sara Pakalan", "1A"),
-        Pupil("Mia Oberstar", "1A"),
-        Pupil("Matija Podvin", "1B"),
-        Pupil("Manja Kalan", "1B"),
-        Pupil("Nejc Modrič", "1B"),
-        Pupil("Klara Kompara", "1B"),
-      )
-    )
   }
 
   private fun pupilLeaves(ctx: RoutingContext) {
@@ -120,4 +116,6 @@ class MainVerticle : CoroutineVerticle() {
     }
     ctx.end()
   }
+
+
 }

@@ -1,0 +1,14 @@
+// Maps to class co.petrin.ekristijan.Config
+{
+    port: 8888,
+    pupils: [
+        { name:"Jan Hrušca", fromClass: "1A" },
+        { name: "Sara Pakalan", fromClass: "1A" },
+        { name: "Mia Oberstar", fromClass: "1A" },
+        { name: "Matija Podvin", fromClass: "1B" },
+        { name: "Manja Kalan", fromClass: "1B" },
+        { name: "Nejc Modrič", fromClass: "1B" },
+        { name: "Klara Kompara", fromClass: "1B" },
+        { name: "Klemen Klemen", fromClass: "1B" },
+    ]
+}

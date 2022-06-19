@@ -19,14 +19,14 @@ repositories {
 val vertxVersion = "4.3.1"
 val junitJupiterVersion = "5.7.0"
 
-val mainVerticleName = "co.petrin.ekristijan.MainVerticle"
-val launcherClassName = "io.vertx.core.Launcher"
+//val mainVerticleName = "co.petrin.ekristijan.MainVerticle"
+//val launcherClassName = "io.vertx.core.Launcher"
 
 val watchForChange = "src/main/*"
 val doOnChange = "${projectDir}/gradlew classes"
 
 application {
-  mainClass.set(launcherClassName)
+  mainClass.set("co.petrin.ekristijan.StartupKt")
 }
 
 dependencies {
@@ -34,6 +34,8 @@ dependencies {
   implementation("io.vertx:vertx-web")
   implementation("io.vertx:vertx-lang-kotlin")
   implementation("io.vertx:vertx-lang-kotlin-coroutines")
+  implementation("io.vertx:vertx-config:${vertxVersion}")
+  runtimeOnly("io.vertx:vertx-config-hocon:$vertxVersion")
   implementation(kotlin("stdlib-jdk8"))
   implementation("nl.martijndwars:web-push:5.1.1")
   implementation("org.bouncycastle:bcprov-jdk15on:1.70") // required for web push
@@ -43,6 +45,7 @@ dependencies {
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
   implementation("com.github.ntrrgc:ts-generator:1.1.1") // generate typescript definition files
   runtimeOnly("ch.qos.logback:logback-classic:1.2.3")
+  implementation("info.picocli:picocli:4.6.1")
 }
 
 val compileKotlin: KotlinCompile by tasks
@@ -50,9 +53,6 @@ compileKotlin.kotlinOptions.jvmTarget = "17"
 
 tasks.withType<ShadowJar> {
   archiveClassifier.set("fat")
-  manifest {
-    attributes(mapOf("Main-Verticle" to mainVerticleName))
-  }
   mergeServiceFiles()
 }
 
@@ -64,9 +64,8 @@ tasks.withType<Test> {
 }
 
 tasks.withType<JavaExec> {
-  args = listOf("run", mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$launcherClassName", "--on-redeploy=$doOnChange")
+  args = listOf("--config", "$projectDir/src/main/resources/config.hocon")
 }
-
 
 buildscript {
   repositories {
