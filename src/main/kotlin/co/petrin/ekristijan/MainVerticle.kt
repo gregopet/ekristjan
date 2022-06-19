@@ -31,12 +31,8 @@ private val LOG = LoggerFactory.getLogger(MainVerticle::class.java)
 
 class MainVerticle : CoroutineVerticle() {
 
-  init {
-    Security.addProvider(BouncyCastleProvider())
-  }
-
-  val vapid = Vapid()
-  val pushService: PushAsyncService = PushAsyncService(vapid.publicKey, vapid.privateKey, vapid.subject)
+  /** Service for sending push notifications */
+  lateinit var pushService: PushAsyncService
 
   /** All push targets we want to send to - indexed by the subscription URL */
   val pushSubscriptions = mutableMapOf<String, SubscribedClient>()
@@ -45,10 +41,10 @@ class MainVerticle : CoroutineVerticle() {
 
   override suspend fun start() {
 
-    parsedConfig = config.mapTo(Config::class.java)
+    parseConfig(config)
     vertx.eventBus().consumer<JsonObject>(CONFIG_CHANGE_HANDLER_ADDRESS) { newConfig ->
       LOG.debug("Reloading config")
-      parsedConfig = newConfig.body().mapTo(Config::class.java)
+      parseConfig(newConfig.body())
       LOG.info("Config reloaded")
     }
 
@@ -66,6 +62,12 @@ class MainVerticle : CoroutineVerticle() {
       .requestHandler(router::handle)
       .listen(parsedConfig.port)
       .await()
+  }
+
+  /** Actions to perform on a config change (either first-time or reload) */
+  private fun parseConfig(cfg: JsonObject) {
+    parsedConfig = cfg.mapTo(Config::class.java)
+    pushService = PushAsyncService(parsedConfig.vapid.publicKey, parsedConfig.vapid.privateKey, parsedConfig.vapid.subject)
   }
 
   private fun pupilLeaves(ctx: RoutingContext) {
@@ -101,7 +103,7 @@ class MainVerticle : CoroutineVerticle() {
   /** Serve the application's public key so the client can subscribe. */
   private fun pushPublicKey(ctx: RoutingContext) {
     LOG.trace("Serving VAPID public key")
-    ctx.end(vapid.publicKey)
+    ctx.end(parsedConfig.vapid.publicKey)
   }
 
   /** Once client subscribes, it will send its details to us here */

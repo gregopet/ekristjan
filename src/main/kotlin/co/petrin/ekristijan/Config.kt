@@ -8,5 +8,6 @@ import co.petrin.ekristijan.dto.Pupil
  */
 data class Config(
     val port: Int,
-    val pupils: List<Pupil>
+    val pupils: List<Pupil>,
+    val vapid: Vapid,
 )

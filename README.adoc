@@ -10,7 +10,7 @@ NOTE: Aplikacija je trenutno v čisti prototipni fazi, izgrajena s kopiranjem ko
 
 == Delovanje
 
-Aplikacija je narejena s spletnimi tehnologijami. Server posreduje sporočila med klienti s pomočjo web push tehnologije. Za delovanje je nujna HTTPS povezava, saj le na ta način delujejo napredne PWA funkcionalnosti.
+Aplikacija je narejena s spletnimi tehnologijami. Server posreduje sporočila med klienti s pomočjo web push tehnologije. Za delovanje je nujna HTTPS povezava, saj le na ta način delujejo napredne PWA funkcionalnosti. Da se zaledni strežnik lahko identifira kot pošiljatelj push sporočil, je potrebno zanj ustvariti https://vapidkeys.com/[VAPID ključ] in ga zapisati v konfiguracijsko datoteko (glej naslednji odstavek).
 
 Aplikacija zaenkrat deluje brez baze podatkov. Učenci so našteti v konfiguracijski datoteki, ki je lahko
 bodisi v JSON bodisi v https://github.com/lightbend/config/blob/main/HOCON.md[HOCON] formatu - vzorec se nahaja v datoteki `src/main/resources/config.hocon`, ob zagonu pa je možno podati pot do svoje konfiguracijske datoteke s pomočjo parametra `--config <pot do konfiguracije>`.

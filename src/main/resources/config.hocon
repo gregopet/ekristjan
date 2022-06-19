@@ -1,14 +1,19 @@
 // Maps to class co.petrin.ekristijan.Config
 {
     port: 8888,
+    vapid: {
+        subject: "mailto: <developer@example.org>"
+        publicKey: "BEFi2MSXd8_BZ13nqEn35XggYPUYXssEjniygu6Wf-JqF_hXhc1qA5PT3aPeKOk49nwJwI1ndvHv4HDFk6hnK7I"
+        privateKey: "1OIdkA_4uyRO30aZiVuCBxMQwAxq12V079dnDOlmv_0"
+    },
     pupils: [
-        { name:"Jan Hrušca", fromClass: "1A" },
-        { name: "Sara Pakalan", fromClass: "1A" },
-        { name: "Mia Oberstar", fromClass: "1A" },
-        { name: "Matija Podvin", fromClass: "1B" },
-        { name: "Manja Kalan", fromClass: "1B" },
-        { name: "Nejc Modrič", fromClass: "1B" },
-        { name: "Klara Kompara", fromClass: "1B" },
-        { name: "Klemen Klemen", fromClass: "1B" },
+        { name:"Jan Hrušca", fromClass: "1A" }
+        { name: "Sara Pakalan", fromClass: "1A" }
+        { name: "Mia Oberstar", fromClass: "1A" }
+        { name: "Matija Podvin", fromClass: "1B" }
+        { name: "Manja Kalan", fromClass: "1B" }
+        { name: "Nejc Modrič", fromClass: "1B" }
+        { name: "Klara Kompara", fromClass: "1B" }
+        { name: "Klemen Klemen", fromClass: "1B" }
     ]
 }
