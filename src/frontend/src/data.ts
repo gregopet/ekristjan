@@ -1,14 +1,7 @@
-const fakestate: dto.Pupil[] = [
-    {"name": "Jan Hrušca", "fromClass": "1A"},
-    {"name": "Sara Pakalan", "fromClass": "1A"},
-    {"name": "Mia Oberstar", "fromClass": "1A"},
-    {"name": "Matija Podvin", "fromClass": "1B"},
-    {"name": "Manja Kalan", "fromClass": "1B"},
-    {"name": "Nejc Modrič", "fromClass": "1B"},
-    {"name": "Klara Kompara", "fromClass": "1B"}
-]
+import {reactive} from "vue";
 
-export default fakestate;
+/** List of pupils will be kept here */
+export const pupils = reactive<dto.Pupil[]>([])
 
 export function removePupil(className: string, pupil: dto.Pupil) {
     /*const cls = fakestate.classes.get(className);

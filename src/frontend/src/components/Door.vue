@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import {computed, type Ref, ref} from "vue";
-import fakestate from "../data";
+import { pupils } from "../data";
 import { refDebounced } from '@vueuse/core';
 
 const search = ref('');
@@ -27,7 +27,7 @@ const filtered: Ref<dto.Pupil[]> = computed(() => {
   const searchWordsLowercase = searchDebounced.value.toLocaleLowerCase().split(" ").filter( w => !!w)
   const searchFn = (pupil: dto.Pupil) => studentMatches(searchWordsLowercase, pupil)
 
-  return fakestate.filter(searchFn)
+  return pupils.filter(searchFn)
 })
 
 function resetSearch() {

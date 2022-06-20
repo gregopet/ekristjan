@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 import {computed, defineComponent, onMounted, ref} from "vue";
-import fakestate from "../data";
+import { pupils } from "../data";
 import { eventBus } from '../events';
 import { format } from 'date-fns';
 import { type Palette, ColorChoice } from "@/components/palette";
@@ -91,11 +91,11 @@ async function pushClassSubscriptions() {
 
 
 function pupilsHere(forClass: string): dto.Pupil[] {
-  return fakestate.filter( p => p.fromClass == forClass);
+  return pupils.filter( p => p.fromClass == forClass);
 }
 
 function allAvailableClasses(): string[] {
-  return [ ...new Set(fakestate.map( p => p.fromClass )) ]
+  return [ ...new Set(pupils.map( p => p.fromClass )) ]
 }
 
 // Pupil calls
