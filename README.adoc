@@ -6,22 +6,29 @@
 Progresivna spletna aplikacija za pomoč šolskim delavcem, da obvestijo učitelje podaljšanega bivanja, kdaj morajo
 poslati otroke domov.
 
-NOTE: Aplikacija je trenutno v čisti prototipni fazi, izgrajena s kopiranjem koščkov kode iz drugih projektov (seveda z dovoljenjem). Konstruktivne pripombe, predlogi ali celo pull requesti so dobrodošli.
+Vmesnik je razdeljen na dva dela: na eni strani so vhodna vrata, na katerih starši sporočijo vratarju, po katerega otroka so prišli.
+Na drugi strani je učilnica, v kateri učitelj podaljšanega bivanja označi, katere skupine otrok so v njegovem varstvu.
+Ko pride starš po otroka iz oddelka, se v učilnici učitelju sproži "notification", da lahko otroka pošlje k izhodu.
+
+NOTE: Aplikacija je trenutno v čisti prototipni fazi, izgrajena s kopiranjem koščkov kode iz drugih projektov ( z dovoljenjem). Konstruktivne pripombe, predlogi ali celo pull requesti so dobrodošli.
 
 == Delovanje
 
 Aplikacija je narejena s spletnimi tehnologijami. Server posreduje sporočila med klienti s pomočjo web push tehnologije. Za delovanje je nujna HTTPS povezava, saj le na ta način delujejo napredne PWA funkcionalnosti. Da se zaledni strežnik lahko identifira kot pošiljatelj push sporočil, je potrebno zanj ustvariti https://vapidkeys.com/[VAPID ključ] in ga zapisati v konfiguracijsko datoteko (glej naslednji odstavek).
 
 Aplikacija zaenkrat deluje brez baze podatkov. Učenci so našteti v konfiguracijski datoteki, ki je lahko
-bodisi v JSON bodisi v https://github.com/lightbend/config/blob/main/HOCON.md[HOCON] formatu - vzorec se nahaja v datoteki `src/main/resources/config.hocon`, ob zagonu pa je možno podati pot do svoje konfiguracijske datoteke s pomočjo parametra `--config <pot do konfiguracije>`.
+bodisi v JSON bodisi v https://github.com/lightbend/config/blob/main/HOCON.md[HOCON] formatu - vzorec se nahaja v datoteki `src/main/resources/config.hocon`, ob zagonu na produkciji pa je potrebno podati pot do svoje konfiguracijske datoteke s pomočjo parametra `--config <pot do konfiguracije>`.
 
-WARNING: Aplikacija trenutno ni zaščitena z nobenim geslom - na proxy strežniku je potrebno urediti npr. HTTP Basic avtentikacijo ali kaj podobnega!
+WARNING: Aplikacija trenutno ni zaščitena z nobenim geslom - na proxy strežniku je zato potrebno urediti npr. HTTP Basic avtentikacijo ali kaj podobnega!
 
 == Osprednji del / frontend
 
 Logika same aplikacije se večinoma odvija na frontendu. Ta se nahaja v mapi `src/frontend`.
 
 WARNING: frontend se zaenkrat ne zgradi avtomatsko pred deployem aplikacije - ta korak je nujno narediti ročno!
+
+Če želite, lahko frontend gradite neodvisno od backenda in ga tudi distribuirate ločeno; to omogoča npr. neodvisno nadgrajevanje frontenda. V tem primeru lahko
+pot do backenda podate v konfiguracijski datoteki s pomočjo ključa `frontendDistFolder`.
 
 === Predpogoji za zagon
  * node.js 16.15.0+ (priporočena namestitev z https://github.com/nvm-sh/nvm[NVM])
@@ -32,7 +39,7 @@ Najprej namestite vse zahtevane knjižnjice s pomočjo ukaza `yarn install`. Za 
 
 WARNING: Za delovanje naprednih funkcionalnosti brskalniki zahtevajo uporabo HTTPS povezave - razvoj stilov brez HTTPS je sicer možen, a podatkovna povezava ne bo delovala!
 
-Za delovanje HTTPS povezave je potreben veljaven certifikat, pridobljen z https://letsencrypt.org/[Let's Encrypt], https://github.com/FiloSottile/mkcert[mkcert] ali s katerokoli drugo storitvijo za ta namen. Poti do certifikata in pripadajočega ključa je potrebno navesti v okoljskih spremenljivkah `HTTPS_KEY` in `HTTPS_CERT`, najlažje tako, da se jih vnese v datoteko `.env` (vzorec je priložen k projektu) - ta datoteka je značilna za vaš računalnik in se ne vključuje v git!
+Za delovanje HTTPS povezave je potreben veljaven certifikat, pridobljen z https://letsencrypt.org/[Let's Encrypt], https://github.com/FiloSottile/mkcert[mkcert] ali s katerokoli drugo storitvijo za ta namen. Poti do certifikata in pripadajočega ključa je potrebno navesti v okoljskih spremenljivkah `HTTPS_KEY` in `HTTPS_CERT`, najlažje tako, da se jih vnese v datoteko `.env`, ki jo build tool avtomatsko prebere (vzorec je priložen k projektu) - ta datoteka je značilna za vaš računalnik in se ne vključuje v git!
 
 Da bo podatkovna povezava med večimi instancami frontenda delovala, mora biti prižgan tudi zaledni strežnik. Če želite uporabiti zunanji, že delujoči zaledni strežnik, lahko njegov naslov vpišete v datoteko `vite.config.ts` (ključ `server.proxy./sock.target`).
 
