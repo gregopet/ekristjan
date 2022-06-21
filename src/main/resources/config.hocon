@@ -1,6 +1,7 @@
 // Maps to class co.petrin.ekristijan.Config
 {
     port: 8888,
+    frontendDistFolder: null
     vapid: {
         subject: "mailto: <developer@example.org>"
         publicKey: "BEFi2MSXd8_BZ13nqEn35XggYPUYXssEjniygu6Wf-JqF_hXhc1qA5PT3aPeKOk49nwJwI1ndvHv4HDFk6hnK7I"

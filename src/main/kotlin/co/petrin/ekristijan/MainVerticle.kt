@@ -53,7 +53,7 @@ class MainVerticle : CoroutineVerticle() {
     router.put("/push/subscribe").handler(BodyHandler.create()).handler(this::subscribe)
     router.post("/pupils/leave").handler(BodyHandler.create()).handler(this::pupilLeaves)
     router.get("/pupils").handler { ctx -> ctx.json(parsedConfig.pupils) }
-    router.route().handler(StaticHandler.create("src/frontend/dist"))
+    router.route().handler(StaticHandler.create(parsedConfig.frontendDistFolder ?: "src/frontend/dist"))
 
     LOG.info("Main verticle listening on port ${parsedConfig.port}")
 
