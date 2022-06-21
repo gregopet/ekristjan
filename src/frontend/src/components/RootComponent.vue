@@ -12,7 +12,7 @@ import {pupils} from "@/data";
 import {type Ref, watch} from "vue";
 
 // Load pupils from server
-const { isFinished, error, data } = useFetch("/pupils")
+const { isFinished, error, data } = useFetch("/pupils", { credentials: "include" }, {})
 watch(data as Ref<string>, (newData: string) => {
   const newPupils = JSON.parse(newData) as dto.Pupil[];
   if (newData) {

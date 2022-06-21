@@ -42,7 +42,8 @@ async function sendPupil(pupil: dto.Pupil) {
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify(pupil)
+    body: JSON.stringify(pupil),
+    credentials: "include",
   })
   resetSearch()
 }
