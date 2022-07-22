@@ -30,6 +30,7 @@ application {
 }
 
 dependencies {
+  implementation("si.razum:vertx-common:1.0.1-SNAPSHOT")
   implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
   implementation("io.vertx:vertx-web")
   implementation("io.vertx:vertx-lang-kotlin")
@@ -42,6 +43,7 @@ dependencies {
   testImplementation("io.vertx:vertx-junit5")
   implementation("com.fasterxml.jackson.core:jackson-databind:2.11.4")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.2")
+  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.1")
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
   implementation("com.github.ntrrgc:ts-generator:1.1.1") // generate typescript definition files
   runtimeOnly("ch.qos.logback:logback-classic:1.2.3")

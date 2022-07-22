@@ -25,11 +25,12 @@ import nl.martijndwars.webpush.Subscription
 import nl.martijndwars.webpush.Urgency
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.slf4j.LoggerFactory
+import si.razum.vertx.config.ConfigurableCoroutineVerticle
 import java.security.Security
 
 private val LOG = LoggerFactory.getLogger(MainVerticle::class.java)
 
-class MainVerticle : CoroutineVerticle() {
+class MainVerticle : ConfigurableCoroutineVerticle(LOG) {
 
   /** Service for sending push notifications */
   lateinit var pushService: PushAsyncService
@@ -40,13 +41,7 @@ class MainVerticle : CoroutineVerticle() {
   lateinit var parsedConfig: Config
 
   override suspend fun start() {
-
-    parseConfig(config)
-    vertx.eventBus().consumer<JsonObject>(CONFIG_CHANGE_HANDLER_ADDRESS) { newConfig ->
-      LOG.debug("Reloading config")
-      parseConfig(newConfig.body())
-      LOG.info("Config reloaded")
-    }
+    super.start()
 
     val router = Router.router(vertx)
     router.get("/push/key").handler(this::pushPublicKey)
@@ -62,12 +57,6 @@ class MainVerticle : CoroutineVerticle() {
       .requestHandler(router::handle)
       .listen(parsedConfig.port)
       .await()
-  }
-
-  /** Actions to perform on a config change (either first-time or reload) */
-  private fun parseConfig(cfg: JsonObject) {
-    parsedConfig = cfg.mapTo(Config::class.java)
-    pushService = PushAsyncService(parsedConfig.vapid.publicKey, parsedConfig.vapid.privateKey, parsedConfig.vapid.subject)
   }
 
   private fun pupilLeaves(ctx: RoutingContext) {
@@ -120,5 +109,9 @@ class MainVerticle : CoroutineVerticle() {
     ctx.end()
   }
 
-
+  override suspend fun readConfiguration(conf: JsonObject, forceStatusOutput: Boolean) {
+    LOG.info("Reloading config")
+    parsedConfig = conf.mapTo(Config::class.java)
+    pushService = PushAsyncService(parsedConfig.vapid.publicKey, parsedConfig.vapid.privateKey, parsedConfig.vapid.subject)
+  }
 }
