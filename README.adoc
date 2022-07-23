@@ -55,6 +55,8 @@ Backend skrbi za posredovanje push dogodkov aplikaciji.
 
 Za frontend zna zgraditi definicije razredov za prenos podatkov: generator se sproži z ukazom `./gradlew generateDTO` (oziroma `gradlew.bat generateDTO` na operacijskem sistemi Windows).
 
+Backend potrebuje Postgres bazo podatkov. Za lokalni razvoj je najlažje bazo postaviti iz priložene docker-compose datoteke.
+
 === Predpogoji za zagon
  * Java JRE ali JDK 8+
 

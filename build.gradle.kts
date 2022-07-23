@@ -7,6 +7,7 @@ plugins {
   application
   id("com.github.johnrengelman.shadow") version "7.0.0"
 }
+apply(from = "jooq.gradle.kts")
 
 group = "co.petrin"
 version = "1.0.0-SNAPSHOT"
@@ -16,6 +17,7 @@ repositories {
   maven("https://jitpack.io")
 }
 
+val jooqVersion: String by project.properties
 val vertxVersion = "4.3.1"
 val junitJupiterVersion = "5.7.0"
 
@@ -48,6 +50,14 @@ dependencies {
   implementation("com.github.ntrrgc:ts-generator:1.1.1") // generate typescript definition files
   runtimeOnly("ch.qos.logback:logback-classic:1.2.3")
   implementation("info.picocli:picocli:4.6.1")
+
+  // Database
+  implementation("com.zaxxer:HikariCP:3.4.5")
+  implementation("org.postgresql:postgresql:42.2.16")
+  implementation("org.flywaydb:flyway-core:7.5.2")
+  implementation("org.jooq:jooq:$jooqVersion")
+  implementation("org.jooq:jooq-kotlin:$jooqVersion")
+  implementation("com.google.code.findbugs:jsr305:3.0.2")  
 }
 
 val compileKotlin: KotlinCompile by tasks

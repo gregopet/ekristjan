@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory
 import picocli.CommandLine
 import si.razum.vertx.config.ConfigurableCoroutineVerticle
 import si.razum.vertx.configureDataBinding
+import si.razum.vertx.db.ConnectionPool
 import java.security.Security
 
 private val LOG = LoggerFactory.getLogger("ekristijan.main")
@@ -22,13 +23,19 @@ fun main(args: Array<String>) {
     configureDataBinding()
 
     runBlocking {
-        Security.addProvider(BouncyCastleProvider())
-
-        val configRetriever = ConfigurableCoroutineVerticle.reloadableHoconConfig("config.hocon", options.configFile, vertx)
-        val config = configRetriever.config.await()
-
         try {
-            vertx.deployVerticle(MainVerticle(), deploymentOptionsOf(config = config)).await()
+            Security.addProvider(BouncyCastleProvider())
+
+            val configRetriever =
+                ConfigurableCoroutineVerticle.reloadableHoconConfig(vertx, overrideFileLocation = options.configFile)
+            val configJson = configRetriever.config.await()
+            val config = configJson.mapTo(Config::class.java)
+
+            ConnectionPool.migrateDatabase(config.db, false, false, true)
+            val jooq = ConnectionPool.wrapWithJooq(config.db, true)
+            jooq.selectOne().fetch()
+
+            vertx.deployVerticle(MainVerticle()).await()
         } catch (t: Throwable) {
             LOG.error("Error starting main verticle", t)
             vertx.close()

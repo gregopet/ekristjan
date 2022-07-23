@@ -16,5 +16,12 @@
         { name: "Nejc Modrič", fromClass: "1B" }
         { name: "Klara Kompara", fromClass: "1B" }
         { name: "Klemen Domen", fromClass: "1B" }
-    ]
+    ],
+    db: {
+        host: "localhost",
+        port: 6500,
+        user: "ekristjan",
+        database: "ekristjan",
+        password: "",
+    }
 }
