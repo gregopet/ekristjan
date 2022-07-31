@@ -1,11 +1,13 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.flywaydb.gradle.task.FlywayMigrateTask
 
 plugins {
   kotlin ("jvm") version "1.6.10"
   application
   id("com.github.johnrengelman.shadow") version "7.0.0"
+  id("org.flywaydb.flyway").version("7.5.2")
 }
 apply(from = "jooq.gradle.kts")
 
@@ -20,6 +22,13 @@ repositories {
 val jooqVersion: String by project.properties
 val vertxVersion = "4.3.1"
 val junitJupiterVersion = "5.7.0"
+
+val dbHost: String by project
+val dbPort: String by project
+val dbName: String by project
+val dbUser: String by project
+val dbPass: String by project
+
 
 //val mainVerticleName = "co.petrin.ekristijan.MainVerticle"
 //val launcherClassName = "io.vertx.core.Launcher"
@@ -95,4 +104,11 @@ tasks.create<JavaExec>(name = "generateDTO") {
   classpath = sourceSets["main"].runtimeClasspath
   mainClass.set("co.petrin.ekristijan.dto.GenerateDTOKt")
   args = listOf(file("$projectDir/src/frontend/dto.d.ts").absolutePath)
+}
+
+flyway {
+  url = "jdbc:postgresql://$dbHost:$dbPort/$dbName"
+  user = dbUser
+  locations = arrayOf("filesystem:src/main/resources/db/migration,filesystem:src/main/resources/db/devMigration")
+  mixed = true
 }
