@@ -73,10 +73,10 @@ public class Summon extends TableImpl<SummonRecord> {
     public final TableField<SummonRecord, Integer> TEACHER_ID = createField(DSL.name("teacher_id"), SQLDataType.INTEGER.nullable(false), this, "Teacher who issued the summon");
 
     /**
-     * The column <code>public.summon.time</code>. Time at which the summon was
-     * triggered
+     * The column <code>public.summon.created_at</code>. Time at which the
+     * summon was triggered
      */
-    public final TableField<SummonRecord, OffsetDateTime> TIME = createField(DSL.name("time"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(DSL.field("CURRENT_TIMESTAMP", SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "Time at which the summon was triggered");
+    public final TableField<SummonRecord, OffsetDateTime> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(DSL.field("CURRENT_TIMESTAMP", SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "Time at which the summon was triggered");
 
     private Summon(Name alias, Table<SummonRecord> aliased) {
         this(alias, aliased, null);

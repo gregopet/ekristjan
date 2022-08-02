@@ -11,6 +11,7 @@ import co.petrin.ekristijan.db.tables.records.ExtraordinaryDepartureRecord;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -19,13 +20,13 @@ import javax.annotation.Nonnull;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function7;
+import org.jooq.Function8;
 import org.jooq.Identity;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row7;
+import org.jooq.Row8;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -102,6 +103,11 @@ public class ExtraordinaryDeparture extends TableImpl<ExtraordinaryDepartureReco
      * special remarks about this departure?
      */
     public final TableField<ExtraordinaryDepartureRecord, String> REMARK = createField(DSL.name("remark"), SQLDataType.CLOB, this, "Any special remarks about this departure?");
+
+    /**
+     * The column <code>public.extraordinary_departure.created_at</code>.
+     */
+    public final TableField<ExtraordinaryDepartureRecord, OffsetDateTime> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(DSL.field("CURRENT_TIMESTAMP", SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "");
 
     private ExtraordinaryDeparture(Name alias, Table<ExtraordinaryDepartureRecord> aliased) {
         this(alias, aliased, null);
@@ -243,19 +249,19 @@ public class ExtraordinaryDeparture extends TableImpl<ExtraordinaryDepartureReco
     }
 
     // -------------------------------------------------------------------------
-    // Row7 type methods
+    // Row8 type methods
     // -------------------------------------------------------------------------
 
     @Override
     @Nonnull
-    public Row7<Integer, Integer, Integer, LocalDate, LocalTime, Boolean, String> fieldsRow() {
-        return (Row7) super.fieldsRow();
+    public Row8<Integer, Integer, Integer, LocalDate, LocalTime, Boolean, String, OffsetDateTime> fieldsRow() {
+        return (Row8) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function7<? super Integer, ? super Integer, ? super Integer, ? super LocalDate, ? super LocalTime, ? super Boolean, ? super String, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function8<? super Integer, ? super Integer, ? super Integer, ? super LocalDate, ? super LocalTime, ? super Boolean, ? super String, ? super OffsetDateTime, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -263,7 +269,7 @@ public class ExtraordinaryDeparture extends TableImpl<ExtraordinaryDepartureReco
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function7<? super Integer, ? super Integer, ? super Integer, ? super LocalDate, ? super LocalTime, ? super Boolean, ? super String, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function8<? super Integer, ? super Integer, ? super Integer, ? super LocalDate, ? super LocalTime, ? super Boolean, ? super String, ? super OffsetDateTime, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

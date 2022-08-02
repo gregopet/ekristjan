@@ -49,12 +49,12 @@ CREATE TABLE summon(
     summon_id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     pupil_id INTEGER NOT NULL REFERENCES pupil(pupil_id),
     teacher_id INTEGER NOT NULL REFERENCES teacher(teacher_id),
-    time TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp
 );
 COMMENT ON TABLE summon IS 'A request for the pupil to come to the door';
 COMMENT ON COLUMN summon.pupil_id IS 'Pupil that was summoned';
 COMMENT ON COLUMN summon.teacher_id IS 'Teacher who issued the summon';
-COMMENT ON COLUMN summon.time IS 'Time at which the summon was triggered';
+COMMENT ON COLUMN summon.created_at IS 'Time at which the summon was triggered';
 
 CREATE TABLE summon_ack(
     summon_ack_id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -75,6 +75,7 @@ CREATE TABLE extraordinary_departure(
     time TIME NOT NULL,
     leaves_alone BOOLEAN,
     remark TEXT,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
     unique(date, pupil_id)
 );
 CREATE INDEX idx_extraordinary_departure_pupil ON extraordinary_departure(pupil_id, date);

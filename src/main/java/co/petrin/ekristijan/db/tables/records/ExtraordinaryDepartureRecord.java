@@ -8,14 +8,15 @@ import co.petrin.ekristijan.db.tables.ExtraordinaryDeparture;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.jooq.Field;
 import org.jooq.Record1;
-import org.jooq.Record7;
-import org.jooq.Row7;
+import org.jooq.Record8;
+import org.jooq.Row8;
 import org.jooq.impl.UpdatableRecordImpl;
 
 
@@ -24,7 +25,7 @@ import org.jooq.impl.UpdatableRecordImpl;
  * notified. Guaranteed there is only one extraordinary departure per day!
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
-public class ExtraordinaryDepartureRecord extends UpdatableRecordImpl<ExtraordinaryDepartureRecord> implements Record7<Integer, Integer, Integer, LocalDate, LocalTime, Boolean, String> {
+public class ExtraordinaryDepartureRecord extends UpdatableRecordImpl<ExtraordinaryDepartureRecord> implements Record8<Integer, Integer, Integer, LocalDate, LocalTime, Boolean, String, OffsetDateTime> {
 
     private static final long serialVersionUID = 1L;
 
@@ -149,6 +150,21 @@ public class ExtraordinaryDepartureRecord extends UpdatableRecordImpl<Extraordin
         return (String) get(6);
     }
 
+    /**
+     * Setter for <code>public.extraordinary_departure.created_at</code>.
+     */
+    public void setCreatedAt(@Nonnull OffsetDateTime value) {
+        set(7, value);
+    }
+
+    /**
+     * Getter for <code>public.extraordinary_departure.created_at</code>.
+     */
+    @Nonnull
+    public OffsetDateTime getCreatedAt() {
+        return (OffsetDateTime) get(7);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -160,19 +176,19 @@ public class ExtraordinaryDepartureRecord extends UpdatableRecordImpl<Extraordin
     }
 
     // -------------------------------------------------------------------------
-    // Record7 type implementation
+    // Record8 type implementation
     // -------------------------------------------------------------------------
 
     @Override
     @Nonnull
-    public Row7<Integer, Integer, Integer, LocalDate, LocalTime, Boolean, String> fieldsRow() {
-        return (Row7) super.fieldsRow();
+    public Row8<Integer, Integer, Integer, LocalDate, LocalTime, Boolean, String, OffsetDateTime> fieldsRow() {
+        return (Row8) super.fieldsRow();
     }
 
     @Override
     @Nonnull
-    public Row7<Integer, Integer, Integer, LocalDate, LocalTime, Boolean, String> valuesRow() {
-        return (Row7) super.valuesRow();
+    public Row8<Integer, Integer, Integer, LocalDate, LocalTime, Boolean, String, OffsetDateTime> valuesRow() {
+        return (Row8) super.valuesRow();
     }
 
     @Override
@@ -219,6 +235,12 @@ public class ExtraordinaryDepartureRecord extends UpdatableRecordImpl<Extraordin
 
     @Override
     @Nonnull
+    public Field<OffsetDateTime> field8() {
+        return ExtraordinaryDeparture.EXTRAORDINARY_DEPARTURE.CREATED_AT;
+    }
+
+    @Override
+    @Nonnull
     public Integer component1() {
         return getExtraordinaryDepartureId();
     }
@@ -261,6 +283,12 @@ public class ExtraordinaryDepartureRecord extends UpdatableRecordImpl<Extraordin
 
     @Override
     @Nonnull
+    public OffsetDateTime component8() {
+        return getCreatedAt();
+    }
+
+    @Override
+    @Nonnull
     public Integer value1() {
         return getExtraordinaryDepartureId();
     }
@@ -299,6 +327,12 @@ public class ExtraordinaryDepartureRecord extends UpdatableRecordImpl<Extraordin
     @Nullable
     public String value7() {
         return getRemark();
+    }
+
+    @Override
+    @Nonnull
+    public OffsetDateTime value8() {
+        return getCreatedAt();
     }
 
     @Override
@@ -352,7 +386,14 @@ public class ExtraordinaryDepartureRecord extends UpdatableRecordImpl<Extraordin
 
     @Override
     @Nonnull
-    public ExtraordinaryDepartureRecord values(@Nonnull Integer value1, @Nonnull Integer value2, @Nullable Integer value3, @Nonnull LocalDate value4, @Nonnull LocalTime value5, @Nullable Boolean value6, @Nullable String value7) {
+    public ExtraordinaryDepartureRecord value8(@Nonnull OffsetDateTime value) {
+        setCreatedAt(value);
+        return this;
+    }
+
+    @Override
+    @Nonnull
+    public ExtraordinaryDepartureRecord values(@Nonnull Integer value1, @Nonnull Integer value2, @Nullable Integer value3, @Nonnull LocalDate value4, @Nonnull LocalTime value5, @Nullable Boolean value6, @Nullable String value7, @Nonnull OffsetDateTime value8) {
         value1(value1);
         value2(value2);
         value3(value3);
@@ -360,6 +401,7 @@ public class ExtraordinaryDepartureRecord extends UpdatableRecordImpl<Extraordin
         value5(value5);
         value6(value6);
         value7(value7);
+        value8(value8);
         return this;
     }
 
@@ -377,7 +419,7 @@ public class ExtraordinaryDepartureRecord extends UpdatableRecordImpl<Extraordin
     /**
      * Create a detached, initialised ExtraordinaryDepartureRecord
      */
-    public ExtraordinaryDepartureRecord(@Nonnull Integer extraordinaryDepartureId, @Nonnull Integer pupilId, @Nullable Integer teacherId, @Nonnull LocalDate date, @Nonnull LocalTime time, @Nullable Boolean leavesAlone, @Nullable String remark) {
+    public ExtraordinaryDepartureRecord(@Nonnull Integer extraordinaryDepartureId, @Nonnull Integer pupilId, @Nullable Integer teacherId, @Nonnull LocalDate date, @Nonnull LocalTime time, @Nullable Boolean leavesAlone, @Nullable String remark, @Nonnull OffsetDateTime createdAt) {
         super(ExtraordinaryDeparture.EXTRAORDINARY_DEPARTURE);
 
         setExtraordinaryDepartureId(extraordinaryDepartureId);
@@ -387,5 +429,6 @@ public class ExtraordinaryDepartureRecord extends UpdatableRecordImpl<Extraordin
         setTime(time);
         setLeavesAlone(leavesAlone);
         setRemark(remark);
+        setCreatedAt(createdAt);
     }
 }

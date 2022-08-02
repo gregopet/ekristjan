@@ -73,19 +73,19 @@ public class SummonRecord extends UpdatableRecordImpl<SummonRecord> implements R
     }
 
     /**
-     * Setter for <code>public.summon.time</code>. Time at which the summon was
-     * triggered
+     * Setter for <code>public.summon.created_at</code>. Time at which the
+     * summon was triggered
      */
-    public void setTime(@Nonnull OffsetDateTime value) {
+    public void setCreatedAt(@Nonnull OffsetDateTime value) {
         set(3, value);
     }
 
     /**
-     * Getter for <code>public.summon.time</code>. Time at which the summon was
-     * triggered
+     * Getter for <code>public.summon.created_at</code>. Time at which the
+     * summon was triggered
      */
     @Nonnull
-    public OffsetDateTime getTime() {
+    public OffsetDateTime getCreatedAt() {
         return (OffsetDateTime) get(3);
     }
 
@@ -136,7 +136,7 @@ public class SummonRecord extends UpdatableRecordImpl<SummonRecord> implements R
     @Override
     @Nonnull
     public Field<OffsetDateTime> field4() {
-        return Summon.SUMMON.TIME;
+        return Summon.SUMMON.CREATED_AT;
     }
 
     @Override
@@ -160,7 +160,7 @@ public class SummonRecord extends UpdatableRecordImpl<SummonRecord> implements R
     @Override
     @Nonnull
     public OffsetDateTime component4() {
-        return getTime();
+        return getCreatedAt();
     }
 
     @Override
@@ -184,7 +184,7 @@ public class SummonRecord extends UpdatableRecordImpl<SummonRecord> implements R
     @Override
     @Nonnull
     public OffsetDateTime value4() {
-        return getTime();
+        return getCreatedAt();
     }
 
     @Override
@@ -211,7 +211,7 @@ public class SummonRecord extends UpdatableRecordImpl<SummonRecord> implements R
     @Override
     @Nonnull
     public SummonRecord value4(@Nonnull OffsetDateTime value) {
-        setTime(value);
+        setCreatedAt(value);
         return this;
     }
 
@@ -239,12 +239,12 @@ public class SummonRecord extends UpdatableRecordImpl<SummonRecord> implements R
     /**
      * Create a detached, initialised SummonRecord
      */
-    public SummonRecord(@Nonnull Integer summonId, @Nonnull Integer pupilId, @Nonnull Integer teacherId, @Nonnull OffsetDateTime time) {
+    public SummonRecord(@Nonnull Integer summonId, @Nonnull Integer pupilId, @Nonnull Integer teacherId, @Nonnull OffsetDateTime createdAt) {
         super(Summon.SUMMON);
 
         setSummonId(summonId);
         setPupilId(pupilId);
         setTeacherId(teacherId);
-        setTime(time);
+        setCreatedAt(createdAt);
     }
 }
