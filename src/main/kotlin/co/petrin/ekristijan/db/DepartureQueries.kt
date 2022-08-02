@@ -1,18 +1,23 @@
 package co.petrin.ekristijan.db
 
 import co.petrin.ekristijan.db.Tables.*
-import co.petrin.ekristijan.db.tables.records.DepartureRecord
 import org.jooq.DSLContext
 import org.jooq.DatePart
 import org.jooq.Field
 import org.jooq.impl.DSL.*
 import org.jooq.impl.SQLDataType
+import org.slf4j.LoggerFactory
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.OffsetDateTime
 
 object DepartureQueries {
+
+    private val LOG = LoggerFactory.getLogger(DepartureQueries::class.java)
+
+    /** When pupils skip entire days, record them as having left at 7 o'clock */
+    private val entireDayLeaveTime = LocalTime.of(7, 0);
 
     /**
      * Fetches the daily departures for a set of classes. Considers:
@@ -32,7 +37,8 @@ object DepartureQueries {
             CLAZZ,
             LEAVES_ALONE,
             dailyDepartureTime,
-            departure
+            departure,
+            *EXTRAORDINARY_DEPARTURE.fields()
         )
         .from(PUPIL)
         .leftJoin(EXTRAORDINARY_DEPARTURE).on(
@@ -44,6 +50,9 @@ object DepartureQueries {
             CLAZZ.eq(any(*classes)),
         )
         .fetch { rec ->
+            val plannedDeparture = if (rec.get(EXTRAORDINARY_DEPARTURE.EXTRAORDINARY_DEPARTURE_ID) != null) {
+                rec.into(EXTRAORDINARY_DEPARTURE)
+            } else null
             DailyDeparture(
                 pupilId = rec.get(PUPIL_ID),
                 name = rec.get(NAME),
@@ -51,7 +60,7 @@ object DepartureQueries {
                 leavesAlone = rec.get(LEAVES_ALONE),
                 usualDeparture = rec.get(dailyDepartureTime),
                 actualDeparture = rec.get(departure)?.value1()?.into(DEPARTURE),
-                plannedDeparture = rec.into(EXTRAORDINARY_DEPARTURE)
+                plannedDeparture = plannedDeparture
             )
         }
     }
@@ -59,27 +68,95 @@ object DepartureQueries {
     /**
      * Declares that a student will leave school at a certain time, overriding their usual departure time.
      */
-    /*fun declareExtraordinaryDeparture(pupilId: Int, schoolId: Int, teacherId: Int?, day: LocalDate, time: LocalTime, remark: String?, leavesAlone: Boolean?, trans: DSLContext) {
-
-    }*/
+    fun declareExtraordinaryDeparture(pupilId: Int, teacherId: Int, day: LocalDate, time: LocalTime, remark: String?, leavesAlone: Boolean?, trans: DSLContext) = with(EXTRAORDINARY_DEPARTURE) {
+        trans.insertInto(EXTRAORDINARY_DEPARTURE)
+            .set(PUPIL_ID, pupilBelongingToSameSchoolAsTeacher(pupilId, teacherId))
+            .set(TEACHER_ID, teacherId)
+            .set(DATE, day)
+            .set(TIME, time)
+            .set(REMARK, remark)
+            .set(LEAVES_ALONE, leavesAlone)
+            .execute()
+    }
 
     /**
-     * Records the acknowledgement of a pupil being sent home. Currently the time of departure from school is also
-     * set to the exact same date because we currently don't have the physical mechanism to record actual departures,
-     * but this could change in the future.
+     * Records the acknowledgement of a pupil being sent home.
      *
-     * @param pupilId The pupil who departed
-     * @param schoolId The school of this pupil (has to match the pupilId, or no departure will be inserted and the function will return `false`)
+     * Currently the time of departure from school is also set to the exact same date because we currently don't have
+     * the physical mechanism to record actual departures, but this could change in the future.
+     *
+     * @param summonId ID of the notification that the pupil needs to come to the gate
      * @param departure The time of the departure
-     * @param entireDay Was the pupil absent for the entire day (didn't even show up)?
      * @param teacherId The teacher who inserted this departure
-     * @param remark If the teacher has any remarks about the nature of this departure, it may be inserted here
      *
      * @return true if the departure was inserted, false if [pupilId] didn't match [schoolId] (permission problem).
      */
-    /*fun acknowledgePupilNotification(pupilId: Int, schoolId: Int, departure: OffsetDateTime, entireDay: Boolean, teacherId: Int, remark: String?, trans: DSLContext): Boolean {
+    fun acknowledgePupilNotificationAndRecordDeparture(summonId: Int, teacherId: Int, departure: OffsetDateTime, trans: DSLContext): Boolean {
+        // Puzzle suggestion: this could probably be achieved in a single query :)
 
-    }*/
+        val summonRecord = trans.select(SUMMON.PUPIL_ID, SUMMON_ACK.TIME)
+            .from(SUMMON)
+            .leftJoin(SUMMON_ACK).using(SUMMON.SUMMON_ID)
+            .where(
+                SUMMON.SUMMON_ID.eq(summonId),
+                SUMMON.TEACHER_ID.eq(teacherId)
+            ).fetchOne()
+
+        if (summonRecord == null) {
+            LOG.debug("Summon with ID $summonId for teacher $teacherId not found!")
+            return false
+        }
+
+        if (summonRecord.get(SUMMON_ACK.TIME) != null) {
+            LOG.debug("Summon with ID $summonId was already acknowledged!")
+            return false
+        }
+
+        val pupilId = summonRecord.get(SUMMON.PUPIL_ID)
+        trans.insertInto(SUMMON_ACK)
+            .set(SUMMON_ACK.SUMMON_ID, summonId)
+            .set(SUMMON_ACK.TEACHER_ID, teacherId)
+            .set(SUMMON_ACK.TIME, departure)
+            .execute()
+
+        recordDeparture(pupilId, teacherId, departure, false, null, trans)
+        return true
+    }
+
+    /**
+     * Records the departure of a pupil.
+     *
+     * For departures that last entire day, a 7 o'clock leave time will be recorded to simplify the data model & queries.
+     *
+     * @return true if the departure was recorded, false otherwise (pupil's school didn't match teacher's school for example).
+     */
+    fun recordDeparture(pupilId: Int, teacherId: Int, departure: OffsetDateTime, entireDay: Boolean, remark: String?, trans: DSLContext): Boolean = with(DEPARTURE) {
+        val recordedLeaveTime = if (!entireDay) {
+            departure
+        } else {
+            departure.toLocalDate().atTime(entireDayLeaveTime).atOffset(departure.offset)
+        }
+        val rowsAffected = trans.insertInto(DEPARTURE)
+            .set(PUPIL_ID, pupilBelongingToSameSchoolAsTeacher(pupilId, teacherId))
+            .set(TEACHER_ID, teacherId)
+            .set(TIME, recordedLeaveTime)
+            .set(REMARK, remark)
+            .set(ENTIRE_DAY, entireDay)
+            .execute()
+
+        rowsAffected > 0
+    }
+
+    /** Returns a pupil_id field that is only non-null if the pupil belongs to the school as teacher */
+    private fun pupilBelongingToSameSchoolAsTeacher(pupilId: Int, teacherId: Int): Field<Int> =
+        field(
+            select(PUPIL.PUPIL_ID).from(PUPIL).where(
+                PUPIL.PUPIL_ID.eq(pupilId),
+                PUPIL.SCHOOL_ID.eq(
+                    select(TEACHER.SCHOOL_ID).from(TEACHER).where(TEACHER.TEACHER_ID.eq(teacherId))
+                )
+            )
+        )
 
     /**
      * Determines which field from the pupil table is appropriate for a given day.
