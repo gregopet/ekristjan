@@ -22,10 +22,12 @@ object TextFixtures {
 
     val allClasses = arrayOf("1A", "1B", "2A", "2B")
     val schoolId = 1
-    val teacherId = 1
     val janaId = 1
     val gasperId = 2
     val klemenId = 3
     val anitaId = 4
     val timezone = ZoneId.of("Europe/Ljubljana")
+
+    val teacherId = 1
+    val teacherEmail = "ucitelj@example.org"
 }

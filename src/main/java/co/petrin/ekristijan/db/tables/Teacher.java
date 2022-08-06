@@ -91,11 +91,11 @@ public class Teacher extends TableImpl<TeacherRecord> {
     public final TableField<TeacherRecord, OffsetDateTime> PASSWORD_LAST_ATTEMPT = createField(DSL.name("password_last_attempt"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "Time at which the last password change was attempted");
 
     /**
-     * The column <code>public.teacher.password_failed_attempts</code>. Number
-     * of times wrong password was entered in current 'session' (application
-     * defined)
+     * The column <code>public.teacher.password_last_attempt_count</code>.
+     * Number of times wrong password was entered in current attempt timeframe
+     * (the timeframe's length is application defined)
      */
-    public final TableField<TeacherRecord, Integer> PASSWORD_FAILED_ATTEMPTS = createField(DSL.name("password_failed_attempts"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.field("0", SQLDataType.INTEGER)), this, "Number of times wrong password was entered in current 'session' (application defined)");
+    public final TableField<TeacherRecord, Integer> PASSWORD_LAST_ATTEMPT_COUNT = createField(DSL.name("password_last_attempt_count"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.field("0", SQLDataType.INTEGER)), this, "Number of times wrong password was entered in current attempt timeframe (the timeframe's length is application defined)");
 
     private Teacher(Name alias, Table<TeacherRecord> aliased) {
         this(alias, aliased, null);

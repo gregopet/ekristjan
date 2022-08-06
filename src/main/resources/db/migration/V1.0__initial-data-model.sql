@@ -32,10 +32,10 @@ CREATE TABLE teacher(
     teacher_id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     school_id INTEGER NOT NULL REFERENCES school(school_id),
     name TEXT NOT NULL,
-    email TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
     password_hash TEXT,
     password_last_attempt TIMESTAMP WITH TIME ZONE,
-    password_failed_attempts INTEGER NOT NULL DEFAULT 0
+    password_last_attempt_count INTEGER NOT NULL DEFAULT 0
 );
 COMMENT ON TABLE teacher IS 'A teacher authorized to supervise children';
 COMMENT ON COLUMN teacher.school_id IS 'School this teacher is from';
@@ -43,7 +43,7 @@ COMMENT ON COLUMN teacher.name IS 'The name of this school';
 COMMENT ON COLUMN teacher.email IS 'The teacher''s email (used for password resets)';
 COMMENT ON COLUMN teacher.password_hash IS 'Hashed password of this teacher';
 COMMENT ON COLUMN teacher.password_last_attempt IS 'Time at which the last password change was attempted';
-COMMENT ON COLUMN teacher.password_failed_attempts IS 'Number of times wrong password was entered in current ''session'' (application defined)';
+COMMENT ON COLUMN teacher.password_last_attempt_count IS 'Number of times wrong password was entered in current attempt timeframe (the timeframe''s length is application defined)';
 
 CREATE TABLE registered_device (
     registered_device_id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,

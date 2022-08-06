@@ -125,21 +125,21 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
     }
 
     /**
-     * Setter for <code>public.teacher.password_failed_attempts</code>. Number
-     * of times wrong password was entered in current 'session' (application
-     * defined)
+     * Setter for <code>public.teacher.password_last_attempt_count</code>.
+     * Number of times wrong password was entered in current attempt timeframe
+     * (the timeframe's length is application defined)
      */
-    public void setPasswordFailedAttempts(@Nonnull Integer value) {
+    public void setPasswordLastAttemptCount(@Nonnull Integer value) {
         set(6, value);
     }
 
     /**
-     * Getter for <code>public.teacher.password_failed_attempts</code>. Number
-     * of times wrong password was entered in current 'session' (application
-     * defined)
+     * Getter for <code>public.teacher.password_last_attempt_count</code>.
+     * Number of times wrong password was entered in current attempt timeframe
+     * (the timeframe's length is application defined)
      */
     @Nonnull
-    public Integer getPasswordFailedAttempts() {
+    public Integer getPasswordLastAttemptCount() {
         return (Integer) get(6);
     }
 
@@ -208,7 +208,7 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
     @Override
     @Nonnull
     public Field<Integer> field7() {
-        return Teacher.TEACHER.PASSWORD_FAILED_ATTEMPTS;
+        return Teacher.TEACHER.PASSWORD_LAST_ATTEMPT_COUNT;
     }
 
     @Override
@@ -250,7 +250,7 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
     @Override
     @Nonnull
     public Integer component7() {
-        return getPasswordFailedAttempts();
+        return getPasswordLastAttemptCount();
     }
 
     @Override
@@ -292,7 +292,7 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
     @Override
     @Nonnull
     public Integer value7() {
-        return getPasswordFailedAttempts();
+        return getPasswordLastAttemptCount();
     }
 
     @Override
@@ -340,7 +340,7 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
     @Override
     @Nonnull
     public TeacherRecord value7(@Nonnull Integer value) {
-        setPasswordFailedAttempts(value);
+        setPasswordLastAttemptCount(value);
         return this;
     }
 
@@ -371,7 +371,7 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
     /**
      * Create a detached, initialised TeacherRecord
      */
-    public TeacherRecord(@Nonnull Integer teacherId, @Nonnull Integer schoolId, @Nonnull String name, @Nonnull String email, @Nullable String passwordHash, @Nullable OffsetDateTime passwordLastAttempt, @Nonnull Integer passwordFailedAttempts) {
+    public TeacherRecord(@Nonnull Integer teacherId, @Nonnull Integer schoolId, @Nonnull String name, @Nonnull String email, @Nullable String passwordHash, @Nullable OffsetDateTime passwordLastAttempt, @Nonnull Integer passwordLastAttemptCount) {
         super(Teacher.TEACHER);
 
         setTeacherId(teacherId);
@@ -380,6 +380,6 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
         setEmail(email);
         setPasswordHash(passwordHash);
         setPasswordLastAttempt(passwordLastAttempt);
-        setPasswordFailedAttempts(passwordFailedAttempts);
+        setPasswordLastAttemptCount(passwordLastAttemptCount);
     }
 }
