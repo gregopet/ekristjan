@@ -13,4 +13,6 @@ from ( values
 ('Ivar Svenson', '2B', true, null)
 ) as a;
 
-insert into teacher(name, email, school_id) values ('Učiteljica Majda', 'ucitelj@example.org', (select school_id from school limit 1));
+-- password: test
+insert into teacher(name, email, password_hash, school_id)
+values ('Učiteljica Majda', 'ucitelj@example.org', '$argon2i$v=19$m=65536,t=10,p=1$JYJq9hWxJob0lGOJsoxP4g$Qj+IfKiprIEKjF4Xlwz2qsnZsVyDPrb6j9Vklyh4YSM', (select school_id from school limit 1));

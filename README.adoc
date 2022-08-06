@@ -43,6 +43,12 @@ Za delovanje HTTPS povezave je potreben veljaven certifikat, pridobljen z https:
 
 Da bo podatkovna povezava med večimi instancami frontenda delovala, mora biti prižgan tudi zaledni strežnik. Če želite uporabiti zunanji, že delujoči zaledni strežnik, lahko njegov naslov vpišete v datoteko `vite.config.ts` (ključ `server.proxy./sock.target`).
 
+==== Pošiljanje email sporočil
+
+Priložena docker-compose datoteka vsebuje testni mail strežnik, do katerega lahko (po zagonu) dostopate preko naslova http://localhost:6080/
+
+
+
 === Izgradnja produkcijske verzije
 
 ```

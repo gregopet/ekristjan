@@ -1,0 +1,27 @@
+### login
+POST {{host}}/security/login
+Content-Type: application/json
+
+{ "email": "ucitelj@example.org", "password": "test" }
+
+> {%
+client.global.set("accessToken", response.body.accessToken);
+client.global.set("refreshToken", response.body.refreshToken);
+%}
+
+### refreshToken
+POST {{host}}/security/refresh-token
+Authorization: Bearer {{refreshToken}}
+
+### passwordResetRequest
+POST {{host}}/security/request-password-reset
+Content-Type: application/json
+
+{ "email": "ucitelj@example.org" }
+
+### passwordReset
+POST {{host}}/security/submit-password-reset
+Authorization: Bearer <token-from-email>
+Content-Type: application/json
+
+{ "password": "test" }

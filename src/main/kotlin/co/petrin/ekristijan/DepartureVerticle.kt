@@ -37,21 +37,17 @@ class DepartureVerticle : ConfigurableCoroutineVerticle(LOG) {
 
   override suspend fun start() {
     super.start()
+  }
 
+  /** Creates a subrouter that handles requests */
+  fun createSubrouter(): Router {
     val router = Router.router(vertx)
     router.get("/push/key").handler(this::pushPublicKey)
     router.put("/push/subscribe").handler(BodyHandler.create()).handler(this::subscribe)
     router.post("/pupils/leave").handler(BodyHandler.create()).handler(this::pupilLeaves)
     router.get("/pupils").handler { ctx -> ctx.json(parsedConfig.pupils) }
     router.route().handler(StaticHandler.create(parsedConfig.frontendDistFolder ?: "src/frontend/dist"))
-
-    LOG.info("Main verticle listening on port ${parsedConfig.port}")
-
-    vertx
-      .createHttpServer()
-      .requestHandler(router::handle)
-      .listen(parsedConfig.port)
-      .await()
+    return router
   }
 
   private fun pupilLeaves(ctx: RoutingContext) {
@@ -108,6 +104,6 @@ class DepartureVerticle : ConfigurableCoroutineVerticle(LOG) {
     LOG.info("Reloading config")
     parsedConfig = conf.mapTo(Config::class.java)
     pushService = PushAsyncService(parsedConfig.vapid.publicKey, parsedConfig.vapid.privateKey, parsedConfig.vapid.subject)
-    jwtProvider = createJwtProvider(vertx, parsedConfig.jwtSymetricPassword)
+    jwtProvider = createJwtProvider(vertx, parsedConfig.jwtSymetricPassword) // Do we need this?
   }
 }

@@ -11,6 +11,17 @@ import java.time.OffsetDateTime
 object PasswordQueries {
 
     /**
+     * Detects whether an email exists in our database so we don't spam random people via our password reset form.
+     */
+    fun emailExists(email: String, trans: DSLContext): Boolean =
+        trans.select(TEACHER.EMAIL).from(TEACHER).where(TEACHER.EMAIL.eq(email)).fetchOne() != null
+
+    /** Get a complete teacher record by their email */
+    // will probably end up in another file
+    fun findByEmail(email: String, trans: DSLContext): TeacherRecord? =
+        trans.selectFrom(TEACHER).where(TEACHER.EMAIL.eq(email)).fetchOne()
+
+    /**
      * Attempts to fetch a teacher row for login purposes.
      * It increments the password attempt counter, unless [attemptDurationMinutes] have passed since the last password
      * attempt - in this case, the counter is reset to 1 and the attempt window is reset to now.

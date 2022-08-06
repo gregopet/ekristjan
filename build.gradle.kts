@@ -51,6 +51,9 @@ dependencies {
   runtimeOnly("io.vertx:vertx-config-hocon:$vertxVersion")
   implementation("io.vertx:vertx-auth-common:$vertxVersion")
   implementation("io.vertx:vertx-auth-jwt:$vertxVersion")
+  implementation("io.vertx:vertx-mail-client:$vertxVersion")
+  implementation("io.vertx:vertx-web-client:$vertxVersion")
+  implementation("de.mkammerer:argon2-jvm:2.11")
   implementation(kotlin("stdlib-jdk8"))
   implementation("nl.martijndwars:web-push:5.1.1")
   implementation("org.bouncycastle:bcprov-jdk15on:1.70") // required for web push
@@ -80,6 +83,7 @@ dependencies {
   testImplementation("org.testcontainers:testcontainers:1.15.3")
   testImplementation("org.testcontainers:postgresql:1.15.2")
   testImplementation("com.github.tomakehurst:wiremock-jre8:2.27.2")
+  testImplementation("com.icegreen:greenmail:1.6.2")
 }
 
 val compileKotlin: KotlinCompile by tasks
