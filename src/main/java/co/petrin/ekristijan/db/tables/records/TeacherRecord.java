@@ -13,8 +13,8 @@ import javax.annotation.Nullable;
 
 import org.jooq.Field;
 import org.jooq.Record1;
-import org.jooq.Record7;
-import org.jooq.Row7;
+import org.jooq.Record8;
+import org.jooq.Row8;
 import org.jooq.impl.UpdatableRecordImpl;
 
 
@@ -22,7 +22,7 @@ import org.jooq.impl.UpdatableRecordImpl;
  * A teacher authorized to supervise children
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
-public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements Record7<Integer, Integer, String, String, String, OffsetDateTime, Integer> {
+public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements Record8<Integer, Integer, String, String, String, OffsetDateTime, Integer, Long[]> {
 
     private static final long serialVersionUID = 1L;
 
@@ -143,6 +143,23 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
         return (Integer) get(6);
     }
 
+    /**
+     * Setter for <code>public.teacher.password_used_reset_identifiers</code>.
+     * Contains identifiers of user password reset tokens
+     */
+    public void setPasswordUsedResetIdentifiers(@Nonnull Long[] value) {
+        set(7, value);
+    }
+
+    /**
+     * Getter for <code>public.teacher.password_used_reset_identifiers</code>.
+     * Contains identifiers of user password reset tokens
+     */
+    @Nonnull
+    public Long[] getPasswordUsedResetIdentifiers() {
+        return (Long[]) get(7);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -154,19 +171,19 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
     }
 
     // -------------------------------------------------------------------------
-    // Record7 type implementation
+    // Record8 type implementation
     // -------------------------------------------------------------------------
 
     @Override
     @Nonnull
-    public Row7<Integer, Integer, String, String, String, OffsetDateTime, Integer> fieldsRow() {
-        return (Row7) super.fieldsRow();
+    public Row8<Integer, Integer, String, String, String, OffsetDateTime, Integer, Long[]> fieldsRow() {
+        return (Row8) super.fieldsRow();
     }
 
     @Override
     @Nonnull
-    public Row7<Integer, Integer, String, String, String, OffsetDateTime, Integer> valuesRow() {
-        return (Row7) super.valuesRow();
+    public Row8<Integer, Integer, String, String, String, OffsetDateTime, Integer, Long[]> valuesRow() {
+        return (Row8) super.valuesRow();
     }
 
     @Override
@@ -213,6 +230,12 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
 
     @Override
     @Nonnull
+    public Field<Long[]> field8() {
+        return Teacher.TEACHER.PASSWORD_USED_RESET_IDENTIFIERS;
+    }
+
+    @Override
+    @Nonnull
     public Integer component1() {
         return getTeacherId();
     }
@@ -255,6 +278,12 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
 
     @Override
     @Nonnull
+    public Long[] component8() {
+        return getPasswordUsedResetIdentifiers();
+    }
+
+    @Override
+    @Nonnull
     public Integer value1() {
         return getTeacherId();
     }
@@ -293,6 +322,12 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
     @Nonnull
     public Integer value7() {
         return getPasswordLastAttemptCount();
+    }
+
+    @Override
+    @Nonnull
+    public Long[] value8() {
+        return getPasswordUsedResetIdentifiers();
     }
 
     @Override
@@ -346,7 +381,14 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
 
     @Override
     @Nonnull
-    public TeacherRecord values(@Nonnull Integer value1, @Nonnull Integer value2, @Nonnull String value3, @Nonnull String value4, @Nullable String value5, @Nullable OffsetDateTime value6, @Nonnull Integer value7) {
+    public TeacherRecord value8(@Nonnull Long[] value) {
+        setPasswordUsedResetIdentifiers(value);
+        return this;
+    }
+
+    @Override
+    @Nonnull
+    public TeacherRecord values(@Nonnull Integer value1, @Nonnull Integer value2, @Nonnull String value3, @Nonnull String value4, @Nullable String value5, @Nullable OffsetDateTime value6, @Nonnull Integer value7, @Nonnull Long[] value8) {
         value1(value1);
         value2(value2);
         value3(value3);
@@ -354,6 +396,7 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
         value5(value5);
         value6(value6);
         value7(value7);
+        value8(value8);
         return this;
     }
 
@@ -371,7 +414,7 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
     /**
      * Create a detached, initialised TeacherRecord
      */
-    public TeacherRecord(@Nonnull Integer teacherId, @Nonnull Integer schoolId, @Nonnull String name, @Nonnull String email, @Nullable String passwordHash, @Nullable OffsetDateTime passwordLastAttempt, @Nonnull Integer passwordLastAttemptCount) {
+    public TeacherRecord(@Nonnull Integer teacherId, @Nonnull Integer schoolId, @Nonnull String name, @Nonnull String email, @Nullable String passwordHash, @Nullable OffsetDateTime passwordLastAttempt, @Nonnull Integer passwordLastAttemptCount, @Nonnull Long[] passwordUsedResetIdentifiers) {
         super(Teacher.TEACHER);
 
         setTeacherId(teacherId);
@@ -381,5 +424,6 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
         setPasswordHash(passwordHash);
         setPasswordLastAttempt(passwordLastAttempt);
         setPasswordLastAttemptCount(passwordLastAttemptCount);
+        setPasswordUsedResetIdentifiers(passwordUsedResetIdentifiers);
     }
 }

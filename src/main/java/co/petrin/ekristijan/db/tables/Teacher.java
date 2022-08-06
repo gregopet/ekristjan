@@ -17,12 +17,12 @@ import javax.annotation.Nonnull;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function7;
+import org.jooq.Function8;
 import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row7;
+import org.jooq.Row8;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -97,6 +97,12 @@ public class Teacher extends TableImpl<TeacherRecord> {
      */
     public final TableField<TeacherRecord, Integer> PASSWORD_LAST_ATTEMPT_COUNT = createField(DSL.name("password_last_attempt_count"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.field("0", SQLDataType.INTEGER)), this, "Number of times wrong password was entered in current attempt timeframe (the timeframe's length is application defined)");
 
+    /**
+     * The column <code>public.teacher.password_used_reset_identifiers</code>.
+     * Contains identifiers of user password reset tokens
+     */
+    public final TableField<TeacherRecord, Long[]> PASSWORD_USED_RESET_IDENTIFIERS = createField(DSL.name("password_used_reset_identifiers"), SQLDataType.BIGINT.getArrayDataType(), this, "Contains identifiers of user password reset tokens");
+
     private Teacher(Name alias, Table<TeacherRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -146,6 +152,12 @@ public class Teacher extends TableImpl<TeacherRecord> {
     @Nonnull
     public UniqueKey<TeacherRecord> getPrimaryKey() {
         return Keys.TEACHER_PKEY;
+    }
+
+    @Override
+    @Nonnull
+    public List<UniqueKey<TeacherRecord>> getUniqueKeys() {
+        return Arrays.asList(Keys.TEACHER_EMAIL_KEY);
     }
 
     @Override
@@ -212,19 +224,19 @@ public class Teacher extends TableImpl<TeacherRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row7 type methods
+    // Row8 type methods
     // -------------------------------------------------------------------------
 
     @Override
     @Nonnull
-    public Row7<Integer, Integer, String, String, String, OffsetDateTime, Integer> fieldsRow() {
-        return (Row7) super.fieldsRow();
+    public Row8<Integer, Integer, String, String, String, OffsetDateTime, Integer, Long[]> fieldsRow() {
+        return (Row8) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function7<? super Integer, ? super Integer, ? super String, ? super String, ? super String, ? super OffsetDateTime, ? super Integer, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function8<? super Integer, ? super Integer, ? super String, ? super String, ? super String, ? super OffsetDateTime, ? super Integer, ? super Long[], ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -232,7 +244,7 @@ public class Teacher extends TableImpl<TeacherRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function7<? super Integer, ? super Integer, ? super String, ? super String, ? super String, ? super OffsetDateTime, ? super Integer, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function8<? super Integer, ? super Integer, ? super String, ? super String, ? super String, ? super OffsetDateTime, ? super Integer, ? super Long[], ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

@@ -52,6 +52,7 @@ public class Keys {
     public static final UniqueKey<SchoolRecord> SCHOOL_PKEY = Internal.createUniqueKey(School.SCHOOL, DSL.name("school_pkey"), new TableField[] { School.SCHOOL.SCHOOL_ID }, true);
     public static final UniqueKey<SummonRecord> SUMMON_PKEY = Internal.createUniqueKey(Summon.SUMMON, DSL.name("summon_pkey"), new TableField[] { Summon.SUMMON.SUMMON_ID }, true);
     public static final UniqueKey<SummonAckRecord> SUMMON_ACK_PKEY = Internal.createUniqueKey(SummonAck.SUMMON_ACK, DSL.name("summon_ack_pkey"), new TableField[] { SummonAck.SUMMON_ACK.SUMMON_ACK_ID }, true);
+    public static final UniqueKey<TeacherRecord> TEACHER_EMAIL_KEY = Internal.createUniqueKey(Teacher.TEACHER, DSL.name("teacher_email_key"), new TableField[] { Teacher.TEACHER.EMAIL }, true);
     public static final UniqueKey<TeacherRecord> TEACHER_PKEY = Internal.createUniqueKey(Teacher.TEACHER, DSL.name("teacher_pkey"), new TableField[] { Teacher.TEACHER.TEACHER_ID }, true);
 
     // -------------------------------------------------------------------------

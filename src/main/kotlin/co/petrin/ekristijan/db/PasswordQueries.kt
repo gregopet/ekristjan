@@ -5,6 +5,7 @@ import co.petrin.ekristijan.db.tables.records.TeacherRecord
 import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.impl.DSL.*
+import org.jooq.util.postgres.PostgresDSL
 import java.time.OffsetDateTime
 
 object PasswordQueries {
@@ -34,12 +35,19 @@ object PasswordQueries {
 
     /**
      * Updates the teacher's password hash and resets the password fail counters.
+     * @param resetUniqueIdentifier A blacklist - password reset will fail if this identifier is already in the user's list
+     * @return true if the reset was successful, false otherwise
      */
-    fun passwordReset(teacherId: Int, newPassHash: String, trans: DSLContext) = with(TEACHER) {
+    fun passwordReset(teacherEmail: String, newPassHash: String, resetUniqueIdentifier: Long, trans: DSLContext): Boolean = with(TEACHER) {
         trans.update(TEACHER)
         .set(PASSWORD_HASH, newPassHash)
         .set(PASSWORD_LAST_ATTEMPT_COUNT, 0)
-        .where(TEACHER_ID.eq(teacherId))
+        .set(PASSWORD_USED_RESET_IDENTIFIERS, PostgresDSL.arrayAppend(PASSWORD_USED_RESET_IDENTIFIERS, resetUniqueIdentifier))
+        .where(
+            EMAIL.eq(teacherEmail),
+            not( `val`(resetUniqueIdentifier).eq(any(PASSWORD_USED_RESET_IDENTIFIERS)) ),
+        )
         .execute()
+        .let { it > 0 }
     }
 }

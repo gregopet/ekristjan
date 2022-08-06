@@ -49,6 +49,8 @@ dependencies {
   implementation("io.vertx:vertx-lang-kotlin-coroutines")
   implementation("io.vertx:vertx-config:${vertxVersion}")
   runtimeOnly("io.vertx:vertx-config-hocon:$vertxVersion")
+  implementation("io.vertx:vertx-auth-common:$vertxVersion")
+  implementation("io.vertx:vertx-auth-jwt:$vertxVersion")
   implementation(kotlin("stdlib-jdk8"))
   implementation("nl.martijndwars:web-push:5.1.1")
   implementation("org.bouncycastle:bcprov-jdk15on:1.70") // required for web push

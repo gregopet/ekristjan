@@ -52,11 +52,19 @@ class PasswordQueriesSpec : FreeSpec({
                 }
             }
 
-            PasswordQueries.passwordReset(fixture.teacherId, "hash", jooq)
+            PasswordQueries.passwordReset(fixture.teacherEmail, "hash", 1L, jooq)
             refreshTeacher().apply {
                 passwordLastAttemptCount shouldBe 0
                 passwordHash shouldBe "hash"
             }
         }
+
+        "a password reset should not work with the same unique identifier twice" {
+            val uniqueIdentifier = 2L
+            PasswordQueries.passwordReset(fixture.teacherEmail, "random", uniqueIdentifier, jooq) shouldBe true
+            PasswordQueries.passwordReset(fixture.teacherEmail, "random", uniqueIdentifier, jooq) shouldBe false
+            PasswordQueries.passwordReset(fixture.teacherEmail, "random", uniqueIdentifier + 1, jooq) shouldBe true
+        }
+
     }
 })

@@ -7,6 +7,7 @@
         publicKey: "BEFi2MSXd8_BZ13nqEn35XggYPUYXssEjniygu6Wf-JqF_hXhc1qA5PT3aPeKOk49nwJwI1ndvHv4HDFk6hnK7I"
         privateKey: "1OIdkA_4uyRO30aZiVuCBxMQwAxq12V079dnDOlmv_0"
     },
+    jwtSymetricPassword: "change me"
     pupils: [
         { name:"Jan Hrušca", fromClass: "1A" }
         { name: "Sara Pakalan", fromClass: "1A" }

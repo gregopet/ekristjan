@@ -3,12 +3,16 @@ package co.petrin.ekristijan
 import co.petrin.ekristijan.dto.Pupil
 import co.petrin.ekristijan.dto.PushSubscription
 import co.petrin.ekristijan.dto.event.SendPupilEvent
+import co.petrin.ekristijan.security.createJwtProvider
 import io.vertx.core.json.JsonObject
+import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.StaticHandler
 import io.vertx.kotlin.coroutines.await
+import io.vertx.kotlin.ext.auth.jwt.jwtAuthOptionsOf
+import io.vertx.kotlin.ext.auth.pubSecKeyOptionsOf
 import kotlinx.coroutines.launch
 import nl.martijndwars.webpush.Notification
 import nl.martijndwars.webpush.PushAsyncService
@@ -19,6 +23,9 @@ import si.razum.vertx.config.ConfigurableCoroutineVerticle
 private val LOG = LoggerFactory.getLogger(DepartureVerticle::class.java)
 
 class DepartureVerticle : ConfigurableCoroutineVerticle(LOG) {
+
+  /** JWT auth provider - it uses the VAPID private key as its key for signing tokens */
+  lateinit var jwtProvider: JWTAuth
 
   /** Service for sending push notifications */
   lateinit var pushService: PushAsyncService
@@ -101,5 +108,6 @@ class DepartureVerticle : ConfigurableCoroutineVerticle(LOG) {
     LOG.info("Reloading config")
     parsedConfig = conf.mapTo(Config::class.java)
     pushService = PushAsyncService(parsedConfig.vapid.publicKey, parsedConfig.vapid.privateKey, parsedConfig.vapid.subject)
+    jwtProvider = createJwtProvider(vertx, parsedConfig.jwtSymetricPassword)
   }
 }
