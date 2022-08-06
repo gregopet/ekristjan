@@ -29,40 +29,53 @@ object DepartureQueries {
     fun dailyDepartures(schoolId: Int, day: LocalDate, classes: Array<String>, trans: DSLContext) = with(PUPIL) {
         val dailyDepartureTime = pupilLeaveField(day)
         val departure = field(row(lastDailyDepartureField(day, PUPIL_ID)))
+        val mostRecentSummon = field(
+            select(SUMMON.fieldsRow())
+                .from(SUMMON)
+                .where(
+                    SUMMON.PUPIL_ID.eq(PUPIL.PUPIL_ID),
+                    trunc(SUMMON.CREATED_AT, DatePart.DAY).cast(SQLDataType.LOCALDATE).eq(day)
+                )
+                .orderBy(SUMMON.CREATED_AT.desc())
+                .limit(1)
+        )
 
         trans
-        .select(
-            PUPIL_ID,
-            NAME,
-            CLAZZ,
-            LEAVES_ALONE,
-            dailyDepartureTime,
-            departure,
-            *EXTRAORDINARY_DEPARTURE.fields()
-        )
-        .from(PUPIL)
-        .leftJoin(EXTRAORDINARY_DEPARTURE).on(
-            PUPIL_ID.eq(EXTRAORDINARY_DEPARTURE.PUPIL_ID),
-            EXTRAORDINARY_DEPARTURE.DATE.eq(day),
-        )
-        .where(
-            PUPIL.SCHOOL_ID.eq(schoolId),
-            CLAZZ.eq(any(*classes)),
-        )
-        .fetch { rec ->
-            val plannedDeparture = if (rec.get(EXTRAORDINARY_DEPARTURE.EXTRAORDINARY_DEPARTURE_ID) != null) {
-                rec.into(EXTRAORDINARY_DEPARTURE)
-            } else null
-            DailyDeparture(
-                pupilId = rec.get(PUPIL_ID),
-                name = rec.get(NAME),
-                clazz = rec.get(CLAZZ),
-                leavesAlone = rec.get(LEAVES_ALONE),
-                usualDeparture = rec.get(dailyDepartureTime),
-                actualDeparture = rec.get(departure)?.value1()?.into(DEPARTURE),
-                plannedDeparture = plannedDeparture
+            .select(
+                PUPIL_ID,
+                NAME,
+                CLAZZ,
+                LEAVES_ALONE,
+                dailyDepartureTime,
+                departure,
+                *EXTRAORDINARY_DEPARTURE.fields(),
+                mostRecentSummon
             )
-        }
+            .from(PUPIL)
+            .leftJoin(EXTRAORDINARY_DEPARTURE).on(
+                PUPIL_ID.eq(EXTRAORDINARY_DEPARTURE.PUPIL_ID),
+                EXTRAORDINARY_DEPARTURE.DATE.eq(day),
+            )
+            .where(
+                PUPIL.SCHOOL_ID.eq(schoolId),
+                CLAZZ.eq(any(*classes)),
+            )
+            .fetch { rec ->
+                val plannedDeparture = if (rec.get(EXTRAORDINARY_DEPARTURE.EXTRAORDINARY_DEPARTURE_ID) != null) {
+                    rec.into(EXTRAORDINARY_DEPARTURE)
+                } else null
+                DailyDeparture(
+                    pupilId = rec.get(PUPIL_ID),
+                    name = rec.get(NAME),
+                    clazz = rec.get(CLAZZ),
+                    day = day,
+                    leavesAlone = rec.get(LEAVES_ALONE),
+                    usualDeparture = rec.get(dailyDepartureTime),
+                    actualDeparture = rec.get(departure)?.value1()?.into(DEPARTURE),
+                    plannedDeparture = plannedDeparture,
+                    summon = rec.get(mostRecentSummon)?.let { it.into(SUMMON) }
+                )
+            }
     }
 
     /**
@@ -80,6 +93,25 @@ object DepartureQueries {
     }
 
     /**
+     * Publishes a summon request for a student - the pupil should be sent to the door.
+     * @param pupilId The pupil who shall be sent to the door
+     * @param teacherId The teacher who sent the pupil to the door
+     * @param time The time at which the student was summoned
+     * @return false if the summon could not be issued (e.g. pupil's school doesn't match teacher's school), true otherwise
+     */
+    fun summonPupil(pupilId: Int, teacherId: Int, time: OffsetDateTime, trans: DSLContext): Boolean = with(SUMMON) {
+        // should we have two times in the summon table? the created_at as well as the time the summon was made
+        // (perhaps containing the device's local time)? Let's just keep one time for now.
+        trans
+        .insertInto(SUMMON)
+        .set(PUPIL_ID, pupilBelongingToSameSchoolAsTeacher(pupilId, teacherId))
+        .set(TEACHER_ID, teacherId)
+        .set(CREATED_AT, time)
+        .execute()
+        .let { rowCount -> rowCount > 0 }
+    }
+
+    /**
      * Records the acknowledgement of a pupil being sent home.
      *
      * Currently the time of departure from school is also set to the exact same date because we currently don't have
@@ -91,7 +123,7 @@ object DepartureQueries {
      *
      * @return true if the departure was inserted, false if [pupilId] didn't match [schoolId] (permission problem).
      */
-    fun acknowledgePupilNotificationAndRecordDeparture(summonId: Int, teacherId: Int, departure: OffsetDateTime, trans: DSLContext): Boolean {
+    fun acknowledgePupilSummonAndRecordDeparture(summonId: Int, teacherId: Int, departure: OffsetDateTime, trans: DSLContext): Boolean {
         // Puzzle suggestion: this could probably be achieved in a single query :)
 
         val summonRecord = trans.select(SUMMON.PUPIL_ID, SUMMON_ACK.TIME)

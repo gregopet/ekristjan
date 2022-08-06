@@ -26,5 +26,6 @@ object TextFixtures {
     val janaId = 1
     val gasperId = 2
     val klemenId = 3
+    val anitaId = 4
     val timezone = ZoneId.of("Europe/Ljubljana")
 }

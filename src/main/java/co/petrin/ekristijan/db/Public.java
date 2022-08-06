@@ -8,6 +8,7 @@ import co.petrin.ekristijan.db.tables.Departure;
 import co.petrin.ekristijan.db.tables.ExtraordinaryDeparture;
 import co.petrin.ekristijan.db.tables.PasswordReset;
 import co.petrin.ekristijan.db.tables.Pupil;
+import co.petrin.ekristijan.db.tables.RegisteredDevice;
 import co.petrin.ekristijan.db.tables.School;
 import co.petrin.ekristijan.db.tables.Summon;
 import co.petrin.ekristijan.db.tables.SummonAck;
@@ -59,6 +60,11 @@ public class Public extends SchemaImpl {
     public final Pupil PUPIL = Pupil.PUPIL;
 
     /**
+     * A device registered to receive notifications, 
+     */
+    public final RegisteredDevice REGISTERED_DEVICE = RegisteredDevice.REGISTERED_DEVICE;
+
+    /**
      * A school with pupils &amp; teachers
      */
     public final School SCHOOL = School.SCHOOL;
@@ -100,6 +106,7 @@ public class Public extends SchemaImpl {
             ExtraordinaryDeparture.EXTRAORDINARY_DEPARTURE,
             PasswordReset.PASSWORD_RESET,
             Pupil.PUPIL,
+            RegisteredDevice.REGISTERED_DEVICE,
             School.SCHOOL,
             Summon.SUMMON,
             SummonAck.SUMMON_ACK,

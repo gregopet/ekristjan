@@ -45,6 +45,25 @@ COMMENT ON COLUMN teacher.password_hash IS 'Hashed password of this teacher';
 COMMENT ON COLUMN teacher.password_last_attempt IS 'Time at which the last password change was attempted';
 COMMENT ON COLUMN teacher.password_failed_attempts IS 'Number of times wrong password was entered in current ''session'' (application defined)';
 
+CREATE TABLE registered_device (
+    registered_device_id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    last_teacher_id INTEGER NOT NULL REFERENCES teacher(teacher_id),
+    user_agent TEXT,
+    push_endpoint TEXT UNIQUE,
+    push_auth TEXT,
+    push_p256dh TEXT,
+    classes TEXT[] NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp
+);
+COMMENT ON TABLE registered_device IS 'A device registered to receive notifications, ';
+COMMENT ON COLUMN registered_device.last_teacher_id IS 'The teacher most recently logged into this device';
+COMMENT ON COLUMN registered_device.user_agent IS 'User-Agent of the device that can be used to identify its type';
+COMMENT ON COLUMN registered_device.push_endpoint IS 'The endpoint to which a push notification must be made. It is unique but can possibly be null for devices that don''t support push';
+COMMENT ON COLUMN registered_device.push_auth IS 'The push notification authentication secret';
+COMMENT ON COLUMN registered_device.push_p256dh IS 'The push notification authentication public key';
+COMMENT ON COLUMN registered_device.classes IS 'The classes this device wants to receive notifications for';
+COMMENT ON COLUMN registered_device.created_at IS 'The date on which this device was first seen';
+
 CREATE TABLE summon(
     summon_id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     pupil_id INTEGER NOT NULL REFERENCES pupil(pupil_id),
