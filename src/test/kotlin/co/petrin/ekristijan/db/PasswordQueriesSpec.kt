@@ -3,6 +3,7 @@ package co.petrin.ekristijan.db
 import co.petrin.ekristijan.TestSetup
 import co.petrin.ekristijan.db.Tables.TEACHER
 import co.petrin.ekristijan.db.tables.records.TeacherRecord
+import co.petrin.ekristijan.preconditions
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe

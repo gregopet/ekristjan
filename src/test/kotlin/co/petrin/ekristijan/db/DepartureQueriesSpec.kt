@@ -1,6 +1,7 @@
 package co.petrin.ekristijan.db
 
 import co.petrin.ekristijan.TestSetup
+import co.petrin.ekristijan.preconditions
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -88,8 +89,3 @@ class DepartureQueriesTest : FreeSpec({
         }
     }
 })
-
-/** A block to fence off verification of test preconditions. No functionality, syntax tool only. */
-private suspend fun preconditions(block: () -> Any) {
-    block()
-}
