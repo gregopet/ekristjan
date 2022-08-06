@@ -1,0 +1,16 @@
+<configuration scan="true" scanPeriod="5 seconds">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{20} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <logger name="io.vertx" level="debug"/>
+    <logger name="co.petrin" level="trace" />
+    <logger name="org.jooq.tools.LoggerListener" level="debug"/>
+
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
