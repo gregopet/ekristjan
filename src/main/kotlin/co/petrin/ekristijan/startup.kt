@@ -1,7 +1,6 @@
 package co.petrin.ekristijan
 
 import io.vertx.core.Vertx
-import io.vertx.kotlin.core.deploymentOptionsOf
 import io.vertx.kotlin.coroutines.await
 import kotlinx.coroutines.runBlocking
 import org.bouncycastle.jce.provider.BouncyCastleProvider
@@ -35,7 +34,7 @@ fun main(args: Array<String>) {
             val jooq = ConnectionPool.wrapWithJooq(config.db, true)
             jooq.selectOne().fetch()
 
-            vertx.deployVerticle(MainVerticle()).await()
+            vertx.deployVerticle(DepartureVerticle()).await()
         } catch (t: Throwable) {
             LOG.error("Error starting main verticle", t)
             vertx.close()

@@ -2,35 +2,23 @@ package co.petrin.ekristijan
 
 import co.petrin.ekristijan.dto.Pupil
 import co.petrin.ekristijan.dto.PushSubscription
-import co.petrin.ekristijan.dto.event.PushEvent
 import co.petrin.ekristijan.dto.event.SendPupilEvent
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
-import io.vertx.core.json.jackson.DatabindCodec
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.StaticHandler
-import io.vertx.ext.web.handler.sockjs.SockJSHandler
-import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions
-import io.vertx.ext.web.handler.sockjs.SockJSSocket
-import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.await
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import nl.martijndwars.webpush.Notification
 import nl.martijndwars.webpush.PushAsyncService
-import nl.martijndwars.webpush.Subscription
 import nl.martijndwars.webpush.Urgency
-import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.slf4j.LoggerFactory
 import si.razum.vertx.config.ConfigurableCoroutineVerticle
-import java.security.Security
 
-private val LOG = LoggerFactory.getLogger(MainVerticle::class.java)
+private val LOG = LoggerFactory.getLogger(DepartureVerticle::class.java)
 
-class MainVerticle : ConfigurableCoroutineVerticle(LOG) {
+class DepartureVerticle : ConfigurableCoroutineVerticle(LOG) {
 
   /** Service for sending push notifications */
   lateinit var pushService: PushAsyncService
