@@ -33,8 +33,6 @@ class SecurityVerticle(val jooq: DSLContext, val jwtProvider: JWTAuth): Configur
     /** The route under which this verticle is routed */
     private lateinit var parentRoute: String
 
-
-
     /**
      * Creates a subrouter that handles requests.
      * @param parentRoute The route under which this router is located (useful for generating URLs)
@@ -45,9 +43,11 @@ class SecurityVerticle(val jooq: DSLContext, val jwtProvider: JWTAuth): Configur
             post("/login").handler(smallBodyHandler()).coroutineHandler(::loginHandler)
             post("/refresh-token").handler(smallBodyHandler()).handler(JWTAuthHandler.create(jwtProvider).withScope(REFRESH_TOKEN_SCOPE)).coroutineHandler(::refreshTokenHandler)
             post("/request-password-reset").handler(smallBodyHandler()).coroutineHandler { ctx ->
-                passwordResetRequest(ctx) { tokenAsJwt -> "${configuration.absoluteUrl}/$parentRoute/submit-password-reset/$tokenAsJwt" }
+                passwordResetRequest(ctx) { tokenAsJwt -> "${configuration.absoluteUrl}#/ponastavi-geslo/$tokenAsJwt" }
             }
-            post("/submit-password-reset").handler(smallBodyHandler()).handler(JWTAuthHandler.create(jwtProvider).withScope(RESET_PASSWORD_SCOPE)).coroutineHandler(::passwordResetHandler)
+            val pwResetTokenHandler = JWTAuthHandler.create(jwtProvider).withScope(RESET_PASSWORD_SCOPE)
+            get("/check-password-reset").handler(pwResetTokenHandler).handler { ctx -> ctx.end() } // just checks whether the token is valid
+            post("/submit-password-reset").handler(smallBodyHandler()).handler(pwResetTokenHandler).coroutineHandler(::passwordResetHandler)
         }
     }
 
@@ -57,18 +57,6 @@ class SecurityVerticle(val jooq: DSLContext, val jwtProvider: JWTAuth): Configur
             mailClient = constructEmailClient(parsed.smtp)
         }
 
-    }
-
-    private fun Route.coroutineHandler(fn: suspend (RoutingContext) -> Unit) {
-        handler { ctx ->
-            launch(ctx.vertx().dispatcher()) {
-                try {
-                    fn(ctx)
-                } catch (e: Exception) {
-                    ctx.fail(e)
-                }
-            }
-        }
     }
 
     private fun constructEmailClient(config: SmtpConfig): MailClient {

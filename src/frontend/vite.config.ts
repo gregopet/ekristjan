@@ -50,8 +50,8 @@ export default defineConfig( ({ command, mode }) => {
     server: {
       ...httpsConfig,
       proxy: {
-        '/push': { target: 'ws://127.0.0.1:8888/' },
-        '/pupils': { target: 'ws://127.0.0.1:8888/' },
+        '/departures': { target: 'ws://127.0.0.1:8888/' },
+        '/security': { target: 'ws://127.0.0.1:8888/' },
         '/sock': { target: 'ws://127.0.0.1:8888/', ws: true }
       }
     },

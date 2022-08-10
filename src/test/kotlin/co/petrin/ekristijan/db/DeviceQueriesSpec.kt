@@ -26,8 +26,7 @@ class DeviceQueriesSpec : FreeSpec({
         fun refreshDevice(): RegisteredDeviceRecord = jooq.selectFrom(REGISTERED_DEVICE).where(REGISTERED_DEVICE.PUSH_ENDPOINT.eq(devicePushEndpoint)).fetchOne()!!
         DeviceQueries.registerOrUpdateDevice(
             teacherId = TextFixtures.teacherId,
-            subscription = subscription,
-            classes = listOf("1A"),
+            subscription = subscription.copy(fromClasses = setOf("1A")),
             userAgent = "Android",
             trans = jooq
         )
@@ -39,8 +38,7 @@ class DeviceQueriesSpec : FreeSpec({
         "device info (such as list of classes) can be upserted" {
             DeviceQueries.registerOrUpdateDevice(
                 teacherId = TextFixtures.teacherId,
-                subscription = subscription,
-                classes = listOf("1A", "1B"),
+                subscription = subscription.copy(fromClasses = setOf("1A", "1B")),
                 userAgent = "Android",
                 trans = jooq
             )
@@ -58,7 +56,6 @@ class DeviceQueriesSpec : FreeSpec({
             DeviceQueries.registerOrUpdateDevice(
                 teacherId = TextFixtures.teacherId,
                 subscription = PushSubscription("delete me", Subscription.Keys("key", "auth"), setOf("1A")),
-                classes = listOf("1A"),
                 userAgent = "Android",
                 trans = jooq
             )

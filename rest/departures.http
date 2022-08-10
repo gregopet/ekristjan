@@ -1,0 +1,10 @@
+### Gets the state of departures
+GET {{host}}/departures/pupils/1A,1B,2A,2B
+Authorization: Bearer {{accessToken}}
+
+### Register device for listening to departures
+PUT {{host}}/departures/push/subscribe
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{ "endpoint":  "http://localhost:9876", "fromClasses": ["1A", "1B"], "keys":  {"p256dh": "foo", "auth": "bar"}}

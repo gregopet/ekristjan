@@ -3,29 +3,27 @@ package co.petrin.ekristijan
 import co.petrin.ekristijan.dto.Pupil
 import co.petrin.ekristijan.dto.PushSubscription
 import co.petrin.ekristijan.dto.event.SendPupilEvent
-import co.petrin.ekristijan.security.createJwtProvider
+import co.petrin.ekristijan.security.ACCESS_TOKEN_SCOPE
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.BodyHandler
+import io.vertx.ext.web.handler.JWTAuthHandler
 import io.vertx.ext.web.handler.StaticHandler
-import io.vertx.kotlin.coroutines.await
-import io.vertx.kotlin.ext.auth.jwt.jwtAuthOptionsOf
-import io.vertx.kotlin.ext.auth.pubSecKeyOptionsOf
 import kotlinx.coroutines.launch
 import nl.martijndwars.webpush.Notification
 import nl.martijndwars.webpush.PushAsyncService
 import nl.martijndwars.webpush.Urgency
+import org.jooq.DSLContext
 import org.slf4j.LoggerFactory
 import si.razum.vertx.config.ConfigurableCoroutineVerticle
+import co.petrin.ekristijan.device.registrationHandler
+import co.petrin.ekristijan.departure.departureStateHandler
 
 private val LOG = LoggerFactory.getLogger(DepartureVerticle::class.java)
 
-class DepartureVerticle : ConfigurableCoroutineVerticle(LOG) {
-
-  /** JWT auth provider - it uses the VAPID private key as its key for signing tokens */
-  lateinit var jwtProvider: JWTAuth
+class DepartureVerticle(val jooq: DSLContext, val jwtProvider: JWTAuth) : ConfigurableCoroutineVerticle(LOG) {
 
   /** Service for sending push notifications */
   lateinit var pushService: PushAsyncService
@@ -42,11 +40,18 @@ class DepartureVerticle : ConfigurableCoroutineVerticle(LOG) {
   /** Creates a subrouter that handles requests */
   fun createSubrouter(): Router {
     val router = Router.router(vertx)
+
+    // All requests need to be authenticated!
+    router.route().handler(JWTAuthHandler.create(jwtProvider).withScope(ACCESS_TOKEN_SCOPE))
+
     router.get("/push/key").handler(this::pushPublicKey)
-    router.put("/push/subscribe").handler(BodyHandler.create()).handler(this::subscribe)
+    router.put("/push/subscribe").handler(BodyHandler.create()).coroutineHandler(::registrationHandler)
     router.post("/pupils/leave").handler(BodyHandler.create()).handler(this::pupilLeaves)
-    router.get("/pupils").handler { ctx -> ctx.json(parsedConfig.pupils) }
+    router.get("/pupils/:classes").coroutineHandler { ctx ->
+      departureStateHandler(ctx, ctx.pathParam("classes").split(",").toTypedArray())
+    }
     router.route().handler(StaticHandler.create(parsedConfig.frontendDistFolder ?: "src/frontend/dist"))
+
     return router
   }
 
@@ -104,6 +109,5 @@ class DepartureVerticle : ConfigurableCoroutineVerticle(LOG) {
     LOG.info("Reloading config")
     parsedConfig = conf.mapTo(Config::class.java)
     pushService = PushAsyncService(parsedConfig.vapid.publicKey, parsedConfig.vapid.privateKey, parsedConfig.vapid.subject)
-    jwtProvider = createJwtProvider(vertx, parsedConfig.jwtSymetricPassword) // Do we need this?
   }
 }

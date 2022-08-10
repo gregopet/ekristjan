@@ -12,14 +12,12 @@ object DeviceQueries {
 
     /**
      * Registers a new device for receiving push notifications or updates an existing one.
-     * @param pushEndpoint The push endpoint via which this device can be contacted
-     * @param classes The classes this endpoint wishes to be contacted for
-     * @param keys The push notification authentication data
+     * @param subscription The push credentials & set of classes to subscribe to
      * @param userAgent The user agent this device sent, for diagnostic purposes
      * @param teacherId The teacher who was logged into the device
      * @param trans A jooq connection/transaction
      */
-    fun registerOrUpdateDevice(teacherId: Int, subscription: PushSubscription, userAgent: String?, classes: List<String>, trans: DSLContext) = with(REGISTERED_DEVICE) {
+    fun registerOrUpdateDevice(teacherId: Int, subscription: PushSubscription, userAgent: String?, trans: DSLContext) = with(REGISTERED_DEVICE) {
         trans
             .insertInto(REGISTERED_DEVICE)
                 .set(PUSH_ENDPOINT, subscription.endpoint)
@@ -27,12 +25,12 @@ object DeviceQueries {
                 .set(LAST_TEACHER_ID, teacherId)
                 .set(PUSH_AUTH, subscription.keys.auth)
                 .set(PUSH_P256DH, subscription.keys.p256dh)
-                .set(CLASSES, classes.toTypedArray())
+                .set(CLASSES, subscription.fromClasses.toTypedArray())
             .onConflict(PUSH_ENDPOINT).doUpdate()
                 .set(USER_AGENT, userAgent)
                 .set(PUSH_AUTH, subscription.keys.auth)
                 .set(PUSH_P256DH, subscription.keys.p256dh)
-                .set(CLASSES, classes.toTypedArray())
+                .set(CLASSES, subscription.fromClasses.toTypedArray())
                 .set(LAST_TEACHER_ID, teacherId)
             .execute()
     }

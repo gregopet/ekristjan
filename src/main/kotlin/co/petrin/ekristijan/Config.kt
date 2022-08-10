@@ -7,7 +7,6 @@ import si.razum.vertx.db.DbConfig
 
 /**
  * @property port The port on which the API will be listening
- * @property pupils The list of pupils and their classes
  * @property absoluteUrl The canonical URL prefix to this site
  * @property frontendDistFolder Override for the location of the frontend (by default the classpath version will be used)
  * @property db The database connection properties
@@ -17,7 +16,6 @@ import si.razum.vertx.db.DbConfig
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Config(
     val port: Int,
-    val pupils: List<Pupil>,
     val absoluteUrl: String,
     val frontendDistFolder: String? = null,
     val vapid: Vapid,

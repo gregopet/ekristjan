@@ -6,7 +6,6 @@ import si.razum.vertx.db.DbConfig
 /** A config with sane defaults that can be tweaked in tests */
 val testConfig = Config(
     port = 9087,
-    pupils = emptyList(),
     absoluteUrl = "http://localhost:9087",
     frontendDistFolder = null,
     vapid = Vapid(subject = "test@example.org", publicKey = "publicKey", privateKey = "privateKey"),

@@ -5,6 +5,7 @@ import io.vertx.core.Future
 import io.vertx.ext.auth.User
 import io.vertx.ext.auth.authorization.PermissionBasedAuthorization
 import io.vertx.ext.auth.jwt.JWTAuth
+import io.vertx.ext.web.RoutingContext
 import io.vertx.kotlin.core.json.jsonObjectOf
 import io.vertx.kotlin.coroutines.await
 import io.vertx.kotlin.ext.auth.jwtOptionsOf
@@ -31,3 +32,9 @@ fun generateAccessToken(teacher: TeacherRecord, expiresInMinutes: Int, jwt: JWTA
         "scope" to ACCESS_TOKEN_SCOPE,
     ), props)
 }
+
+/** A helper function to get the teacher ID in handlers where the user must be logged in */
+val RoutingContext.teacherId: Int get() = user().principal().getInteger("teacherId")
+
+/** A helper function to get the school ID in handlers where the user must be logged in */
+val RoutingContext.schoolId: Int get() = user().principal().getInteger("schoolId")

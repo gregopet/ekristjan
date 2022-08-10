@@ -16,6 +16,7 @@ fun main(args: Array<String>) {
             PushSubscription::class,
             SendPupilEvent::class,
             Pupil::class,
+            LoginSuccess::class,
         )
     ).definitionsText
     val namespacedDefinition = listOf("namespace dto {", definitions, "}").joinToString("\n")

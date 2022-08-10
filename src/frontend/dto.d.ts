@@ -4,10 +4,16 @@ interface Keys {
     auth: string;
 }
 
+interface Subscription {
+    endpoint: string;
+    keys: Keys;
+}
+
 interface PushSubscription {
     endpoint: string;
     fromClasses: string[];
     keys: Keys;
+    subscription: Subscription;
 }
 
 type PushEventType = "PUPIL_AT_DOOR";
@@ -25,5 +31,10 @@ interface SendPupilEvent extends PushEvent {
 interface Pupil {
     fromClass: string;
     name: string;
+}
+
+interface LoginSuccess {
+    accessToken: string;
+    refreshToken: string;
 }
 }
