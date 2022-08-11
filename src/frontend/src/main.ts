@@ -4,6 +4,7 @@ import RootComponent from '@/components/RootComponent.vue';
 import { registerSW } from 'virtual:pwa-register';
 import {isSendPupilEvent} from "@/dto";
 import { eventBus } from './events';
+import '@/assets/base.css';
 
 // receive communication from service worker here, passing it onto the message bus
 navigator.serviceWorker.onmessage = (ev) => {
