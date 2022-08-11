@@ -44,7 +44,7 @@ class DepartureVerticle(val jooq: DSLContext, val jwtProvider: JWTAuth) : Config
     // All requests need to be authenticated!
     router.route().handler(JWTAuthHandler.create(jwtProvider).withScope(ACCESS_TOKEN_SCOPE))
 
-    router.get("/push/key").handler(this::pushPublicKey)
+    router.get("/push/key").handler { ctx -> ctx.end(parsedConfig.vapid.publicKey) }
     router.put("/push/subscribe").handler(BodyHandler.create()).coroutineHandler(::registrationHandler)
     router.post("/pupils/leave").handler(BodyHandler.create()).handler(this::pupilLeaves)
     router.get("/pupils/:classes?").coroutineHandler { ctx ->
@@ -85,11 +85,6 @@ class DepartureVerticle(val jooq: DSLContext, val jwtProvider: JWTAuth) : Config
     }
   }
 
-  /** Serve the application's public key so the client can subscribe. */
-  private fun pushPublicKey(ctx: RoutingContext) {
-    LOG.trace("Serving VAPID public key")
-    ctx.end(parsedConfig.vapid.publicKey)
-  }
 
   /** Once client subscribes, it will send its details to us here */
   private fun subscribe(ctx: RoutingContext) {
