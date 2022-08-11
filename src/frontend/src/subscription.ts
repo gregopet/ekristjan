@@ -27,7 +27,7 @@ export async function subscribeOnServer(sub: PushSubscription, fromClasses: stri
         endpoint: endpoint!,
         fromClasses,
     }
-    return fetch("/push/subscribe", {
+    return fetch("/departures/push/subscribe", {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"

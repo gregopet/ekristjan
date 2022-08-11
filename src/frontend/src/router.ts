@@ -10,12 +10,14 @@ import { isLoggedIn } from "@/security";
 const publicRouteMeta = { pub: true }
 
 const routes = [
-    { path: '/', component: OpeningSelector, name: 'landing' },
+    { path: '/', redirect: '/prijavljen' },
     { path: '/prijava', component: Login, name: 'login', meta: publicRouteMeta },
     { path: '/zahtevaj-ponastavitev-gesla', component: RequestPasswordReset, name: 'requestPasswordReset', meta: publicRouteMeta },
     { path: '/ponastavi-geslo/:token', component: ResetPassword, name: 'resetPassword', meta: publicRouteMeta },
-    { path: '/ucilnica', component: Classroom },
-    { path: '/vrata', component: Door },
+    { path: '/prijavljen', component: OpeningSelector, name: 'landing', children: [
+        { path: 'ucilnica', component: Classroom, name: 'classroom' },
+        { path: 'vrata', component: Door, name: 'frontDoor' },
+    ]},
 ]
 
 const router = createRouter({
@@ -29,7 +31,6 @@ router.beforeEach(async (to, from) => {
         console.log("(PREVENTED) Navigation guard to", from)
         return { name: 'login' }
     }
-    console.log("Allowing navigation from", from, "to", to)
 })
 
 export default router;

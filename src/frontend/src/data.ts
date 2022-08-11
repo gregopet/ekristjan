@@ -1,14 +1,12 @@
-import {reactive} from "vue";
+import {reactive, computed} from "vue";
 
 /** List of pupils will be kept here */
-export const pupils = reactive<dto.Pupil[]>([])
+export const pupils = reactive<dto.DailyDeparture[]>([])
 
-export function removePupil(className: string, pupil: dto.Pupil) {
-    /*const cls = fakestate.classes.get(className);
-    if (cls) {
-        const idx = cls.pupils.findIndex((pup) => pup.name == pupil.name);
-        if (idx >= 0) {
-            cls.pupils.splice(idx, 1);
-        }
-    }*/
+/** List of all classes that pupils can belong to */
+export const classes = computed(() => [ ...new Set(pupils.map( p => p.pupil.fromClass )) ])
+
+/** List of all pupils from given class */
+export function pupilsFromClass(forClass: string): dto.DailyDeparture[] {
+    return pupils.filter( p => p.pupil.fromClass == forClass);
 }

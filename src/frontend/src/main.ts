@@ -14,9 +14,10 @@ navigator.serviceWorker.onmessage = (ev) => {
     }
 }
 
-registerSW({
+// disable service worker when we want a fast reload!
+/*registerSW({
     immediate: true,
-})
+})*/
 
 const app = createApp(RootComponent)
 app.use(router)

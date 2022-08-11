@@ -8,9 +8,9 @@
       <ul class="classList">
           <li v-for="cls in selectedClasses">
               {{ cls }}:
-                  <span v-for="(pupil, idx) in pupilsHere(cls)">
+                  <span v-for="(pupil, idx) in fromClass(cls)">
                       <span v-if="idx > 0">, </span>
-                      {{ pupil.name }}
+                      {{ pupil.pupil.name }}
                   </span>
                   <a @click.prevent="removeClass(cls)" href="#"> (odstrani razred)</a>
           </li>
@@ -40,16 +40,18 @@
 
 <script setup lang="ts">
 import {computed, defineComponent, onMounted, ref} from "vue";
-import { pupils } from "../data";
+import {classes, pupils, pupilsFromClass} from "../data";
 import { eventBus } from '../events';
 import { format } from 'date-fns';
 import { type Palette, ColorChoice } from "@/components/palette";
 import notificationSound from'../assets/message-ringtone-magic.mp3';
-import { removePupil } from "../data";
 import { notification } from "../swInterop";
 import logo from "../assets/francetabevka.jpg"
 import {getServerKey, subscribeOnClient, subscribeOnServer} from "@/subscription";
 import {usePermission, useWebNotification} from "@vueuse/core";
+
+
+const fromClass = pupilsFromClass
 
 onMounted(() => {
   eventBus.on("SendPupil", (ev) => {
@@ -64,7 +66,7 @@ function formatDate(date: Date) {
 
 // Class selection
 const selectedClasses = ref<string[]>([]);
-const nonSelectedClasses = computed( () => Array.from(allAvailableClasses().filter( (cls) => selectedClasses.value.indexOf(cls) < 0)))
+const nonSelectedClasses = computed( () => Array.from(classes.value.filter( (cls) => selectedClasses.value.indexOf(cls) < 0)))
 async function selectClass(forClass: string) {
   selectedClasses.value.push(forClass)
   await pushClassSubscriptions()
@@ -87,15 +89,6 @@ async function pushClassSubscriptions() {
   const key = await getServerKey()
   const subscription = await subscribeOnClient(key)
   await subscribeOnServer(subscription, selectedClasses.value);
-}
-
-
-function pupilsHere(forClass: string): dto.Pupil[] {
-  return pupils.filter( p => p.fromClass == forClass);
-}
-
-function allAvailableClasses(): string[] {
-  return [ ...new Set(pupils.map( p => p.fromClass )) ]
 }
 
 // Pupil calls
@@ -142,7 +135,6 @@ function callPupil(pupil: dto.Pupil) {
 
 
 function removeCalledPupil(pupil: dto.Pupil) {
-  removePupil(pupil.fromClass, pupil);
   while(true) {
     const idx = calledPupils.value.findIndex((p) => p.fromClass == pupil.fromClass && p.name == pupil.name)
     if (idx >= 0) {

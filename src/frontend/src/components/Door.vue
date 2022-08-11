@@ -6,8 +6,8 @@
       <input v-model="search" ref="searchElement" autofocus>
       <button @click="resetSearch">Prekliči</button>
       <ul class="selectPupil">
-        <li v-for="pupil in filtered">
-          <a href="#" @click.prevent="sendPupil(pupil)">{{ pupil.name }}, {{ pupil.fromClass }}</a>
+        <li v-for="departure in filtered">
+          <a href="#" @click.prevent="sendPupil(departure.pupil)">{{ departure.pupil.name }}, {{ departure.pupil.fromClass }}</a>
         </li>
       </ul>
 </template>
@@ -20,12 +20,12 @@ import { refDebounced } from '@vueuse/core';
 const search = ref('');
 const searchDebounced = refDebounced(search, 200)
 const searchElement = ref(null) as Ref<HTMLElement | null>
-const filtered: Ref<dto.Pupil[]> = computed(() => {
+const filtered: Ref<dto.DailyDeparture[]> = computed(() => {
   if (!searchDebounced.value) {
     return []
   }
   const searchWordsLowercase = searchDebounced.value.toLocaleLowerCase().split(" ").filter( w => !!w)
-  const searchFn = (pupil: dto.Pupil) => studentMatches(searchWordsLowercase, pupil)
+  const searchFn = (departure: dto.DailyDeparture) => studentMatches(searchWordsLowercase, departure.pupil)
 
   return pupils.filter(searchFn)
 })
