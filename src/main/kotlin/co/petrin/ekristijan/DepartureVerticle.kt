@@ -47,8 +47,8 @@ class DepartureVerticle(val jooq: DSLContext, val jwtProvider: JWTAuth) : Config
     router.get("/push/key").handler(this::pushPublicKey)
     router.put("/push/subscribe").handler(BodyHandler.create()).coroutineHandler(::registrationHandler)
     router.post("/pupils/leave").handler(BodyHandler.create()).handler(this::pupilLeaves)
-    router.get("/pupils/:classes").coroutineHandler { ctx ->
-      departureStateHandler(ctx, ctx.pathParam("classes").split(",").toTypedArray())
+    router.get("/pupils/:classes?").coroutineHandler { ctx ->
+      departureStateHandler(ctx, ctx.pathParam("classes")?.split(",")?.toTypedArray())
     }
     router.route().handler(StaticHandler.create(parsedConfig.frontendDistFolder ?: "src/frontend/dist"))
 

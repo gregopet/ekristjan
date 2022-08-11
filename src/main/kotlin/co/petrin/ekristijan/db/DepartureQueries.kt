@@ -26,7 +26,7 @@ object DepartureQueries {
      * - did the pupil already leave today?
      * - what departures are planned today at specific times (and the teacher should send the kids off)?
      */
-    fun dailyDepartures(schoolId: Int, day: LocalDate, classes: Array<String>, trans: DSLContext) = with(PUPIL) {
+    fun dailyDepartures(schoolId: Int, day: LocalDate, classes: Array<String>?, trans: DSLContext) = with(PUPIL) {
         val dailyDepartureTime = pupilLeaveField(day)
         val departure = field(row(lastDailyDepartureField(day, PUPIL_ID)))
         val mostRecentSummon = field(
@@ -58,7 +58,7 @@ object DepartureQueries {
             )
             .where(
                 PUPIL.SCHOOL_ID.eq(schoolId),
-                CLAZZ.eq(any(*classes)),
+                if (classes != null) CLAZZ.eq(any(*classes)) else noCondition(),
             )
             .fetch { rec ->
                 val plannedDeparture = if (rec.get(EXTRAORDINARY_DEPARTURE.EXTRAORDINARY_DEPARTURE_ID) != null) {
