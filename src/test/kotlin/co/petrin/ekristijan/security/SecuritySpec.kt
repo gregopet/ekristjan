@@ -2,7 +2,6 @@ package co.petrin.ekristijan.security
 
 import co.petrin.ekristijan.SecurityVerticle
 import co.petrin.ekristijan.TestSetup
-import co.petrin.ekristijan.dto.LoginSuccess
 import co.petrin.ekristijan.testConfig
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
@@ -57,7 +56,7 @@ class SecuritySpec : FreeSpec({
             .await()
 
             login.statusCode() shouldBe 200
-            val (accessToken, refreshToken) = login.bodyAsJsonObject().mapTo(LoginSuccess::class.java)
+            val (accessToken, refreshToken) = login.bodyAsJsonObject().mapTo(LoginDTO::class.java)
 
             "the refresh token can be used to get a new access token" {
                 val refresh = client

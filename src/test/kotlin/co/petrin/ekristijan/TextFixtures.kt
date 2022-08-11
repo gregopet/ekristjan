@@ -31,4 +31,5 @@ object TextFixtures {
     val teacherId = 1
     val teacherEmail = "ucitelj@example.org"
     val teacherPassword = "test"
+    val teacherName = "Učiteljica Majda"
 }

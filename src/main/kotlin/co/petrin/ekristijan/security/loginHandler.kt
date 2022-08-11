@@ -3,7 +3,6 @@ package co.petrin.ekristijan.security
 import co.petrin.ekristijan.SecurityVerticle
 import co.petrin.ekristijan.db.PasswordQueries
 import co.petrin.ekristijan.db.tables.records.TeacherRecord
-import co.petrin.ekristijan.dto.LoginSuccess
 import io.vertx.ext.web.RoutingContext
 import io.vertx.kotlin.coroutines.awaitBlocking
 import org.slf4j.LoggerFactory
@@ -62,7 +61,7 @@ suspend fun SecurityVerticle.respondWithTokens(teacher: TeacherRecord, ctx: Rout
         val accessToken = generateAccessToken(teacher, ACCESS_TOKEN_EXPIRY_MINUTES, jwtProvider)
         val refreshToken =
             generateNewRefreshToken(teacher.email, REFRESH_TOKEN_EXPIRY_DAYS, jwtProvider)
-        ctx.json(LoginSuccess(accessToken, refreshToken))
+        ctx.json(LoginDTO(accessToken, refreshToken))
     }
 }
 

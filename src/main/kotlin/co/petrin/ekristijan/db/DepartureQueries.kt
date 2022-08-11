@@ -1,6 +1,7 @@
 package co.petrin.ekristijan.db
 
 import co.petrin.ekristijan.db.Tables.*
+import co.petrin.ekristijan.dto.Pupil
 import org.jooq.DSLContext
 import org.jooq.DatePart
 import org.jooq.Field
@@ -29,8 +30,9 @@ object DepartureQueries {
     fun dailyDepartures(schoolId: Int, day: LocalDate, classes: Array<String>?, trans: DSLContext) = with(PUPIL) {
         val dailyDepartureTime = pupilLeaveField(day)
         val departure = field(row(lastDailyDepartureField(day, PUPIL_ID)))
+        val summonTeacher = SUMMON.teacher().NAME
         val mostRecentSummon = field(
-            select(SUMMON.fieldsRow())
+            select(field(row(SUMMON.SUMMON_ID, SUMMON.CREATED_AT, summonTeacher)))
                 .from(SUMMON)
                 .where(
                     SUMMON.PUPIL_ID.eq(PUPIL.PUPIL_ID),
@@ -65,15 +67,24 @@ object DepartureQueries {
                     rec.into(EXTRAORDINARY_DEPARTURE)
                 } else null
                 DailyDeparture(
-                    pupilId = rec.get(PUPIL_ID),
-                    name = rec.get(NAME),
-                    clazz = rec.get(CLAZZ),
+                    pupil = Pupil(rec.get(PUPIL_ID), rec.get(NAME), rec.get(CLAZZ)),
                     day = day,
                     leavesAlone = rec.get(LEAVES_ALONE),
-                    usualDeparture = rec.get(dailyDepartureTime),
-                    actualDeparture = rec.get(departure)?.value1()?.into(DEPARTURE),
-                    plannedDeparture = plannedDeparture,
-                    summon = rec.get(mostRecentSummon)?.let { it.into(SUMMON) }
+                    departurePlan = DailyDeparture.DeparturePlan(
+                        time = plannedDeparture?.time ?: rec.get(dailyDepartureTime),
+                        leavesAlone = plannedDeparture?.leavesAlone ?: rec.get(LEAVES_ALONE),
+                        remark = plannedDeparture?.remark,
+                    ),
+                    departure = rec.get(departure)?.value1()?.let {
+                        DailyDeparture.Departure(
+                            time = it.get(DEPARTURE.TIME),
+                            entireDay = it.get(DEPARTURE.ENTIRE_DAY),
+                            remark = it.get(DEPARTURE.REMARK),
+                        )
+                    },
+                    summon = rec.get(mostRecentSummon)?.let { DailyDeparture.Summon(
+                        it.get(SUMMON.SUMMON_ID), it.get(SUMMON.teacher().NAME), it.get(SUMMON.CREATED_AT)
+                    ) }
                 )
             }
     }

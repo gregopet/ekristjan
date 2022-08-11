@@ -1,6 +1,8 @@
 package co.petrin.ekristijan.dto
 
+import co.petrin.ekristijan.db.DailyDeparture
 import co.petrin.ekristijan.dto.event.SendPupilEvent
+import co.petrin.ekristijan.security.LoginDTO
 import me.ntrrgc.tsGenerator.TypeScriptGenerator
 import java.nio.file.Paths
 import kotlin.io.path.writeText
@@ -16,7 +18,8 @@ fun main(args: Array<String>) {
             PushSubscription::class,
             SendPupilEvent::class,
             Pupil::class,
-            LoginSuccess::class,
+            LoginDTO::class,
+            DailyDeparture::class,
         )
     ).definitionsText
     val namespacedDefinition = listOf("namespace dto {", definitions, "}").joinToString("\n")
