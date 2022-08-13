@@ -1,12 +1,15 @@
 /** Gets the push notification key from the server */
+import {secureFetch} from "@/security";
+
 export async function getServerKey(): Promise<string> {
-    return (await fetch("/push/key")).text()
+    return (await fetch("/departures/push/key")).text()
 }
 
 /** Sets the browser up to receive push notifications */
 export async function subscribeOnClient(key: string): Promise<PushSubscription> {
     // current subscription?
     const sw = await navigator.serviceWorker.getRegistration()
+    // TODO display an error if server worker couldn't register?
     const current = await sw!.pushManager.getSubscription()
     if (current && arrayBufferToBase64(current.options.applicationServerKey) !== key) {
         await current.unsubscribe();
@@ -27,7 +30,7 @@ export async function subscribeOnServer(sub: PushSubscription, fromClasses: stri
         endpoint: endpoint!,
         fromClasses,
     }
-    return fetch("/departures/push/subscribe", {
+    return secureFetch("/departures/push/subscribe", {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"

@@ -20,6 +20,7 @@ fun main(args: Array<String>) {
             Pupil::class,
             LoginDTO::class,
             DailyDeparture::class,
+            LoginDTO::class,
         )
     ).definitionsText
     val namespacedDefinition = listOf("namespace dto {", definitions, "}").joinToString("\n")

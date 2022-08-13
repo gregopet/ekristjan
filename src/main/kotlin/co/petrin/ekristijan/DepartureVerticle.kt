@@ -22,30 +22,21 @@ class DepartureVerticle(val jooq: DSLContext, val jwtProvider: JWTAuth) : Config
   /** Service for sending push notifications */
   lateinit var pushService: PushAsyncService
 
-  /** All push targets we want to send to - indexed by the subscription URL */
-  @Deprecated("Use subscriptions stored in the database!")
-  val pushSubscriptions = mutableMapOf<String, SubscribedClient>()
-
+  /** Holds the last valid version of config */
   lateinit var parsedConfig: Config
-
-  override suspend fun start() {
-    super.start()
-  }
 
   /** Creates a subrouter that handles requests */
   fun createSubrouter(): Router {
     val router = Router.router(vertx)
-
-    // All requests need to be authenticated!
-    router.route().handler(JWTAuthHandler.create(jwtProvider).withScope(ACCESS_TOKEN_SCOPE))
-
     router.get("/push/key").handler { ctx -> ctx.end(parsedConfig.vapid.publicKey) }
+
+    // All requests below here need to be authenticated!
+    router.route().handler(JWTAuthHandler.create(jwtProvider).withScope(ACCESS_TOKEN_SCOPE))
     router.put("/push/subscribe").handler(BodyHandler.create()).coroutineHandler(::registrationHandler)
     router.post("/pupils/leave").handler(BodyHandler.create()).coroutineHandler(::summonHandler)
     router.get("/pupils/:classes?").coroutineHandler { ctx ->
       departureStateHandler(ctx, ctx.pathParam("classes")?.split(",")?.toTypedArray())
     }
-    router.route().handler(StaticHandler.create(parsedConfig.frontendDistFolder ?: "src/frontend/dist"))
 
     return router
   }

@@ -47,7 +47,7 @@ class DepartureQueriesTest : FreeSpec({
         }
     }
 
-    "Klemen left school at 14:00 on wednesday" {
+    "Klemen left school at 14:00 on wednesday" - {
         preconditions {
             departureFor(fixture.klemenId, wednesday)!!.departure shouldBe null
         }
@@ -58,9 +58,15 @@ class DepartureQueriesTest : FreeSpec({
             departure shouldNotBe null
             departure!!.time shouldBe atFourteenHours
         }
+
+        "on thursday, that departure is no longer relevant" {
+            departureFor(fixture.klemenId, thursday)!!.apply {
+                departure shouldBe null
+            }
+        }
     }
 
-    "Anita has been summoned to the door" - {
+    "Anita has been summoned to the door on thursday" - {
         val fifteenHours = thursday.atStartOfDay(fixture.timezone).toOffsetDateTime().plusHours(15)
         DepartureQueries.summonPupil(fixture.anitaId, fixture.teacherId, fifteenHours, jooq)
 
@@ -70,6 +76,10 @@ class DepartureQueriesTest : FreeSpec({
                 summon shouldNotBe null
                 summon!!.teacherName shouldBe fixture.teacherName
             }
+        }
+
+        "On friday, that summon is no longer relevant" {
+            departureFor(fixture.anitaId, friday)!!.apply { summon shouldBe null }
         }
 
         "The summon can be acknowleded, thereby recording a departure as well" {

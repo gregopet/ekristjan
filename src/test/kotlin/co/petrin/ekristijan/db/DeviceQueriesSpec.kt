@@ -48,8 +48,8 @@ class DeviceQueriesSpec : FreeSpec({
         }
 
         "device will be returned when querying via classes" {
-            DeviceQueries.devicesToNotify(TextFixtures.schoolId, "1A", jooq) should exist { it.subscription.endpoint == devicePushEndpoint }
-            DeviceQueries.devicesToNotify(TextFixtures.schoolId, "2A", jooq) shouldNot exist { it.subscription.endpoint == devicePushEndpoint }
+            DeviceQueries.devicesToNotify(TextFixtures.schoolId, "1A", jooq) should exist { it.subscription().endpoint == devicePushEndpoint }
+            DeviceQueries.devicesToNotify(TextFixtures.schoolId, "2A", jooq) shouldNot exist { it.subscription().endpoint == devicePushEndpoint }
         }
 
         "device can be removed" {
@@ -59,9 +59,9 @@ class DeviceQueriesSpec : FreeSpec({
                 userAgent = "Android",
                 trans = jooq
             )
-            DeviceQueries.devicesToNotify(TextFixtures.schoolId, "1A", jooq) should exist { it.subscription.endpoint == "delete me" }
+            DeviceQueries.devicesToNotify(TextFixtures.schoolId, "1A", jooq) should exist { it.subscription().endpoint == "delete me" }
             DeviceQueries.unregisterDevice("delete me", jooq)
-            DeviceQueries.devicesToNotify(TextFixtures.schoolId, "1A", jooq) shouldNot exist { it.subscription.endpoint == "delete me" }
+            DeviceQueries.devicesToNotify(TextFixtures.schoolId, "1A", jooq) shouldNot exist { it.subscription().endpoint == "delete me" }
         }
 
 

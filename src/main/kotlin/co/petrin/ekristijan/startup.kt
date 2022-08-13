@@ -3,6 +3,7 @@ package co.petrin.ekristijan
 import co.petrin.ekristijan.security.createJwtProvider
 import io.vertx.core.Vertx
 import io.vertx.ext.web.Router
+import io.vertx.ext.web.handler.StaticHandler
 import io.vertx.kotlin.coroutines.await
 import kotlinx.coroutines.runBlocking
 import org.bouncycastle.jce.provider.BouncyCastleProvider
@@ -39,6 +40,8 @@ fun main(args: Array<String>) {
             val jwtProvider = createJwtProvider(vertx, config.jwtSymetricPassword)
 
             val router = Router.router(vertx)
+            router.route().handler(StaticHandler.create(config.frontendDistFolder ?: "src/frontend/dist"))
+
             DepartureVerticle(jooq, jwtProvider).let { verticle ->
                 vertx.deployVerticle(verticle).await()
                 router.route("/departures/*").subRouter(verticle.createSubrouter())

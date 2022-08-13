@@ -13,6 +13,7 @@ import kotlinx.coroutines.*
 /** Registers a device */
 suspend fun DepartureVerticle.registrationHandler(ctx: RoutingContext) {
     val sub = ctx.body().asJsonObject().mapTo(PushSubscription::class.java)
+    ctx.response().setStatusCode(204).end()
     awaitBlocking {
         DeviceQueries.registerOrUpdateDevice(
             ctx.teacherId, sub, ctx.request().getHeader("User-Agent"), jooq

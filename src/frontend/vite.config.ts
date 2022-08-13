@@ -23,23 +23,30 @@ export default defineConfig( ({ command, mode }) => {
   return {
     plugins: [vue(), VitePWA({
       strategies: "injectManifest", // https://vite-plugin-pwa.netlify.app/guide/inject-manifest.html#custom-service-worker,
+      injectRegister: null, //https://vite-plugin-pwa.netlify.app/guide/register-service-worker.html
+      workbox: {
+        clientsClaim: true,
+        skipWaiting: true
+      },
       registerType: "autoUpdate",
       srcDir: 'src',
       disable: false,
       filename: 'serviceworker.ts',
       devOptions: {
-        enabled: true,
+        enabled: true, //type: 'classic'
       },
+      mode: "development",
       manifest: {
         name: "e-kristijan",
         short_name: 'e-kristijan',
         icons: [
-          { sizes: 'any', src: "/assets/francetabevka.58da755a.jpg", type: "image/jpeg" }
+          { sizes: '582x582', src: "/francetabevka.png", type: "image/png" }
         ],
         background_color: 'white',
         display: 'standalone',
         start_url: '/',
-      }
+      },
+      includeAssets: ['francetabevka.png'],
     })],
     resolve: {
       alias: {

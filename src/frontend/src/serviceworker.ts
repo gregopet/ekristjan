@@ -13,6 +13,7 @@ precacheAndRoute(self.__WB_MANIFEST)
 self.skipWaiting()
 clientsClaim()
 
+
 /**
  * Messages all clients of this service worker.
  * @param message The message to send

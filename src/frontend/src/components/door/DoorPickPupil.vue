@@ -1,10 +1,7 @@
 <template>
-  <p>
-    <a href="#" @click.prevent="$router.go(-1)">Nazaj</a>
-  </p>
-  <h4>
-    Izberi učenca iz {{ selectedClass }}
-  </h4>
+  <Header :back="{ name: 'frontDoor'}"/>
+
+  <h5 class="addClassesHeader sectionHeading">Izberi učenca iz {{ selectedClass }}</h5>
   <ul class="selectPupil">
     <li v-for="departure in sortPupils(shownPupils)">
       <a href="#" @click.prevent="sendPupil(departure.pupil)">{{ departure.pupil.name }}</a>
@@ -13,9 +10,12 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, defineProps} from "vue";
+import {computed} from "vue";
 import {useRouter} from "vue-router";
 import {pupilsFromClass} from "@/data";
+import {useSecureFetch} from "@/security";
+import Header from '../Header.vue';
+
 
 const props = defineProps({
   selectedClass: {
@@ -43,7 +43,7 @@ const shownPupils = computed(() => {
 
 /** Sends notification that this pupil should come to the door */
 async function sendPupil(pupil: dto.Pupil) {
-  await fetch("/pupils/leave", {
+  useSecureFetch("/departures/pupils/leave", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -55,3 +55,31 @@ async function sendPupil(pupil: dto.Pupil) {
 }
 
 </script>
+
+<style lang="scss" scoped>
+$padding-left: 20px;
+
+.sectionHeading {
+  font-size: 20px;
+  width: 100%;
+  margin-top: 1.0em;
+  margin-bottom: 0.6em;
+  padding: 0 0 0 $padding-left;
+  &:first-child {
+    padding-top: 0.5em;
+  }
+}
+ul {
+  list-style-type: none;
+  padding-left: $padding-left;
+
+  li {
+     a {
+       color: black;
+       text-decoration: none;
+     }
+    height: 2.5em;
+  }
+}
+
+</style>

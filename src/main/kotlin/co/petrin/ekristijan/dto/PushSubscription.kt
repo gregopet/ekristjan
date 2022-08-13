@@ -11,5 +11,5 @@ import nl.martijndwars.webpush.Subscription
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class PushSubscription(val endpoint: String, val keys: Subscription.Keys, val fromClasses: Set<String>) {
-    val subscription: Subscription = Subscription(endpoint, keys)
+    fun subscription() = Subscription(endpoint, keys)
 }

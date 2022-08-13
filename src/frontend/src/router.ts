@@ -1,10 +1,10 @@
-import Classroom from "@/components/Classroom.vue";
-import DoorPickClass from "@/components/DoorPickClass.vue";
-import DoorPickPupil from "@/components/DoorPickPupil.vue";
+import Classroom from "@/components/classroom/Classroom.vue";
+import DoorPickClass from "@/components/door/DoorPickClass.vue";
+import DoorPickPupil from "@/components/door/DoorPickPupil.vue";
 import Login from "@/components/Login.vue";
-import ResetPassword from "@/components/ResetPassword.vue";
-import RequestPasswordReset from "@/components/RequestPasswordReset.vue";
-import OpeningSelector from "@/components/OpeningSelector.vue";
+import ResetPassword from "@/components/passwordReset/ResetPassword.vue";
+import RequestPasswordReset from "@/components/passwordReset/RequestPasswordReset.vue";
+import LoggedInComponent from "@/components/LoggedInComponent.vue";
 import { createRouter, createWebHashHistory } from 'vue-router';
 import { isLoggedIn } from "@/security";
 
@@ -15,7 +15,7 @@ const routes = [
     { path: '/prijava', component: Login, name: 'login', meta: publicRouteMeta },
     { path: '/zahtevaj-ponastavitev-gesla', component: RequestPasswordReset, name: 'requestPasswordReset', meta: publicRouteMeta },
     { path: '/ponastavi-geslo/:token', component: ResetPassword, name: 'resetPassword', meta: publicRouteMeta },
-    { path: '/prijavljen', component: OpeningSelector, name: 'landing', children: [
+    { path: '/prijavljen', component: LoggedInComponent, name: 'landing', children: [
         { path: 'ucilnica', component: Classroom, name: 'classroom' },
         { path: 'vrata', component: DoorPickClass, name: 'frontDoor' },
         { path: 'vrata/:selectedClass', component: DoorPickPupil, name: 'frontDoorWithClazz', props: true },

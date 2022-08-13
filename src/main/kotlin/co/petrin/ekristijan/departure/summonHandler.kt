@@ -31,9 +31,11 @@ suspend fun DepartureVerticle.summonHandler(ctx: RoutingContext) {
             LOG.info("Teacher ${ctx.teacherId} summoning pupil $pupil")
             ctx.response().setStatusCode(204).send()
             val payload = JsonObject.mapFrom(SendPupilEvent(pupil.name, pupil.fromClass)).encode()
-            DeviceQueries.devicesToNotify(ctx.schoolId, pupil.fromClass, jooq).forEach { subscription ->
+            DeviceQueries.devicesToNotify(ctx.schoolId, pupil.fromClass, jooq)
+            .also { LOG.info("Notifying ${it.size} devices")  }
+            .forEach { subscription ->
                 LOG.debug("Sending push notification to ${subscription.endpoint}")
-                val response = pushService.send(Notification(subscription.subscription, payload, Urgency.HIGH)).get()
+                val response = pushService.send(Notification(subscription.subscription(), payload, Urgency.HIGH)).get()
                 LOG.trace("Result had status code ${response.statusCode}")
                 if (response.statusCode == 410) {
                     DeviceQueries.unregisterDevice(subscription.endpoint, jooq)

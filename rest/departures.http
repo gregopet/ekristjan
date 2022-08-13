@@ -1,3 +1,6 @@
+### Server push key
+GET {{host}}/departures/push/key
+
 ### Gets the state of departures
 GET {{host}}/departures/pupils/1A,1B,2A,2B
 Authorization: Bearer {{accessToken}}

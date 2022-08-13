@@ -1,6 +1,10 @@
 <template>
   <main>
+    <div v-if="error" class="error">
+      Pozor: napaka pri komunikaciji, preverite povezavo!
+    </div>
     <div v-if="showSelector">
+    <Header />
       <h1>
         Kje sem?
       </h1>
@@ -23,14 +27,33 @@
 import {computed, defineComponent, type Ref, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import {pupils} from "@/data";
-import { useSecureFetch } from '@/security';
+import {secureFetch, useSecureFetch} from '@/security';
+import Header from "@/components/Header.vue";
+import {useInterval, useIntervalFn} from "@vueuse/core";
 
 const route = useRoute()
 const showSelector = computed(() => route.name === 'landing');
 
 
+// fetch pupils repeatedly
+const error = ref(false)
+async function fetchPupils() {
+  const resp = await secureFetch("/departures/pupils/")
+  if (resp.ok) {
+    error.value = false
+    const newPupils = await resp.json() as dto.DailyDeparture[];
+    pupils.splice(0, pupils.length,...newPupils)
+  }
+  error.value = !resp.ok
+}
+
+
+useIntervalFn(fetchPupils, 2000, { immediate: true, immediateCallback: true })
+
+
+
 // Load pupils from server, replacing any existing students already there
-const { isFinished, error, data } = useSecureFetch("/departures/pupils/")
+/*const { isFinished, error, data } = useSecureFetch("/departures/pupils/")
 watch(data as Ref<string>, (newData: string) => {
   try {
     const newPupils = JSON.parse(newData) as dto.DailyDeparture[];
@@ -41,11 +64,17 @@ watch(data as Ref<string>, (newData: string) => {
     // vueUse will still call this block, even in case of errors (like auth errors) :(
   }
 })
-watch(error, (err => { }))
+watch(error, (err => { }))*/
 
 
 </script>
 
 <style lang="scss">
-
+  .error {
+    background-color: red;
+    color: white;
+    font-size: 24px;
+    text-shadow: 1px 1px #9b0101;
+    padding-left: 15px;
+  }
 </style>
