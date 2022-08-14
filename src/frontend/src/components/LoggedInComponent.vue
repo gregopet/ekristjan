@@ -27,7 +27,6 @@
 import {computed, defineComponent, type Ref, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import {pupils} from "@/data";
-import {secureFetch, useSecureFetch} from '@/security';
 import Header from "@/components/Header.vue";
 import {useInterval, useIntervalFn} from "@vueuse/core";
 
@@ -38,7 +37,7 @@ const showSelector = computed(() => route.name === 'landing');
 // fetch pupils repeatedly
 const error = ref(false)
 async function fetchPupils() {
-  const resp = await secureFetch("/departures/pupils/")
+  const resp = await fetch("/departures/pupils/")
   if (resp.ok) {
     error.value = false
     const newPupils = await resp.json() as dto.DailyDeparture[];

@@ -13,8 +13,8 @@
 import {computed} from "vue";
 import {useRouter} from "vue-router";
 import {pupilsFromClass} from "@/data";
-import {useSecureFetch} from "@/security";
 import Header from '../Header.vue';
+import {useFetch} from "@vueuse/core";
 
 
 const props = defineProps({
@@ -43,7 +43,7 @@ const shownPupils = computed(() => {
 
 /** Sends notification that this pupil should come to the door */
 async function sendPupil(pupil: dto.Pupil) {
-  useSecureFetch("/departures/pupils/leave", {
+  useFetch("/departures/pupils/leave", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"

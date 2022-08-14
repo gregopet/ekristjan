@@ -6,7 +6,7 @@ import ResetPassword from "@/components/passwordReset/ResetPassword.vue";
 import RequestPasswordReset from "@/components/passwordReset/RequestPasswordReset.vue";
 import LoggedInComponent from "@/components/LoggedInComponent.vue";
 import { createRouter, createWebHashHistory } from 'vue-router';
-import { isLoggedIn } from "@/security";
+import { loggedIn } from '@/main';
 
 const publicRouteMeta = { pub: true }
 
@@ -29,7 +29,7 @@ const router = createRouter({
 
 router.beforeEach(async (to, from) => {
     // Users who are not logged in must first do so
-    if (!to.meta.pub && !isLoggedIn()) {
+    if (!to.meta.pub && !loggedIn.value) {
         console.log("(PREVENTED) Navigation guard to", from)
         return { name: 'login' }
     }

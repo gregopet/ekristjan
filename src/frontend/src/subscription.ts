@@ -1,6 +1,3 @@
-/** Gets the push notification key from the server */
-import {secureFetch} from "@/security";
-
 export async function getServerKey(): Promise<string> {
     return (await fetch("/departures/push/key")).text()
 }
@@ -30,7 +27,7 @@ export async function subscribeOnServer(sub: PushSubscription, fromClasses: stri
         endpoint: endpoint!,
         fromClasses,
     }
-    return secureFetch("/departures/push/subscribe", {
+    return fetch("/departures/push/subscribe", {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
