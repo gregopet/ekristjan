@@ -6,6 +6,7 @@ package co.petrin.ekristijan.dto.event
  * @property fromClass Class of the pupil
  */
 class SendPupilEvent(
+    val summonId: Int,
     val name: String,
     val fromClass: String,
 ): PushEvent {

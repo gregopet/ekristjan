@@ -27,10 +27,11 @@ suspend fun DepartureVerticle.summonHandler(ctx: RoutingContext) {
     val pupil = ctx.body().asJsonObject().mapTo(Pupil::class.java)
 
     awaitBlocking {
-        if (DepartureQueries.summonPupil(pupil.id, ctx.teacherId, OffsetDateTime.now(), jooq)) {
+        val summonId = DepartureQueries.summonPupil(pupil.id, ctx.teacherId, OffsetDateTime.now(), jooq)
+        if (summonId != null) {
             LOG.info("Teacher ${ctx.teacherId} summoning pupil $pupil")
             ctx.response().setStatusCode(204).send()
-            val payload = JsonObject.mapFrom(SendPupilEvent(pupil.name, pupil.fromClass)).encode()
+            val payload = JsonObject.mapFrom(SendPupilEvent(summonId, pupil.name, pupil.fromClass)).encode()
             DeviceQueries.devicesToNotify(ctx.schoolId, pupil.fromClass, jooq)
             .also { LOG.info("Notifying ${it.size} devices")  }
             .forEach { subscription ->
@@ -47,5 +48,11 @@ suspend fun DepartureVerticle.summonHandler(ctx: RoutingContext) {
             ctx.response().setStatusCode(403).send()
         }
     }
+}
+
+/**
+ * Accepts the request that a summon notification was confirmed.
+ */
+suspend fun DepartureVerticle.processSummonNotification(ctx: RoutingContext) {
 
 }

@@ -56,25 +56,53 @@ self.oninstall = async (ev) => {
     console.log("Service worker updated to newer version")
     restoreTokens().then(updateTokens); // If tokens were forgotten during install, re-remember them
 }
+
+/** Show push notifications that come via service worker  */
 self.onpush = (ev) => {
-    const notification = ev.data!.json() as dto.PushEvent
+    const notification = ev.data!.json() as dto.SendPupilEvent
     if (isSendPupilEvent(notification)) {
-        const pupil = `${notification.name}, ${notification.fromClass}`
-        const actions: NotificationAction[] = [{
-            action: SENT_TO_DOOR_ACTION,
-            title: "Poslan k vratom",
-        }]
+        let text: string
+        let actions: NotificationAction[] = []
+        if (loggedIn()) {
+            text = `${notification.name}, ${notification.fromClass}`
+            actions.push({
+                action: SENT_TO_DOOR_ACTION,
+                title: "Poslan k vratom",
+            })
+        } else {
+            // no details - let them log in before getting any names
+            text = "Učenca je potrebno poslati domov"
+        }
         const data = { summonId: notification.summonId }
-        self.registration.showNotification(pupil, { silent: false, renotify: true, tag: pupil, actions, data });
+        self.registration.showNotification(text, { silent: false, renotify: true, tag: text, actions, data });
         messageClients(notification)
     }
 }
 
-/**
- * Fire this action if user confirms the notification.
- */
-self.addEventListener(SENT_TO_DOOR_ACTION, (ev: Event) => {
-    const notificationEvent = ev as NotificationEvent
-    const data = notificationEvent.notification.data as dto.PushEvent
+self.onnotificationclick = ev => {
+    switch(ev.action) {
+        case SENT_TO_DOOR_ACTION:
+            acknowledgeSummon(ev as NotificationEvent)
+            break;
+        default:
+            console.log("Unknown notification action", ev.action);
+    }
+}
+
+/** Handles the notification action where pupil summon was acknowledged */
+function acknowledgeSummon(notificationEvent: NotificationEvent) {
+    const data = notificationEvent.notification.data as dto.SendPupilEvent
     notificationEvent.notification.close();
-})
+    // retry if fetch fails?
+    if (loggedIn()) {
+        console.log("Notifying: we have sent", data.name, "to the door")
+        const req = new Request("/departures/pupils/left", {
+            method: 'POST',
+            body: JSON.stringify({summonId: data.summonId})
+        })
+        authorizedFetch(req).then( resp => console.log("Got response with status code", resp.status))
+    } else {
+        // nothing to do.. somebody logged out and then chose the user action?
+        console.error("Could not notify pupil departure, we are not logged in!")
+    }
+}

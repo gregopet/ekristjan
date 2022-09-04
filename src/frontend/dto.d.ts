@@ -19,6 +19,7 @@ interface PushEvent {
 interface SendPupilEvent extends PushEvent {
     fromClass: string;
     name: string;
+    summonId: number;
     type: PushEventType;
 }
 

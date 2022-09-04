@@ -108,9 +108,9 @@ object DepartureQueries {
      * @param pupilId The pupil who shall be sent to the door
      * @param teacherId The teacher who sent the pupil to the door
      * @param time The time at which the student was summoned
-     * @return false if the summon could not be issued (e.g. pupil's school doesn't match teacher's school), true otherwise
+     * @return The summon's ID or null if the summon could not be issued (e.g. pupil's school doesn't match teacher's school)
      */
-    fun summonPupil(pupilId: Int, teacherId: Int, time: OffsetDateTime, trans: DSLContext): Boolean = with(SUMMON) {
+    fun summonPupil(pupilId: Int, teacherId: Int, time: OffsetDateTime, trans: DSLContext): Int? = with(SUMMON) {
         // should we have two times in the summon table? the created_at as well as the time the summon was made
         // (perhaps containing the device's local time)? Let's just keep one time for now.
         trans
@@ -118,8 +118,8 @@ object DepartureQueries {
         .set(PUPIL_ID, pupilBelongingToSameSchoolAsTeacher(pupilId, teacherId))
         .set(TEACHER_ID, teacherId)
         .set(CREATED_AT, time)
-        .execute()
-        .let { rowCount -> rowCount > 0 }
+        .returning(SUMMON_ID)
+        .fetchOne(SUMMON_ID)
     }
 
     /**
