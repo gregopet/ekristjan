@@ -37,7 +37,17 @@ router.beforeEach(async (to, from) => {
 
 export default router;
 
+/** Is the current path one that requires users to be logged in? */
+export function isOnProtectedRoute(): boolean {
+    return router.currentRoute.value.matched.some(route => route.name === 'landing');
+}
+
 /** Force user to login screen, e.g. in case of errors */
 export async function forceLoginScreen() {
     await router.push({ name: 'login' })
+}
+
+/** Take the user to the logged in landing screen */
+export async function forceLoggedInLanding() {
+    await router.push({ name: 'landing' })
 }

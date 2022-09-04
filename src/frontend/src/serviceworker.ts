@@ -4,7 +4,14 @@ import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching'
 import { clientsClaim } from 'workbox-core';
 import { isSendPupilEvent } from "@/dto";
 import { restoreTokens } from "@/serviceworker/credentialStore";
-import {authorizedFetch, EVENT_LOGIN_SUCCESS, handleFetch, loggedIn, updateTokens} from "@/serviceworker/authorization";
+import {
+    authorizedFetch,
+    EVENT_LOGIN_FAILED,
+    EVENT_LOGIN_SUCCESS,
+    handleFetch,
+    loggedIn,
+    updateTokens
+} from "@/serviceworker/authorization";
 import {messageClients} from "@/serviceworker/messaging";
 
 declare let self: ServiceWorkerGlobalScope
@@ -24,6 +31,7 @@ self.onfetch = handleFetch;
  *  The currently supported types:
  *      - notification (send a notification), payload is {title, NotificationOptions}
  *      - get selected classes
+ *      - log the user out
  */
 self.onmessage = (msg) => {
     if (msg.data?.type === 'notification') {
@@ -32,6 +40,11 @@ self.onmessage = (msg) => {
     }
     if (msg.data?.type === 'loginStatus') {
         msg.ports[0].postMessage(loggedIn());
+    }
+    if (msg.data?.type === 'logout') {
+        console.log("Logging out")
+        updateTokens(undefined)
+        messageClients(EVENT_LOGIN_FAILED)
     }
 }
 

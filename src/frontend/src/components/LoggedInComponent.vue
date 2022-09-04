@@ -18,6 +18,11 @@
           <router-link :to="{ name: 'classroom' }">V učilnici</router-link>
         </h2>
       </div>
+      <div>
+        <h2>
+          <a href="#" @click.prevent="logout">Odjava</a>
+        </h2>
+      </div>
     </div>
     <router-view></router-view>
   </main>
@@ -29,6 +34,7 @@ import {useRoute} from "vue-router";
 import {pupils} from "@/data";
 import Header from "@/components/Header.vue";
 import {useInterval, useIntervalFn} from "@vueuse/core";
+import { logout as doLogout } from "@/main";
 
 const route = useRoute()
 const showSelector = computed(() => route.name === 'landing');
@@ -49,21 +55,10 @@ async function fetchPupils() {
 
 useIntervalFn(fetchPupils, 2000, { immediate: true, immediateCallback: true })
 
-
-
-// Load pupils from server, replacing any existing students already there
-/*const { isFinished, error, data } = useSecureFetch("/departures/pupils/")
-watch(data as Ref<string>, (newData: string) => {
-  try {
-    const newPupils = JSON.parse(newData) as dto.DailyDeparture[];
-    if (newData) {
-      pupils.splice(0, pupils.length,...newPupils)
-    }
-  } catch (err) {
-    // vueUse will still call this block, even in case of errors (like auth errors) :(
-  }
-})
-watch(error, (err => { }))*/
+// logout users
+function logout() {
+  doLogout();
+}
 
 
 </script>

@@ -1,5 +1,5 @@
 import {createApp, ref} from 'vue';
-import router from '@/router';
+import router, {forceLoggedInLanding, forceLoginScreen, isOnProtectedRoute} from '@/router';
 import RootComponent from '@/components/RootComponent.vue';
 import {isSendPupilEvent} from "@/dto";
 import { eventBus } from './events';
@@ -27,13 +27,18 @@ navigator.serviceWorker.getRegistration().then( reg => {
 
 // receive communication from service worker here, passing it onto the message bus
 navigator.serviceWorker.onmessage = (ev) => {
-    console.log("Received event bus message!", ev)
     if (isSendPupilEvent(ev.data)) {
         eventBus.emit("SendPupil", ev.data)
     } else if (ev.data === EVENT_LOGIN_FAILED) {
         loggedIn.value = false;
+        if (isOnProtectedRoute()) {
+            forceLoginScreen();
+        }
     } else if (ev.data === EVENT_LOGIN_SUCCESS) {
         loggedIn.value = true;
+        if (!isOnProtectedRoute()) {
+            forceLoggedInLanding(); // is this OK? Is there a valid thing they could be doing somewhere else while logged in?
+        }
     } else {
         console.log("Received message from service worker", ev)
     }
@@ -52,6 +57,12 @@ function determineLoginStatus() {
             console.error("Error determining whether user is already logged in, aborting app startup", error)
         }
     );
+}
+
+/** Logs out of the application */
+export function logout() {
+    console.debug("Requestiong logout")
+    wb.messageSW({ type: 'logout' })
 }
 
 function startApp() {
