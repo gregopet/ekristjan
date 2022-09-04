@@ -3,7 +3,9 @@
 import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching'
 import { clientsClaim } from 'workbox-core';
 import { isSendPupilEvent } from "@/dto";
-import {eventBus} from "@/events";
+import { restoreTokens } from "@/serviceworker/credentialStore";
+import {authorizedFetch, EVENT_LOGIN_SUCCESS, handleFetch, loggedIn, updateTokens} from "@/serviceworker/authorization";
+import {messageClients} from "@/serviceworker/messaging";
 
 declare let self: ServiceWorkerGlobalScope
 
@@ -13,17 +15,8 @@ precacheAndRoute(self.__WB_MANIFEST)
 self.skipWaiting()
 clientsClaim()
 
-
-/**
- * Messages all clients of this service worker.
- * @param message The message to send
- */
-async function messageClients(message: any) {
-    const clients = await self.clients.matchAll({ includeUncontrolled: true, type: "window"})
-    for (const client of clients) {
-        client.postMessage(message);
-    }
-}
+// Authorized fetches, logins etc
+self.onfetch = handleFetch;
 
 /**
  * Show push notifications that come from other client code (notifications on Android need to be fired from the service worker!)
@@ -38,14 +31,18 @@ self.onmessage = (msg) => {
         self.registration.showNotification(title, options);
     }
     if (msg.data?.type === 'loginStatus') {
-        emitLoginStatus();
+        msg.ports[0].postMessage(loggedIn());
     }
 }
 
 /** Notification key */
 const SENT_TO_DOOR_ACTION = 'SENT';
 
-/** Show push notifications that come via service worker */
+/** Service worker was installed or updated, carry over the old login */
+self.oninstall = async (ev) => {
+    console.log("Service worker updated to newer version")
+    restoreTokens().then(updateTokens); // If tokens were forgotten during install, re-remember them
+}
 self.onpush = (ev) => {
     const notification = ev.data!.json() as dto.PushEvent
     if (isSendPupilEvent(notification)) {
@@ -68,85 +65,3 @@ self.addEventListener(SENT_TO_DOOR_ACTION, (ev: Event) => {
     const data = notificationEvent.notification.data as dto.PushEvent
     notificationEvent.notification.close();
 })
-
-
-// Store access tokens in the service worker. The downside to this is that a service worker upgrade will lose the
-// tokens!
-let mostRecentTokens: null | dto.LoginDTO = null
-
-/** Lets the applications know the current login status */
-function emitLoginStatus(): Promise<void> {
-    return messageClients(mostRecentTokens == null ? 'login:bad' : 'login:ok')
-}
-
-
-const authorizedPathPrefixes = ['/departures'] // prefixes we need to auth for
-const noAuthRequired = ['/departures/push/key'] // exceptions to those prefixes
-
-// Handle authentication transparently
-self.addEventListener('fetch', (ev) => {
-    const url = new URL(ev.request.url)
-    // TODO: add hostname verification for extra security
-
-    // In case of successful login, store tokens in service worker
-    if (ev.request.url.endsWith("/login")) {
-        const authReq = new Request(ev.request)
-        ev.respondWith(fetch(authReq).then( resp => {
-            if (resp.ok) {
-                return resp.json().then((login: dto.LoginDTO) => {
-                    mostRecentTokens = login
-                    return emitLoginStatus().then ( () => {
-                        return new Response(null, {})
-                    })
-                })
-            } else {
-                return resp;
-            }
-        }))
-    } else if (
-        authorizedPathPrefixes.filter(prefix => url.pathname.startsWith(prefix)).length &&
-        !noAuthRequired.filter(path => url.pathname === path).length
-    ) {
-        if (mostRecentTokens != null) {
-            const { accessToken, refreshToken } = mostRecentTokens;
-            const reqWithAuth = new Request(ev.request, { headers: {
-                Authorization: `Bearer ${accessToken}`
-            } })
-            ev.respondWith(fetch(reqWithAuth).then( resp => {
-                if (resp.status == 401) {
-                    // refresh tokens!
-                    return fetch("/security/refresh-token", { method: 'POST', headers: {
-                        Authorization: `Bearer ${refreshToken}`
-                    }}).then((refreshResp) => {
-                        if (refreshResp.ok) {
-                            // great, token refreshed, try the original request again and let the chips fall where they may :P
-                            return refreshResp.json().then((refreshedTokens: dto.LoginDTO) => {
-                                mostRecentTokens = refreshedTokens;
-                                const repeatOriginal = new Request(ev.request, {
-                                    headers: {
-                                        Authorization: `Bearer ${refreshedTokens.accessToken}`
-                                    }
-                                });
-                                return fetch(repeatOriginal);
-                            })
-                        } if (refreshResp.status === 401) {
-                            // something wrong, could not refresh token!
-                            // delete tokens (..though a grace period could be given?) and return original response
-                            mostRecentTokens = null;
-                            return emitLoginStatus().then ( () => {
-                                return resp;
-                            })
-                        } else {
-                            // something else was wrong, huh.. well, just return original response?
-                            return resp;
-                        }
-                    })
-                } else {
-                    // whatever was returned originally
-                    return resp;
-                }
-            }))
-
-        }
-    }
-});

@@ -10,12 +10,6 @@ import { loggedIn } from '@/main';
 
 const login = loggedIn
 
-// disable service worker when we want a fast reload!
-// https://vite-plugin-pwa.netlify.app/frameworks/vue.html#vue-3
-const { offlineReady, needRefresh, updateServiceWorker } = useRegisterSW({
-  immediate: true,
-})
-
 // Keep screen turned on because we want those notifications!
 const { isSupported, isActive, request, release } = useWakeLock()
 request('screen')

@@ -23,18 +23,19 @@ export default defineConfig( ({ command, mode }) => {
   return {
     plugins: [vue(), VitePWA({
       strategies: "injectManifest", // https://vite-plugin-pwa.netlify.app/guide/inject-manifest.html#custom-service-worker,
-      injectRegister: null, //https://vite-plugin-pwa.netlify.app/guide/register-service-worker.html
+      /*injectRegister: null, //https://vite-plugin-pwa.netlify.app/guide/register-service-worker.html
       workbox: {
+        disableDevLogs: false,
         clientsClaim: true,
         skipWaiting: true
-      },
-      registerType: "autoUpdate",
+      },*/
+      //registerType: "autoUpdate", // careful, will cause all tabs to reload when an update is available, see https://vite-plugin-pwa.netlify.app/guide/auto-update.html
       srcDir: 'src',
       disable: false,
       filename: 'serviceworker.ts',
-      devOptions: {
+      /*devOptions: {
         enabled: true, //type: 'classic'
-      },
+      },*/
       mode: "development",
       manifest: {
         name: "e-kristijan",
@@ -54,6 +55,7 @@ export default defineConfig( ({ command, mode }) => {
         'sockjs-client': path.resolve(__dirname, './node_modules/sockjs-client/dist/sockjs.js'),
       }
     },
+    build: { },
     server: {
       ...httpsConfig,
       proxy: {
