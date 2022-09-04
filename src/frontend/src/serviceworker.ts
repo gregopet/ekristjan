@@ -18,7 +18,9 @@ declare let self: ServiceWorkerGlobalScope
 
 // Web service installation
 cleanupOutdatedCaches()
-precacheAndRoute(self.__WB_MANIFEST)
+const manifest = self.__WB_MANIFEST;
+console.log("Offline file caching using the following manifest", manifest)
+precacheAndRoute(manifest) // COMMENT THIS OUT TO ENABLE LIVE RELOADING WITH `yarn serve`! DO NOT REMOVE ABOVE TWO LINES!
 self.skipWaiting()
 clientsClaim()
 

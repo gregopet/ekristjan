@@ -23,19 +23,13 @@ export default defineConfig( ({ command, mode }) => {
   return {
     plugins: [vue(), VitePWA({
       strategies: "injectManifest", // https://vite-plugin-pwa.netlify.app/guide/inject-manifest.html#custom-service-worker,
-      /*injectRegister: null, //https://vite-plugin-pwa.netlify.app/guide/register-service-worker.html
-      workbox: {
-        disableDevLogs: false,
-        clientsClaim: true,
-        skipWaiting: true
-      },*/
-      //registerType: "autoUpdate", // careful, will cause all tabs to reload when an update is available, see https://vite-plugin-pwa.netlify.app/guide/auto-update.html
+      injectRegister: null, //https://vite-plugin-pwa.netlify.app/guide/register-service-worker.html
       srcDir: 'src',
-      disable: false,
+      disable: false, // DISABLE & RUN 'yarn preview', THEN DO A HARD RESET TO RELOAD THE SERVICE WORKER TO ENABLE DEV TIME RELOADING!
       filename: 'serviceworker.ts',
-      /*devOptions: {
-        enabled: true, //type: 'classic'
-      },*/
+      devOptions: {
+        enabled: true,
+      },
       mode: "development",
       manifest: {
         name: "e-kristijan",
