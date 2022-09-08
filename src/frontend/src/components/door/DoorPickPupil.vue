@@ -1,12 +1,14 @@
 <template>
-  <Header :back="{ name: 'frontDoor'}"/>
+  <LoggedInLayout>
+    <Header :back="{ name: 'frontDoor'}"/>
 
-  <h5 class="addClassesHeader sectionHeading">Izberi učenca iz {{ selectedClass }}</h5>
-  <ul class="selectPupil">
-    <li v-for="departure in sortPupils(shownPupils)">
-      <a href="#" @click.prevent="sendPupil(departure.pupil)">{{ departure.pupil.name }}</a>
-    </li>
-  </ul>
+    <h5 class="text-xl p-5">Izberi učenca iz {{ selectedClass }}</h5>
+    <ul class="p-5 space-y-5">
+      <li v-for="departure in sortPupils(shownPupils)">
+        <a href="#" @click.prevent="sendPupil(departure.pupil)">{{ departure.pupil.name }}</a>
+      </li>
+    </ul>
+  </LoggedInLayout>
 </template>
 
 <script lang="ts" setup>
@@ -15,6 +17,7 @@ import {useRouter} from "vue-router";
 import {pupilsFromClass} from "@/data";
 import Header from '../Header.vue';
 import {useFetch} from "@vueuse/core";
+import LoggedInLayout from '../LoggedInLayout.vue';
 
 
 const props = defineProps({
@@ -55,31 +58,3 @@ async function sendPupil(pupil: dto.Pupil) {
 }
 
 </script>
-
-<style lang="scss" scoped>
-$padding-left: 20px;
-
-.sectionHeading {
-  font-size: 20px;
-  width: 100%;
-  margin-top: 1.0em;
-  margin-bottom: 0.6em;
-  padding: 0 0 0 $padding-left;
-  &:first-child {
-    padding-top: 0.5em;
-  }
-}
-ul {
-  list-style-type: none;
-  padding-left: $padding-left;
-
-  li {
-     a {
-       color: black;
-       text-decoration: none;
-     }
-    height: 2.5em;
-  }
-}
-
-</style>

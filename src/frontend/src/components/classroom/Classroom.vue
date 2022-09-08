@@ -1,25 +1,7 @@
 <template>
   <Header :back="{ name: 'landing' }" />
-  <div class="all">
-    <div class="settings">
-
-      <PupilList :selectedClasses="selectedClasses" />
-      <ClassPicker v-model:selected="selectedClasses" />
-
-    </div>
-    <div class="departures">
-      <TransitionGroup tag="ul" name="departures">
-        <li v-for="departure in calledPupils" :style="{ ...departure.color }" @click="removeCalledPupil(departure)" :key="departure.random">
-          <span class="name">
-            {{ departure.name }}
-          </span>
-          <span class="time">
-            {{ formatDate(departure.atTime) }}
-          </span>
-        </li>
-      </TransitionGroup>
-    </div>
-  </div>
+  <PupilList :selectedClasses="selectedClasses" />
+  <ClassPicker v-model:selected="selectedClasses" class="mt-10" />
 </template>
 
 <script setup lang="ts">
@@ -122,44 +104,3 @@ function removeCalledPupil(pupil: dto.Pupil) {
   }
 }
 </script>
-
-<style scoped lang="scss">
-  $padding-left: 20px;
-  $section-heading-font-size: 15px;
-
-  .all {
-    .settings {
-      flex-basis: 350px;
-    }
-    .departures {
-      flex-grow: 1;
-      ul {
-        list-style-type: none;
-        li {
-          display: flex;
-          justify-content: space-between;
-          padding: 0.5em 0.25em;
-
-          font-size: 20px;
-          background-color: red;
-          color: white;
-          border: 2px solid white;
-        }
-      }
-    }
-  }
-
-  // <TransitionGroup>
-  .departures-move,
-  .departures-enter-active,
-  .departures-leave-active {
-    transition: all 1s ease;
-  }
-  .departures-enter-from,
-  .departures-leave-to {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-  .departures-leave-active { position: absolute; }
-
-</style>

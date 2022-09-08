@@ -5,6 +5,7 @@ import vue from '@vitejs/plugin-vue'
 import * as fs from 'fs';
 import path from 'path';
 import { VitePWA } from "vite-plugin-pwa"
+import tailwindcss from 'tailwindcss'
 
 // https://vitejs.dev/config/
 export default defineConfig( ({ command, mode }) => {
@@ -21,7 +22,7 @@ export default defineConfig( ({ command, mode }) => {
   } : {}
 
   return {
-    plugins: [vue(), VitePWA({
+    plugins: [vue(), tailwindcss() as any, VitePWA({
       strategies: "injectManifest", // https://vite-plugin-pwa.netlify.app/guide/inject-manifest.html#custom-service-worker,
       injectRegister: null, //https://vite-plugin-pwa.netlify.app/guide/register-service-worker.html
       srcDir: 'src',

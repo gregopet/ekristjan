@@ -1,14 +1,17 @@
 <template>
-  <h5 class="classListHeader noClasses sectionHeading" v-if="selected.length == 0">Izberite razrede, katerih odhode spremljate</h5>
-  <h5 class="addClassesHeader sectionHeading" v-else>Spremljate odhode razredov</h5>
-  <p class="freeClassList">
-      <span v-for="cls in allClasses.sort()">
-        <span class="class" :class="{ selected: isSelected(cls) }" @click.prevent="toggleClass(cls)">
-          {{cls}}
+  <div>
+    <h5 class="text-lg text-center text-red-700" v-if="selected.length == 0">Izberite razrede, katerih odhode spremljate</h5>
+    <h5 class="text-xl text-center" v-else>Spremljate odhode razredov</h5>
+
+    <p class="text-2xl text-center space-x-8 mt-3">
+        <span v-for="cls in allClasses.sort()">
+          <span class="cursor-pointer opacity-50" :class="{ 'opacity-100 font-bold': isSelected(cls) }" @click.prevent="toggleClass(cls)">
+            {{cls}}
+          </span>
+          {{ '' }}
         </span>
-        {{ '' }}
-      </span>
-  </p>
+    </p>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -16,7 +19,6 @@
 /*
   Presents a list of all classes and allows users to toggle them, emitting changes.
  */
-
 import {classes} from "@/data";
 
 
@@ -44,42 +46,3 @@ function toggleClass(clazz: string) {
   emits('update:selected', newClasses)
 }
 </script>
-
-<style lang="scss" scoped>
-  $padding-left: 20px;
-
-  .sectionHeading {
-    font-size: 20px;
-    width: 100%;
-    padding: 0.5em 0 0 0;
-    text-align: center;
-
-    &.classListHeader {
-      &.noClasses {
-        color: #9b0101;
-        font-size: 18px;
-        padding: 0.5em;
-        text-align: center;
-      }
-    }
-  }
-  .freeClassList {
-    padding: 5px $padding-left;
-    line-height: 50px;
-    font-size: 24px;
-    text-align: center;
-
-    .class {
-      padding: 15px;
-      cursor: pointer;
-
-      opacity: 50%;
-      text-decoration: underline;
-      &.selected {
-        opacity: 100%;
-        font-weight: bold;
-        text-decoration: none;
-      }
-    }
-  }
-</style>

@@ -1,9 +1,9 @@
 import Classroom from "@/components/classroom/Classroom.vue";
 import DoorPickClass from "@/components/door/DoorPickClass.vue";
 import DoorPickPupil from "@/components/door/DoorPickPupil.vue";
-import Login from "@/components/Login.vue";
-import ResetPassword from "@/components/passwordReset/ResetPassword.vue";
-import RequestPasswordReset from "@/components/passwordReset/RequestPasswordReset.vue";
+import Login from "@/components/public/Login.vue";
+import ResetPassword from "@/components/public/passwordReset/Reset.vue";
+import RequestPasswordReset from "@/components/public/passwordReset/Request.vue";
 import LoggedInComponent from "@/components/LoggedInComponent.vue";
 import { createRouter, createWebHashHistory } from 'vue-router';
 import { loggedIn } from '@/main';

@@ -1,15 +1,15 @@
 <template>
-  <h5 class="addClassesHeader sectionHeading" v-if="selectedClasses.length">Prisotni</h5>
-  <ul class="classList">
-    <li v-for="pupil in presentPupils.sort(sorting)" :class="{ departed: pupil.departure, summoned: pupil.summon }">
+  <h5 class="text-xl pt-5 pl-5" v-if="selectedClasses.length">Prisotni</h5>
+  <ul class="px-5 pt-1">
+    <li v-for="pupil in presentPupils.sort(sorting)" :class="{ 'text-red-500': pupil.summon }" class="flex justify-between">
       <span>{{ pupil.pupil.name }}</span>
       <span>{{ formatSeconds(pupil.departurePlan.time) }}</span>
     </li>
   </ul>
 
-  <h5 class="addClassesHeader sectionHeading" v-if="selectedClasses.length">Odšli / odsotni</h5>
-  <ul class="classList">
-    <li v-for="pupil in departedPupils.sort(sorting)" :class="{ departed: pupil.departure, summoned: pupil.summon }">
+  <h5 class="text-xl pt-2 pl-5" v-if="selectedClasses.length">Odšli / odsotni</h5>
+  <ul class="px-5 pt-1">
+    <li v-for="pupil in departedPupils.sort(sorting)" :class="{ 'text-gray-500': pupil.departure }" class="flex justify-between">
       <span>{{ pupil.pupil.name }}</span>
       <span>{{ formatDate(pupil.departure.time) }}</span>
     </li>
@@ -53,28 +53,3 @@ const departedPupils = computed( ()=> {
 })
 
 </script>
-
-<style lang="scss" scoped>
-$padding-left: 20px;
-
-.sectionHeading {
-  font-size: 20px;
-  width: 100%;
-  padding: 0 0 0 $padding-left;
-  &:first-child {
-    padding-top: 0.5em;
-  }
-}
-
-.classList {
-  list-style-type: none;
-  padding: 0.5em $padding-left 1em $padding-left;
-
-  li {
-    display: flex;
-    justify-content: space-between;
-    &.summoned { color: #ff3f0e; }
-    &.departed { color: #7a828a; }
-  }
-}
-</style>

@@ -3,7 +3,7 @@ import router, {forceLoggedInLanding, forceLoginScreen, isOnProtectedRoute} from
 import RootComponent from '@/components/RootComponent.vue';
 import {isSendPupilEvent} from "@/dto";
 import { eventBus } from './events';
-import '@/assets/base.css';
+import '@/tailwind.css';
 import {Workbox} from "workbox-window";
 import {EVENT_LOGIN_FAILED, EVENT_LOGIN_SUCCESS} from "@/serviceworker/authorization";
 
