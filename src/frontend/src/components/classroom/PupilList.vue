@@ -1,7 +1,7 @@
 <template>
   <h5 class="text-xl pt-5 pl-5" v-if="selectedClasses.length">Prisotni</h5>
   <ul class="px-5 pt-1">
-    <li v-for="pupil in presentPupils.sort(sorting)" :class="{ 'text-red-500': pupil.summon }" class="flex justify-between">
+    <li v-for="pupil in presentPupils.sort(sorting)" @click="pupilWithDialog = pupil" :class="{ 'text-red-500': pupil.summon }" class="flex justify-between">
       <span>{{ pupil.pupil.name }}</span>
       <span class="flex items-center">
         <img src="../../assets/otrok.svg" title="Odide sam" v-if="pupil.leavesAlone" class="h-4 inline mr-1 opacity-75">
@@ -12,12 +12,15 @@
 
   <h5 class="text-xl pt-2 pl-5" v-if="selectedClasses.length">Odšli / odsotni</h5>
   <ul class="px-5 pt-1">
-    <li v-for="pupil in departedPupils.sort(sorting)" :class="{ 'text-gray-500': pupil.departure }" class="flex justify-between">
+    <li v-for="pupil in departedPupils.sort(sorting)" @click="pupilWithDialog = pupil" :class="{ 'text-gray-500': pupil.departure }" class="flex justify-between">
       <span>{{ pupil.pupil.name }}</span>
-      <span>{{ formatDate(pupil.departure.time) }}</span>
+      <span>
+        {{ formatDate(pupil.departure.time) }}
+      </span>
     </li>
   </ul>
 
+  <PupilDialog v-if="pupilWithDialog" :pupil="pupilWithDialog" @close="pupilWithDialog = null" />
 </template>
 
 <script lang="ts" setup>
@@ -26,6 +29,7 @@ import {pupils} from "@/data";
 import {format, parse} from "date-fns";
 import {date2Time, stripSeconds} from "@/formatters";
 import {useInterval} from "@vueuse/core";
+import PupilDialog from "@/components/classroom/PupilDialog.vue";
 
 const props = defineProps<{
   selectedClasses: string[],
@@ -33,6 +37,8 @@ const props = defineProps<{
 
 const formatSeconds = stripSeconds;
 const formatDate = date2Time;
+
+const pupilWithDialog = ref<dto.DailyDeparture | null>(null)
 
 /** Defines the sort order of pupils */
 const sorting = ref((pup1: dto.DailyDeparture, pup2: dto.DailyDeparture) => {
