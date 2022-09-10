@@ -12,3 +12,8 @@ export function date2Time(dateTime: string | dto.OffsetDateTime | null) {
     const time = DateTime.fromISO(dateTime as string);
     return time.toFormat("H:mm");
 }
+
+/** Takes the given local time and gets today's date at that local time */
+export function localTimeToday(time: string | dto.LocalTime): Date {
+    return DateTime.fromSQL(time as string).toJSDate()
+}
