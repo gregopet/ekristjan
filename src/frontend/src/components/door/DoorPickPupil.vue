@@ -4,8 +4,16 @@
 
     <h5 class="text-xl p-5">Izberi učenca iz {{ selectedClass }}</h5>
     <ul class="p-5 space-y-5">
-      <li v-for="departure in sortPupils(shownPupils)">
+      <li v-for="departure in sortPupils(shownPupils)" :class="{'text-gray-600': departure.departure}" class="flex justify-between">
         <a href="#" @click.prevent="sendPupil(departure.pupil)">{{ departure.pupil.name }}</a>
+        <span v-if="departure.departure">
+          <span v-if="departure.departure.entireDay">
+            (odsotnost cel dan)
+          </span>
+          <span v-else>
+            (šel/šla ob {{ formatTime(departure.departure.time) }})
+          </span>
+        </span>
       </li>
     </ul>
   </LoggedInLayout>
@@ -18,7 +26,10 @@ import {pupilsFromClass} from "@/data";
 import Header from '../Header.vue';
 import {useFetch} from "@vueuse/core";
 import LoggedInLayout from '../LoggedInLayout.vue';
+import {date2Time} from "@/formatters";
 
+
+const formatTime = date2Time;
 
 const props = defineProps({
   selectedClass: {
