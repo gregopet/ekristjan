@@ -26,7 +26,6 @@
 <script lang="ts" setup>
 import {computed, ref, watch} from "vue";
 import {pupils} from "@/data";
-import {format, parse} from "date-fns";
 import {date2Time, stripSeconds} from "@/formatters";
 import {useInterval} from "@vueuse/core";
 import PupilDialog from "@/components/classroom/PupilDialog.vue";

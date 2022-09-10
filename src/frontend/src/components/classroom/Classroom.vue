@@ -8,7 +8,6 @@
 import { onMounted, ref, watch} from "vue";
 import { pupilsFromClass } from "../../data";
 import { eventBus } from '../../events';
-import { format } from 'date-fns';
 import { type Palette, ColorChoice } from "@/components/palette";
 import notificationSound from '../../assets/message-ringtone-magic.mp3';
 import { notification } from "../../swInterop";
@@ -19,7 +18,6 @@ import ClassPicker from './ClassPicker.vue';
 import PupilList from './PupilList.vue';
 import Header from '../Header.vue';
 
-
 const fromClass = pupilsFromClass
 
 onMounted(() => {
@@ -27,12 +25,6 @@ onMounted(() => {
     callPupil(ev as dto.Pupil);
   })
 })
-
-// Formatting
-function formatDate(date: Date) {
-  return format(date, "H.mm");
-}
-
 
 // Class selection
 const selectedClasses = ref<string[]>([]);
