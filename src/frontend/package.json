@@ -5,7 +5,8 @@
     "serve": "vite --port 3000 --host",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vue-tsc --noEmit && vite build && vite preview --port 3000",
-    "typecheck": "vue-tsc --noEmit"
+    "typecheck": "vue-tsc --noEmit",
+    "test": "vitest"
   },
   "dependencies": {
     "@types/sockjs-client": "^1.5.1",
@@ -33,6 +34,7 @@
     "typescript": "~4.6.3",
     "vite": "^3.0.9",
     "vite-plugin-pwa": "^0.12.3",
+    "vitest": "^0.23.2",
     "vue-tsc": "^0.34.7",
     "workbox-build": "^6.5.4",
     "workbox-window": "^6.5.4"
