@@ -45,7 +45,7 @@
 </template>
 <script lang="ts" setup>
 
-import {date2Time, stripSeconds} from "@/formatters";
+import {date2Time, stripSeconds} from "@/dateAndTime";
 
 const formatDate = date2Time;
 const formatTime = stripSeconds;

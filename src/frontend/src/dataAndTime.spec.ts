@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import {stripSeconds, date2Time, localTimeToday} from "@/formatters";
+import {stripSeconds, date2Time, localTimeToday} from "@/dateAndTime";
 import {DateTime} from "luxon";
 
 test("StripSeconds", () => {

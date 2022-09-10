@@ -12,7 +12,7 @@
 
 import {pupils} from "@/data";
 import {computed} from "vue";
-import {date2Time} from "@/formatters";
+import {date2Time} from "@/dateAndTime";
 
 const formatDate = date2Time;
 

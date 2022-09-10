@@ -26,7 +26,7 @@ import {pupilsFromClass} from "@/data";
 import Header from '../Header.vue';
 import {useFetch} from "@vueuse/core";
 import LoggedInLayout from '../LoggedInLayout.vue';
-import {date2Time} from "@/formatters";
+import {date2Time} from "@/dateAndTime";
 
 
 const formatTime = date2Time;
