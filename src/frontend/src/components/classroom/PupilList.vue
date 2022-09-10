@@ -3,7 +3,10 @@
   <ul class="px-5 pt-1">
     <li v-for="pupil in presentPupils.sort(sorting)" :class="{ 'text-red-500': pupil.summon }" class="flex justify-between">
       <span>{{ pupil.pupil.name }}</span>
-      <span>{{ formatSeconds(pupil.departurePlan.time) }}</span>
+      <span class="flex items-center">
+        <img src="../../assets/otrok.svg" title="Odide sam" v-if="pupil.leavesAlone" class="h-4 inline mr-1 opacity-75">
+        {{ formatSeconds(pupil.departurePlan.time) }}
+      </span>
     </li>
   </ul>
 
