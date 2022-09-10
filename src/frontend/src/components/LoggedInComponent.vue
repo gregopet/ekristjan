@@ -51,9 +51,38 @@ async function fetchPupils() {
   if (resp.ok) {
     error.value = false
     const newPupils = await resp.json() as dto.DailyDeparture[];
-    pupils.splice(0, pupils.length,...newPupils)
+    mergePupils(newPupils);
   }
   error.value = !resp.ok
+}
+
+/** Overwrites properties of existing pupils so their properties update even when injected into a dialogue or somewhere */
+function mergePupils(newPupils: dto.DailyDeparture[]) {
+  // remove non-existant & update existing
+  let pos = 0
+  while (pos < pupils.length) {
+    const newVersion = newPupils.find(pup => pup.pupil.id === pupils[pos].pupil.id);
+    if (newVersion) {
+      // Iterating through all properties could theoretically work, but we'd miss if any property became undefined
+      // in the new state
+      pupils[pos].pupil = newVersion.pupil
+      pupils[pos].departure = newVersion.departure
+      pupils[pos].leavesAlone = newVersion.leavesAlone
+      pupils[pos].day = newVersion.day
+      pupils[pos].departurePlan = newVersion.departurePlan
+      pupils[pos].summon = newVersion.summon
+      pos++
+    } else {
+      newPupils.splice(pos, 1)
+    }
+  }
+
+  // insert new ones
+  newPupils.forEach( (newPup) => {
+    if (!pupils.some(oldPup => oldPup.pupil.id === newPup.pupil.id)) {
+      pupils.push(newPup);
+    }
+  })
 }
 
 
