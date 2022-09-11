@@ -1,16 +1,39 @@
 <template>
-  <h5 class="text-xl pt-5 pl-5" v-if="selectedClasses.length">Prisotni</h5>
+
+  <div class="bg-red-50 pb-5">
+    <h5 class="text-2xl pt-3 pl-5" v-if="scheduledOrSummonedPupils.length">
+      Morajo oditi
+    </h5>
+    <ul class="px-5 pt-2">
+      <li v-for="pupil in scheduledOrSummonedPupils.sort(departureSorting)" :key="leavingPupilUIKey(pupil)" @click="pupilWithDialog = pupil" class="
+        flex justify-between text-xl
+        animate-[bounce_1s_ease-in-out_3]
+      ">
+        <span>{{ pupil.pupil.name }}</span>
+        <span class="flex items-center">
+          <img src="../../assets/otrok.svg" title="Odide sam" v-if="leavesAlone(pupil)" class="h-4 inline mr-1 opacity-75">
+          {{ scheduledOrSummonedTime(pupil) }}
+        </span>
+      </li>
+    </ul>
+  </div>
+
+  <h5 class="text-xl pt-5 pl-5" v-if="selectedClasses.length">
+    Prisotni
+  </h5>
   <ul class="px-5 pt-1">
     <li v-for="pupil in presentPupils.sort(sorting)" @click="pupilWithDialog = pupil" :class="{ 'text-red-500': pupil.summon }" class="flex justify-between">
       <span>{{ pupil.pupil.name }}</span>
       <span class="flex items-center">
-        <img src="../../assets/otrok.svg" title="Odide sam" v-if="pupil.leavesAlone" class="h-4 inline mr-1 opacity-75">
+        <img src="../../assets/otrok.svg" title="Odide sam" v-if="leavesAlone(pupil)" class="h-4 inline mr-1 opacity-75">
         {{ formatSeconds(pupil.departurePlan.time) }}
       </span>
     </li>
   </ul>
 
-  <h5 class="text-xl pt-2 pl-5" v-if="selectedClasses.length">Odšli / odsotni</h5>
+  <h5 class="text-xl pt-5 pl-5" v-if="departedPupils.length">
+    Odšli / odsotni
+  </h5>
   <ul class="px-5 pt-1">
     <li v-for="pupil in departedPupils.sort(sorting)" @click="pupilWithDialog = pupil" :class="{ 'text-gray-500': pupil.departure }" class="flex justify-between">
       <span>{{ pupil.pupil.name }}</span>
@@ -25,17 +48,26 @@
 
 <script lang="ts" setup>
 import {computed, ref, watch} from "vue";
-import {pupils} from "@/data";
-import {useInterval} from "@vueuse/core";
-import PupilDialog from "@/components/classroom/PupilDialog.vue";
+import {pupilDeparted, pupilIsSummoned, pupilLeavesAlone, pupilNeedsToDepart, pupils} from "@/data";
 import {date2Time, stripSeconds} from "@/dateAndTime";
+import PupilDialog from "@/components/classroom/PupilDialog.vue";
+const formatSeconds = stripSeconds;
+const formatDate = date2Time;
+const leavesAlone = pupilLeavesAlone
+
+/** Type safety cast of pupils that have a departure */
+interface DepartedPupil extends dto.DailyDeparture {
+  departure: dto.Departure;
+}
 
 const props = defineProps<{
   selectedClasses: string[],
 }>()
 
-const formatSeconds = stripSeconds;
-const formatDate = date2Time;
+/** Determines and formats the time displayed in the 'need to leave!' section */
+function scheduledOrSummonedTime(pupil: dto.DailyDeparture): string {
+  return formatDate(pupil.summon?.time || null) ?? formatSeconds(pupil.departurePlan.time)
+}
 
 const pupilWithDialog = ref<dto.DailyDeparture | null>(null)
 
@@ -44,20 +76,35 @@ const sorting = ref((pup1: dto.DailyDeparture, pup2: dto.DailyDeparture) => {
   return pup1.pupil.name.localeCompare(pup2.pupil.name)
 })
 
+/** Defines the sort order of pupils in the 'need to leave!' section. Sorts in reverse, so most recent entry is at top */
+const departureSorting = ref((pup1: dto.DailyDeparture, pup2: dto.DailyDeparture) => {
+  return scheduledOrSummonedTime(pup2).localeCompare(scheduledOrSummonedTime(pup1))
+})
+
+/** All the pupils we are even interested in */
 const watchedPupils = computed(() => {
   return pupils.filter( pup => props.selectedClasses.indexOf(pup.pupil.fromClass) >= 0)
 })
 
-interface DepartedPupil extends dto.DailyDeparture {
-  departure: dto.Departure;
-}
-
+/** All pupils still present and not summoned */
 const presentPupils = computed( ()=> {
-  return watchedPupils.value.filter(pup => !pup.departure)
+  return watchedPupils.value.filter(pup => !pupilDeparted(pup) && !pupilNeedsToDepart(pup) && !pupilIsSummoned(pup))
 })
 
+/** All pupils who have departed */
 const departedPupils = computed( ()=> {
-  return watchedPupils.value.filter(pup => pup.departure) as DepartedPupil[];
+  return watchedPupils.value.filter(pupilDeparted) as DepartedPupil[];
 })
 
+/** Pupils that were summoned or scheduled to depart */
+const scheduledOrSummonedPupils = computed(() => watchedPupils.value.filter( (pup) => pupilNeedsToDepart(pup) || pupilIsSummoned(pup)));
+
+/**
+ * A function that calculates Vue's tracking key for pupils that need to depart. When the most recent summon changes the
+ * element's key will change as well, recreating the element and restarting the animation.
+ */
+function leavingPupilUIKey(pup: dto.DailyDeparture): string {
+  if (pup?.summon) return `summon_${pup.summon.id}`;
+  else return '' + pup.pupil.id;
+}
 </script>
