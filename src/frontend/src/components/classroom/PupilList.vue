@@ -1,8 +1,9 @@
 <template>
 
   <div class="bg-red-50 pb-5" v-if="scheduledOrSummonedPupils.length">
-    <h5 class="text-2xl pt-3 pl-5">
-      Morajo oditi
+    <h5 class="text-2xl pt-3 px-5 flex justify-between items-center">
+      <span>Morajo oditi</span>
+      <span :style="{ 'background-color': statusColor }" class="h-5 w-5 rounded border-2 border-gray-400 transition-colors duration-[1s]"></span>
     </h5>
     <ul class="px-5 pt-2">
       <li v-for="pupil in scheduledOrSummonedPupils.sort(departureSorting)" :key="leavingPupilUIKey(pupil)" @click="pupilWithDialog = pupil" class="
@@ -52,6 +53,7 @@ import { pupils} from "@/data";
 import {pupilDeparted, pupilIsSummoned, pupilLeavesAlone, pupilNeedsToDepart} from "@/pupil";
 import {date2Time, stripSeconds} from "@/dateAndTime";
 import PupilDialog from "@/components/classroom/PupilDialog.vue";
+import SparkMD5 from "spark-md5";
 const formatSeconds = stripSeconds;
 const formatDate = date2Time;
 const leavesAlone = pupilLeavesAlone
@@ -108,4 +110,14 @@ function leavingPupilUIKey(pup: dto.DailyDeparture): string {
   if (pup?.summon) return `summon_${pup.summon.id}`;
   else return '' + pup.pupil.id;
 }
+
+/**
+ * Generates a random color to use for the current status of pupils waiting depart; the idea is to provide a visual
+ * cue that the state has changed (in addition to the 'wobbly' animation of newly added waiting students).
+ */
+const statusColor = computed(() => {
+  const base = scheduledOrSummonedPupils.value.map(leavingPupilUIKey).join()
+  const hash = SparkMD5.hash(base);
+  return "#" + hash.substring(0, 6);
+});
 </script>
