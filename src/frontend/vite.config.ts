@@ -54,9 +54,9 @@ export default defineConfig( ({ command, mode }) => {
     server: {
       ...httpsConfig,
       proxy: {
-        '/departures': { target: 'ws://127.0.0.1:8888/' },
-        '/security': { target: 'ws://127.0.0.1:8888/' },
-        '/sock': { target: 'ws://127.0.0.1:8888/', ws: true }
+        '/departures': { target: 'http://127.0.0.1:8888' },
+        '/security': { target: 'http://127.0.0.1:8888' },
+        '/sock': { target: 'ws://127.0.0.1:8888', ws: true }
       }
     },
   }
