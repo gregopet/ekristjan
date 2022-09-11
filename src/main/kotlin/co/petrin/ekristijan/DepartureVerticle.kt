@@ -6,7 +6,6 @@ import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.JWTAuthHandler
-import io.vertx.ext.web.handler.StaticHandler
 import nl.martijndwars.webpush.PushAsyncService
 import org.jooq.DSLContext
 import org.slf4j.LoggerFactory
@@ -15,6 +14,7 @@ import co.petrin.ekristijan.device.registrationHandler
 import co.petrin.ekristijan.departure.departureStateHandler
 import co.petrin.ekristijan.departure.summonAckHandler
 import co.petrin.ekristijan.departure.summonHandler
+import co.petrin.ekristijan.departure.departureHandler
 
 private val LOG = LoggerFactory.getLogger(DepartureVerticle::class.java)
 
@@ -36,6 +36,7 @@ class DepartureVerticle(val jooq: DSLContext, val jwtProvider: JWTAuth) : Config
     router.put("/push/subscribe").handler(BodyHandler.create()).coroutineHandler(::registrationHandler)
     router.post("/pupils/leave").handler(BodyHandler.create()).coroutineHandler(::summonHandler)
     router.post("/pupils/left").handler(BodyHandler.create()).coroutineHandler(::summonAckHandler)
+    router.post("/pupils/leftAlone").handler(BodyHandler.create()).coroutineHandler(::departureHandler)
     router.get("/pupils/:classes?").coroutineHandler { ctx ->
       departureStateHandler(ctx, ctx.pathParam("classes")?.split(",")?.toTypedArray())
     }

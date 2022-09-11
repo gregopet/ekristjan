@@ -1,6 +1,7 @@
 package co.petrin.ekristijan.dto
 
 import co.petrin.ekristijan.db.DailyDeparture
+import co.petrin.ekristijan.departure.DepartureHandlerCommand
 import co.petrin.ekristijan.dto.event.SendPupilEvent
 import co.petrin.ekristijan.security.LoginDTO
 import me.ntrrgc.tsGenerator.TypeScriptGenerator
@@ -21,6 +22,7 @@ fun main(args: Array<String>) {
             LoginDTO::class,
             DailyDeparture::class,
             LoginDTO::class,
+            DepartureHandlerCommand::class,
         )
     ).definitionsText
     val namespacedDefinition = listOf("namespace dto {", definitions, "}").joinToString("\n")

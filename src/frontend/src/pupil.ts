@@ -21,3 +21,31 @@ export function pupilNeedsToDepart(pupil: dto.DailyDeparture): boolean {
         pupilLeavesAlone(pupil) &&
         !!pupil.departurePlan.time && localTimeToday(pupil.departurePlan.time) > new Date();
 }
+
+/** Request that the pupil come to the door */
+export function requestPupilSummon(pupil: dto.Pupil): Request {
+    return new Request("/departures/pupils/leave", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(pupil),
+        credentials: "include",
+    })
+}
+
+/** Acknowledge that a pupil was sent to the door following a summon */
+export function requestPupilSummonAck(summonId: number): Request {
+    return new Request("/departures/pupils/left", {
+        method: 'POST',
+        body: JSON.stringify({summonId})
+    });
+}
+
+/** Assert that a pupil was sent to the door to leave alone */
+export function requestPupilLeaveAlone(departure: dto.DepartureHandlerCommand): Request {
+    return new Request("/departures/pupils/leftAlone", {
+        method: 'POST',
+        body: JSON.stringify(departure)
+    })
+}

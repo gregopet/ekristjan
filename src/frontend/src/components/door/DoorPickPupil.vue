@@ -27,6 +27,7 @@ import Header from '../Header.vue';
 import {useFetch} from "@vueuse/core";
 import LoggedInLayout from '../LoggedInLayout.vue';
 import {date2Time} from "@/dateAndTime";
+import {requestPupilSummon} from "@/pupil";
 
 
 const formatTime = date2Time;
@@ -57,15 +58,12 @@ const shownPupils = computed(() => {
 
 /** Sends notification that this pupil should come to the door */
 async function sendPupil(pupil: dto.Pupil) {
-  useFetch("/departures/pupils/leave", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(pupil),
-    credentials: "include",
-  })
-  router.go(-1);
+  const req = await fetch(requestPupilSummon(pupil))
+  if (req.ok) {
+    router.go(-1);
+  } else {
+    // TODO: let the caller know there was an error
+  }
 }
 
 </script>

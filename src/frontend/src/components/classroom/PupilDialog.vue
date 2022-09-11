@@ -35,8 +35,8 @@
           </div>
 
           <p class="text-center space-x-3 mb-3">
-            <button class="bg-blue-600 text-white rounded p-2 w-[150px]">Poslan/a domov</button>
-            <button class="bg-yellow-600 text-white rounded p-2 w-[150px]" @click="close">Zapri</button>
+            <button @click="sendHome" v-if="showSendHomeButton()" class="bg-blue-600 text-white rounded p-2 w-[150px]">Poslan/a domov</button>
+            <button @click="close" class="bg-yellow-600 text-white rounded p-2 w-[150px]">Zapri</button>
           </p>
         </div>
       </div>
@@ -46,6 +46,8 @@
 <script lang="ts" setup>
 
 import {date2Time, stripSeconds} from "@/dateAndTime";
+import {pupilDeparted, requestPupilLeaveAlone, requestPupilSummonAck} from "@/pupil";
+import {DateTime} from "luxon";
 
 const formatDate = date2Time;
 const formatTime = stripSeconds;
@@ -59,5 +61,23 @@ const props = defineProps<{
 
 function close() {
   emit('close');
+}
+
+
+function showSendHomeButton(): boolean {
+  console.log("So is departed?", props.pupil, pupilDeparted(props.pupil))
+  return !pupilDeparted(props.pupil);
+}
+
+async function sendHome() {
+  const req = props.pupil.summon ? requestPupilSummonAck(props.pupil.summon.id) : requestPupilLeaveAlone({
+    pupilId: props.pupil.pupil.id,
+    time: DateTime.now().toISO()
+  })
+  const reply = await fetch(req)
+  if (reply.ok) close();
+  else {
+    // TODO notify there was an exception
+  }
 }
 </script>

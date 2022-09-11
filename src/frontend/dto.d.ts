@@ -96,4 +96,9 @@ interface DailyDeparture {
     pupil: Pupil;
     summon: Summon | null;
 }
+
+interface DepartureHandlerCommand {
+    pupilId: number;
+    time: OffsetDateTime;
+}
 }

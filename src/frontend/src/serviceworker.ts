@@ -13,6 +13,7 @@ import {
     updateTokens
 } from "@/serviceworker/authorization";
 import {messageClients} from "@/serviceworker/messaging";
+import {requestPupilSummonAck} from "@/pupil";
 
 declare let self: ServiceWorkerGlobalScope
 
@@ -98,11 +99,8 @@ function acknowledgeSummon(notificationEvent: NotificationEvent) {
     // retry if fetch fails?
     if (loggedIn()) {
         console.log("Notifying: we have sent", data.name, "to the door")
-        const req = new Request("/departures/pupils/left", {
-            method: 'POST',
-            body: JSON.stringify({summonId: data.summonId})
-        })
-        authorizedFetch(req).then( resp => console.log("Got response with status code", resp.status))
+        authorizedFetch(requestPupilSummonAck(data.summonId))
+            .then( resp => console.log("Got response with status code", resp.status))
     } else {
         // nothing to do.. somebody logged out and then chose the user action?
         console.error("Could not notify pupil departure, we are not logged in!")

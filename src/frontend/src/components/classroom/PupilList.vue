@@ -1,7 +1,7 @@
 <template>
 
-  <div class="bg-red-50 pb-5">
-    <h5 class="text-2xl pt-3 pl-5" v-if="scheduledOrSummonedPupils.length">
+  <div class="bg-red-50 pb-5" v-if="scheduledOrSummonedPupils.length">
+    <h5 class="text-2xl pt-3 pl-5">
       Morajo oditi
     </h5>
     <ul class="px-5 pt-2">
