@@ -48,7 +48,8 @@
 
 <script lang="ts" setup>
 import {computed, ref, watch} from "vue";
-import {pupilDeparted, pupilIsSummoned, pupilLeavesAlone, pupilNeedsToDepart, pupils} from "@/data";
+import { pupils} from "@/data";
+import {pupilDeparted, pupilIsSummoned, pupilLeavesAlone, pupilNeedsToDepart} from "@/pupil";
 import {date2Time, stripSeconds} from "@/dateAndTime";
 import PupilDialog from "@/components/classroom/PupilDialog.vue";
 const formatSeconds = stripSeconds;
