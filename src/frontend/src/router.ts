@@ -30,8 +30,12 @@ const router = createRouter({
 router.beforeEach(async (to, from) => {
     // Users who are not logged in must first do so
     if (!to.meta.pub && !loggedIn.value) {
-        console.log("(PREVENTED) Navigation guard to", from)
+        console.log("(PREVENTED) Unauthorized user sent to login", from)
         return { name: 'login' }
+    }
+    else if (to.meta.pub && loggedIn) {
+        console.log("(PREVENTED) Authorized user forwarded to authenticated part", from)
+        return { name: 'landing' }
     }
 })
 
