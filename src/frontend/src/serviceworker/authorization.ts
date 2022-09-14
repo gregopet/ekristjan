@@ -1,5 +1,6 @@
 import {restoreTokens, storeTokens} from "@/serviceworker/credentialStore";
 import {messageClients} from "@/serviceworker/messaging";
+import {sendLog} from "@/diagnostics";
 
 
 /** Event fired when good credentials have been entered into the system */
@@ -60,6 +61,7 @@ export async function handleFetch(ev: FetchEvent) {
                     })
                 })
             } else {
+                sendLog("login", "debug", "Login NOT successful, got status code " + resp.status)
                 return resp;
             }
         }))
@@ -105,6 +107,7 @@ export async function authorizedFetch(req: Request): Promise<Response> {
         } else if (refreshTokenFetch.status === 401) {
             // something wrong, could not refresh token!
             // delete tokens (..though a grace period could be given?) and return original response
+            sendLog("login", "info", "Refresh token failed: " + refreshToken)
             mostRecentTokens = null;
             storeTokens(null);
             return messageClients(EVENT_LOGIN_FAILED).then ( () => {
@@ -112,6 +115,7 @@ export async function authorizedFetch(req: Request): Promise<Response> {
             })
         } else {
             // something else was wrong, huh.. well, just return original response?
+            sendLog("login", "warn", `Authorized request failed with code ${refreshTokenFetch.status}`)
             return accessTokenFetch;
         }
     }

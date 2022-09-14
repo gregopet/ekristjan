@@ -29,6 +29,7 @@ suspend fun SecurityVerticle.passwordResetRequest(ctx: RoutingContext, resetPath
         LOG.info("User with email ${cmd.email} was not found")
         ctx.response().setStatusCode(404).end()
     } else {
+        LOG.info("User with email ${cmd.email} wants to reset password, sending email with token")
         generatePasswordResetToken(cmd.email, RESET_TOKEN_EXPIRY_MINUTES, jwtProvider).also { token ->
             mailClient.sendMail(
                 createResetEmail(cmd.email, resetPathProvider(token))

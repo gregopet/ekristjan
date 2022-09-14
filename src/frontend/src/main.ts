@@ -6,6 +6,7 @@ import { eventBus } from './events';
 import '@/tailwind.css';
 import {Workbox} from "workbox-window";
 import {EVENT_LOGIN_FAILED, EVENT_LOGIN_SUCCESS} from "@/serviceworker/authorization";
+import {sendLog} from "@/diagnostics";
 
 /** Is the user currently logged in? */
 export const loggedIn = ref(false)
@@ -32,11 +33,13 @@ navigator.serviceWorker.onmessage = (ev) => {
     } else if (ev.data === EVENT_LOGIN_FAILED) {
         loggedIn.value = false;
         if (isOnProtectedRoute()) {
+            sendLog("login", "debug", "Login failed, sending to login page!")
             forceLoginScreen();
         }
     } else if (ev.data === EVENT_LOGIN_SUCCESS) {
         loggedIn.value = true;
         if (!isOnProtectedRoute()) {
+            sendLog("login", "debug", "Somebody logged us in, sending user to logged in page")
             forceLoggedInLanding(); // is this OK? Is there a valid thing they could be doing somewhere else while logged in?
         }
     } else {
