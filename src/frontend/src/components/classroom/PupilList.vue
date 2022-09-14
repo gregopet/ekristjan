@@ -2,7 +2,7 @@
 
   <div class="bg-red-50 pb-5" v-if="scheduledOrSummonedPupils.length">
     <h5 class="text-2xl pt-3 px-5 flex justify-between items-center">
-      <span>Morajo oditi</span>
+      <span>V odhodu</span>
       <span :style="{ 'background-color': statusColor }" class="h-5 w-5 rounded border-2 border-gray-400 transition-colors duration-[1s]"></span>
     </h5>
     <ul class="px-5 pt-2">

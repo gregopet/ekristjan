@@ -11,12 +11,12 @@
           <h1 class="mb-10">Kje sem?</h1>
 
           <h2 class="rounded bg-blue-600 w-[66%] text-blue-50 m-auto cursor-pointer">
-            <router-link :to="{ name: 'frontDoor' }" class="block">Na vratih</router-link>
+            <router-link :to="{ name: 'frontDoor' }" class="block">Vrata</router-link>
           </h2>
 
           <div>
             <h2 class="rounded bg-blue-600 w-[66%] text-blue-50 m-auto  cursor-pointer">
-              <router-link :to="{ name: 'classroom' }" class="block">V učilnici</router-link>
+              <router-link :to="{ name: 'classroom' }" class="block">Učilnica</router-link>
             </h2>
           </div>
           <div>
