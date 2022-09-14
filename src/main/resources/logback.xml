@@ -8,6 +8,7 @@
 
     <logger name="io.vertx" level="debug"/>
     <logger name="co.petrin" level="trace" />
+    <logger name="frontend" level="trace" />
     <logger name="org.jooq.tools.LoggerListener" level="info"/> <!-- Set to debug to log SQL execution -->
 
     <root level="info">

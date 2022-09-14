@@ -56,6 +56,7 @@ export default defineConfig( ({ command, mode }) => {
       proxy: {
         '/departures': { target: 'http://127.0.0.1:8888' },
         '/security': { target: 'http://127.0.0.1:8888' },
+        '/log': { target: 'http://127.0.0.1:8888' },
         '/sock': { target: 'ws://127.0.0.1:8888', ws: true }
       }
     },

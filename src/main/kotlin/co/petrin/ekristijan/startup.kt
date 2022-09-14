@@ -50,6 +50,7 @@ fun main(args: Array<String>) {
                 vertx.deployVerticle(verticle).await()
                 router.route("/security/*").subRouter(verticle.createSubrouter("/security"))
             }
+            router.route("/log/*").subRouter(registerFrontendLoggingRouter(vertx))
 
             vertx
                 .createHttpServer()
