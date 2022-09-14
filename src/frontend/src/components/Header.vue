@@ -1,7 +1,7 @@
 <template>
-  <header class="flex justify-center items-center w-full font-logo text-white blur-[0.5px] bg-[#2f3a35]">
+  <header class="flex justify-center items-center w-full font-logo text-background-beige bg-background-green">
     <router-link v-if="back" :to="back" class="absolute h-full left-0 ml-4 w-5"></router-link>
-    <h1 class="my-1 text-xl">eKristjan</h1>
+    <h1 class="my-1 text-xl tracking-wider">eKristjan</h1>
   </header>
 </template>
 

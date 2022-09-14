@@ -7,7 +7,10 @@ module.exports = {
   theme: {
     extend: {
         fontFamily: {
-            'logo': ['RubikMarkerHatch']
+            'logo': ['KgChasingPavements']
+        },
+        colors: {
+            'background-green': '#265b2b',
         }
     },
   },
