@@ -28,7 +28,7 @@
           </div>
         </div>
 
-          <button @click="login" type="button" class="mt-6 bg-blue-600 block w-full text-white p-2 rounded">Prijava</button>
+          <button @click="login" type="button" class="mt-6 bg-my-blue block w-full text-azure p-2 rounded">Prijava</button>
       </form>
   </PublicLayout>
 </template>

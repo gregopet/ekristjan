@@ -1,6 +1,6 @@
 <template>
   <LoggedInLayout>
-    <Header :back="{ name: 'landing'}"/>
+    <Header />
 
     <DoorSummonedPupils></DoorSummonedPupils>
 

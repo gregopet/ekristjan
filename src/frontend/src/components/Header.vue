@@ -1,7 +1,7 @@
 <template>
-  <header class="flex justify-center items-center w-full font-logo text-background-beige bg-background-green">
-    <router-link v-if="back" :to="back" class="absolute h-full left-0 ml-4 w-5"></router-link>
-    <h1 class="my-1 text-xl tracking-wider">eKristjan</h1>
+  <header class="flex justify-center items-center w-full font-logo text-background-beige bg-my-green relative p-1">
+    <router-link v-if="back" :to="back" class="arrow absolute h-full left-0 ml-4 w-5"></router-link>
+    <router-link :to="{name: 'landing'}" class="my-1 text-2xl tracking-wider text-white">eKristjan</router-link>
   </header>
 </template>
 
@@ -15,12 +15,11 @@ const props = defineProps({
     default: null,
   },
 })
-
 </script>
 
 <style lang="scss" scoped>
 header {
-  a {
+  a.arrow {
     background-size: 80%;
     background: url('../assets/Back_Arrow.svg') no-repeat center center;
   }

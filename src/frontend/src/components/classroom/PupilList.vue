@@ -26,7 +26,7 @@
     <li v-for="pupil in presentPupils.sort(sorting)" @click="pupilWithDialog = pupil" :class="{ 'text-red-500': pupil.summon }" class="flex justify-between">
       <span>{{ pupil.pupil.name }}</span>
       <span class="flex items-center">
-        <img src="../../assets/otrok.svg" title="Odide sam" v-if="leavesAlone(pupil)" class="h-4 inline mr-1 opacity-75">
+        <img v-if="leavesAlone(pupil)" src="../../assets/otrok.svg" title="Odide sam" class="h-4 inline mr-1 opacity-75">
         {{ formatSeconds(pupil.departurePlan.time) }}
       </span>
     </li>

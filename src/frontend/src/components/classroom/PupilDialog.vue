@@ -34,9 +34,9 @@
             </span>
           </div>
 
-          <p class="text-center space-x-3 mb-3">
-            <button @click="sendHome" v-if="showSendHomeButton()" class="bg-blue-600 text-white rounded p-2 w-[150px]">Poslan/a domov</button>
-            <button @click="close" class="bg-yellow-600 text-white rounded p-2 w-[150px]">Zapri</button>
+          <p class="text-center space-y-3 md:space-x-3 mb-3">
+            <button @click="sendHome" v-if="showSendHomeButton()" class="bg-my-blue text-white rounded p-2 w-[150px]">Poslan/a domov</button>
+            <button @click="close" class="bg-sandy text-white rounded p-2 w-[150px]">Zapri</button>
           </p>
         </div>
       </div>

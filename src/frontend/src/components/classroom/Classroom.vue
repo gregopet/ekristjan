@@ -1,5 +1,5 @@
 <template>
-  <Header :back="{ name: 'landing' }" />
+  <Header />
   <PupilList :selectedClasses="selectedClasses" />
   <ClassPicker v-model:selected="selectedClasses" class="mt-10" />
 </template>
