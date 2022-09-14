@@ -48,9 +48,9 @@ navigator.serviceWorker.onmessage = (ev) => {
 function determineLoginStatus() {
     console.debug("Asking the service worker what our login status is")
     wb.messageSW({ type: 'loginStatus' }).then(
-        (loginStatus) => {
+        (loginStatus: boolean) => {
             console.debug("Detected initial login state as", loginStatus);
-            loggedIn.value = loginStatus as boolean;
+            loggedIn.value = loginStatus;
             startApp(loginStatus);
         },
         (error) => {

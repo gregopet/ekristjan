@@ -72,7 +72,7 @@ function showSendHomeButton(): boolean {
 async function sendHome() {
   const req = props.pupil.summon ? requestPupilSummonAck(props.pupil.summon.id) : requestPupilLeaveAlone({
     pupilId: props.pupil.pupil.id,
-    time: DateTime.now().toISO()
+    time: (DateTime.now().toISO() as any) as dto.OffsetDateTime,
   })
   const reply = await fetch(req)
   if (reply.ok) close();
