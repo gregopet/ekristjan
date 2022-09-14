@@ -51,7 +51,7 @@ function determineLoginStatus() {
         (loginStatus) => {
             console.debug("Detected initial login state as", loginStatus);
             loggedIn.value = loginStatus as boolean;
-            startApp();
+            startApp(loginStatus);
         },
         (error) => {
             console.error("Error determining whether user is already logged in, aborting app startup", error)
@@ -65,10 +65,14 @@ export function logout() {
     wb.messageSW({ type: 'logout' })
 }
 
-function startApp() {
+function startApp(loggedIn: boolean) {
     const app = createApp(RootComponent)
     app.use(router)
     const rootContainer = document.getElementById("app");
     if (!rootContainer) console.error("Could not find root element to mount app on!")
     else app.mount(rootContainer);
+
+    if (loggedIn && router.currentRoute.value.params.pub) {
+        router.replace({ name: 'landing' })
+    }
 }

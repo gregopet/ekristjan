@@ -1,4 +1,4 @@
-import {storeTokens} from "@/serviceworker/credentialStore";
+import {restoreTokens, storeTokens} from "@/serviceworker/credentialStore";
 import {messageClients} from "@/serviceworker/messaging";
 
 
@@ -17,16 +17,29 @@ const noAuthRequired = ['/departures/push/key']
 /**
  * Current access & refresh tokens. All the users' tabs currently share the same session. They are also stored in
  * indexedDB in order to survive service worker upgrades.
+ *
+ * If the property is undefined, we need to check its value in the database.
  */
-let mostRecentTokens: undefined | dto.LoginDTO
+let mostRecentTokens: undefined | null | dto.LoginDTO = undefined;
 
 /** Do we currently have valid tokens? */
-export function loggedIn(): Boolean {
-    return mostRecentTokens !== undefined;
+export async function loggedIn(): Promise<Boolean> {
+    if (mostRecentTokens !== undefined) {
+        return mostRecentTokens !== null;
+    } else {
+        // WARN: there is no protection from multiple parts of code calling this at once during the period between
+        // the function invocation & promise being resolved. This is _probably_ not a problem as indexedDb query should
+        // be quick (there's no other data in there) and there shouldn't be any harm if it does happen.
+        return restoreTokens()
+        .then( tokens => {
+            mostRecentTokens = tokens;
+            return mostRecentTokens !== null;
+        })
+    }
 }
 
 /** Updates the authorization tokens, after a login for example */
-export function updateTokens(tokens: dto.LoginDTO | undefined) {
+export function updateTokens(tokens: dto.LoginDTO | null) {
     mostRecentTokens = tokens;
     storeTokens(tokens);
 }
@@ -54,7 +67,7 @@ export async function handleFetch(ev: FetchEvent) {
         authorizedPathPrefixes.filter(prefix => url.pathname.startsWith(prefix)).length &&
         !noAuthRequired.filter(path => url.pathname === path).length
     ) {
-        if (loggedIn()) {
+        if (await loggedIn()) {
             ev.respondWith(authorizedFetch(ev.request));
         }
     }
@@ -92,8 +105,8 @@ export async function authorizedFetch(req: Request): Promise<Response> {
         } else if (refreshTokenFetch.status === 401) {
             // something wrong, could not refresh token!
             // delete tokens (..though a grace period could be given?) and return original response
-            mostRecentTokens = undefined;
-            storeTokens(undefined);
+            mostRecentTokens = null;
+            storeTokens(null);
             return messageClients(EVENT_LOGIN_FAILED).then ( () => {
                 return accessTokenFetch;
             })

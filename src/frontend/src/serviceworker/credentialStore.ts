@@ -8,15 +8,15 @@ const STORE_NAME = "ekristjan";
 const TOKEN_KEY = "token" ;
 
 /** Stores tokens inside IndexedDB */
-export async function storeTokens(tokens: dto.LoginDTO | undefined) {
+export async function storeTokens(tokens: dto.LoginDTO | null) {
     const db = await getDatabase();
     db.put(STORE_NAME, tokens, TOKEN_KEY)
 }
 
 /** Retrieves any stored token from IndexedDB */
-export async function restoreTokens(): Promise<dto.LoginDTO | undefined> {
+export async function restoreTokens(): Promise<dto.LoginDTO | null> {
     const db = await getDatabase();
-    return db.get(STORE_NAME, TOKEN_KEY) as Promise<dto.LoginDTO | undefined>;
+    return db.get(STORE_NAME, TOKEN_KEY) as Promise<dto.LoginDTO | null>;
 }
 
 function getDatabase(): Promise<IDBPDatabase> {

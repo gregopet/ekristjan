@@ -36,17 +36,18 @@ self.onfetch = handleFetch;
  *      - get selected classes
  *      - log the user out
  */
-self.onmessage = (msg) => {
+self.onmessage = async (msg) => {
     if (msg.data?.type === 'notification') {
         const { title, options } = msg.data;
         self.registration.showNotification(title, options);
     }
     if (msg.data?.type === 'loginStatus') {
-        msg.ports[0].postMessage(loggedIn());
+        const loginStatus = await loggedIn()
+        msg.ports[0].postMessage(loginStatus);
     }
     if (msg.data?.type === 'logout') {
         console.log("Logging out")
-        updateTokens(undefined)
+        updateTokens(null)
         messageClients(EVENT_LOGIN_FAILED)
     }
 }
@@ -61,12 +62,12 @@ self.oninstall = async (ev) => {
 }
 
 /** Show push notifications that come via service worker  */
-self.onpush = (ev) => {
+self.onpush = async (ev) => {
     const notification = ev.data!.json() as dto.SendPupilEvent
     if (isSendPupilEvent(notification)) {
         let text: string
         let actions: NotificationAction[] = []
-        if (loggedIn()) {
+        if (await loggedIn()) {
             text = `${notification.name}, ${notification.fromClass}`
             actions.push({
                 action: SENT_TO_DOOR_ACTION,
@@ -93,11 +94,11 @@ self.onnotificationclick = ev => {
 }
 
 /** Handles the notification action where pupil summon was acknowledged */
-function acknowledgeSummon(notificationEvent: NotificationEvent) {
+async function acknowledgeSummon(notificationEvent: NotificationEvent) {
     const data = notificationEvent.notification.data as dto.SendPupilEvent
     notificationEvent.notification.close();
     // retry if fetch fails?
-    if (loggedIn()) {
+    if (await loggedIn()) {
         console.log("Notifying: we have sent", data.name, "to the door")
         authorizedFetch(requestPupilSummonAck(data.summonId))
             .then( resp => console.log("Got response with status code", resp.status))
