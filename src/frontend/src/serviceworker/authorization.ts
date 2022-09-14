@@ -30,8 +30,8 @@ export async function loggedIn(): Promise<Boolean> {
         // WARN: there is no protection from multiple parts of code calling this at once during the period between
         // the function invocation & promise being resolved. This is _probably_ not a problem as indexedDb query should
         // be quick (there's no other data in there) and there shouldn't be any harm if it does happen.
-        return restoreTokens()
-        .then( tokens => {
+        return restoreTokens().then( tokens => {
+            sendLog("login", "trace", "Restoring security tokens: " + JSON.stringify(tokens))
             mostRecentTokens = tokens;
             return mostRecentTokens !== null;
         })
