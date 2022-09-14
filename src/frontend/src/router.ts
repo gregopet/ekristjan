@@ -33,8 +33,8 @@ router.beforeEach(async (to, from) => {
         console.log("(PREVENTED) Unauthorized user sent to login", from)
         return { name: 'login' }
     }
-    else if (to.meta.pub && loggedIn) {
-        console.log("(PREVENTED) Authorized user forwarded to authenticated part", from)
+    else if (to.meta.pub && loggedIn.value) {
+        console.log("(FORWARDED) Authorized user forwarded to authenticated part", from)
         return { name: 'landing' }
     }
 })
