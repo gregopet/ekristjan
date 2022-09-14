@@ -19,7 +19,7 @@ export function pupilLeavesAlone(pupil: dto.DailyDeparture): boolean {
 export function pupilNeedsToDepart(pupil: dto.DailyDeparture): boolean {
     return !pupilDeparted(pupil) &&
         pupilLeavesAlone(pupil) &&
-        !!pupil.departurePlan.time && localTimeToday(pupil.departurePlan.time) > new Date();
+        !!pupil.departurePlan.time && localTimeToday(pupil.departurePlan.time) < new Date();
 }
 
 /** Request that the pupil come to the door */
