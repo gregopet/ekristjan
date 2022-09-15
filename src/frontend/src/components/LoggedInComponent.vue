@@ -4,31 +4,32 @@
       <div v-if="error" class="bg-red-500 text-red-50 p-4 text-xl fixed" style="text-shadow: 1px 1px #9b0101">
         Pozor: napaka pri komunikaciji, preverite povezavo!
       </div>
-      <div v-if="showSelector" class="h-screen flex flex-col justify-center">
+      <div v-if="showSelector" class="min-h-screen flex flex-col justify-center pt-8 pb-16">
         <h1 class="font-logo text-5xl text-center text-blue mb-5">eKristjan</h1>
 
-        <div class="text-xl space-y-8 pt-10 font-sans uppercase text-blue">
+        <div class="text-xl pt-10 font-sans uppercase text-blue">
           <router-link :to="{ name: 'classroom' }" class="rounded-r-[20px] w-[70%] m-auto cursor-pointer drop-shadow-lg flex justify-between items-stretch bg-gradient-to-r from-gray-100 to-white">
             <div class="block py-3 basis-[80%] text-right">Učilnica</div>
             <div class="w-3 basis-[30px] rounded-r-[20px] bg-gradient-to-r from-my-green to-my-green-light"> </div>
           </router-link>
 
-          <router-link :to="{ name: 'frontDoor' }" class="rounded-r-[20px] w-[70%] m-auto cursor-pointer drop-shadow-lg flex justify-between items-stretch bg-gradient-to-r from-gray-100 to-white">
+          <router-link :to="{ name: 'frontDoor' }" class="rounded-r-[20px] w-[70%] m-auto cursor-pointer drop-shadow-lg flex justify-between items-stretch bg-gradient-to-r from-gray-100 to-white mt-8">
             <div class="block py-3 basis-[80%] text-right">Vrata</div>
             <div class="w-3 basis-[30px] rounded-r-[20px] bg-gradient-to-r from-sandy to-sandy-light"> </div>
           </router-link>
 
-          <a class="rounded-r-[20px] w-[70%] m-auto cursor-pointer drop-shadow-lg flex justify-between items-stretch bg-gradient-to-r from-gray-100 to-white">
+          <a class="rounded-r-[20px] w-[70%] m-auto cursor-pointer drop-shadow-lg flex justify-between items-stretch bg-gradient-to-r from-gray-100 to-white mt-8">
             <div class="block py-3 basis-[80%] text-right">Pisarna</div>
             <div class="w-3 basis-[30px] rounded-r-[20px] bg-gradient-to-r from-my-blue to-my-blue-light"> </div>
           </a>
 
 
-          <a @click.prevent="logout" class="text-left rounded-l-[20px] w-[70%] m-auto cursor-pointer drop-shadow-lg bg-gray-100 flex justify-between items-stretch relative top-7">
+          <a @click.prevent="logout" class="text-left rounded-l-[20px] w-[70%] m-auto cursor-pointer drop-shadow-lg bg-gray-100 flex justify-between items-stretch mt-16">
             <div class="w-3 basis-[30px] rounded-l-[20px] bg-gradient-to-l from-red-600 to-red-200"> </div>
             <a href="#" class="block py-3 basis-[80%] text-left">Odjava</a>
           </a>
         </div>
+
       </div>
       <router-view></router-view>
     </main>
