@@ -1,5 +1,4 @@
 <template>
-  <LoggedInLayout>
     <Header />
 
     <DoorSummonedPupils></DoorSummonedPupils>
@@ -10,7 +9,6 @@
         <router-link :to="'/prijavljen/vrata/' + clazz">{{clazz}}</router-link>
       </li>
     </ul>
-  </LoggedInLayout>
 </template>
 
 <script setup lang="ts">

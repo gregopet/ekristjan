@@ -1,5 +1,4 @@
 <template>
-  <LoggedInLayout>
     <Header :back="{ name: 'frontDoor'}"/>
 
     <h5 class="text-xl p-5">Izberi učenca iz {{ selectedClass }}</h5>
@@ -16,7 +15,6 @@
         </span>
       </li>
     </ul>
-  </LoggedInLayout>
 </template>
 
 <script lang="ts" setup>

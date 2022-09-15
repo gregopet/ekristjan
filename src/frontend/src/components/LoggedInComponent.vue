@@ -1,5 +1,5 @@
 <template>
-  <LoggedInComponent>
+  <LoggedInLayout>
     <main>
       <div v-if="error" class="bg-red-500 text-red-50 p-4 text-xl fixed" style="text-shadow: 1px 1px #9b0101">
         Pozor: napaka pri komunikaciji, preverite povezavo!
@@ -29,11 +29,12 @@
             <a href="#" class="block py-3 basis-[80%] text-left">Odjava</a>
           </a>
         </div>
-
       </div>
-      <router-view></router-view>
+      <div v-else class="min-h-screen">
+        <router-view></router-view>
+      </div>
     </main>
-  </LoggedInComponent>
+  </LoggedInLayout>
 </template>
 
 <script lang="ts" setup>
@@ -43,7 +44,7 @@ import {pupils} from "@/data";
 import Header from "@/components/Header.vue";
 import {useInterval, useIntervalFn} from "@vueuse/core";
 import { logout as doLogout } from "@/main";
-import LoggedInComponent from './LoggedInLayout.vue';
+import LoggedInLayout from './LoggedInLayout.vue';
 
 const route = useRoute()
 const showSelector = computed(() => route.name === 'landing');
