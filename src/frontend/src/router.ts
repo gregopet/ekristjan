@@ -1,5 +1,5 @@
 import Classroom from "@/components/classroom/Classroom.vue";
-import DoorPickClass from "@/components/door/DoorPickClass.vue";
+import Door from "@/components/door/Door.vue";
 import DoorPickPupil from "@/components/door/DoorPickPupil.vue";
 import Login from "@/components/public/Login.vue";
 import ResetPassword from "@/components/public/passwordReset/Reset.vue";
@@ -17,7 +17,7 @@ const routes = [
     { path: '/ponastavi-geslo/:token', component: ResetPassword, name: 'resetPassword', meta: publicRouteMeta },
     { path: '/prijavljen', component: LoggedInComponent, name: 'landing', children: [
         { path: 'ucilnica', component: Classroom, name: 'classroom' },
-        { path: 'vrata', component: DoorPickClass, name: 'frontDoor' },
+        { path: 'vrata', component: Door, name: 'frontDoor' },
         { path: 'vrata/:selectedClass', component: DoorPickPupil, name: 'frontDoorWithClazz', props: true },
     ]},
 ]
