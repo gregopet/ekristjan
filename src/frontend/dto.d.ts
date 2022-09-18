@@ -101,4 +101,28 @@ interface DepartureHandlerCommand {
     pupilId: number;
     time: OffsetDateTime;
 }
+
+interface PupilLeaveDays {
+    friday: LocalTime | null;
+    monday: LocalTime | null;
+    thursday: LocalTime | null;
+    tuesday: LocalTime | null;
+    wednesday: LocalTime | null;
+}
+
+interface ExtraordinaryDeparture {
+    date: LocalDate;
+    leavesAlone: boolean | null;
+    remark: string | null;
+    time: LocalTime;
+}
+
+interface PupilDTO {
+    clazz: string;
+    departure: PupilLeaveDays;
+    id: number;
+    leavesAlone: boolean;
+    name: string;
+    plannedDepartures: ExtraordinaryDeparture[];
+}
 }

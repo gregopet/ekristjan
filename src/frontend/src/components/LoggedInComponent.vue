@@ -18,10 +18,10 @@
             <div class="w-3 basis-[30px] rounded-r-[20px] bg-gradient-to-r from-sandy to-sandy-light"> </div>
           </router-link>
 
-          <a class="rounded-r-[20px] w-[70%] m-auto cursor-pointer drop-shadow-lg flex justify-between items-stretch bg-gradient-to-r from-gray-100 to-white mt-8">
+          <router-link :to="{ name: 'office' }" class="rounded-r-[20px] w-[70%] m-auto cursor-pointer drop-shadow-lg flex justify-between items-stretch bg-gradient-to-r from-gray-100 to-white mt-8">
             <div class="block py-3 basis-[80%] text-right">Pisarna</div>
             <div class="w-3 basis-[30px] rounded-r-[20px] bg-gradient-to-r from-my-blue to-my-blue-light"> </div>
-          </a>
+          </router-link>
 
 
           <a @click.prevent="logout" class="text-left rounded-l-[20px] w-[70%] m-auto cursor-pointer drop-shadow-lg bg-gray-100 flex justify-between items-stretch mt-16">

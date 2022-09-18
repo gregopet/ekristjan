@@ -10,7 +10,7 @@ export const EVENT_LOGIN_FAILED = "LOGIN_BAD"
 export const EVENT_LOGIN_SUCCESS = "LOGIN_GOOD"
 
 /** Path prefixes for API paths that need authentication  */
-const authorizedPathPrefixes = ['/departures']
+const authorizedPathPrefixes = ['/departures', '/backoffice']
 
 /** Exceptions for API paths that need authentication */
 const noAuthRequired = ['/departures/push/key']
