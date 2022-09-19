@@ -12,7 +12,7 @@ private val LOG = LoggerFactory.getLogger("LoginVerticle.passwordResetHandler")
  * Resets a password if the correct token was provided.
  * Body: PasswordResetCommand
  * * Responses:
- * - 204: done, password was reset
+ * - 200: done, password was reset, respond with newly issued tokens (same as with login command)
  * - 401: bad password reset token
  * - 409: password token was already spent
  */
@@ -21,9 +21,11 @@ suspend fun SecurityVerticle.passwordResetHandler(ctx: RoutingContext) {
     val reset = decodePasswordResetFromUser(ctx.user())
     awaitBlocking {
         val hash = hashPassword(command.password, passEncoder)
-        if (PasswordQueries.passwordReset(reset.teacherEmail, hash, reset.uniqueIdentifier, jooq)) {
+        PasswordQueries.passwordReset(reset.teacherEmail, hash, reset.uniqueIdentifier, jooq)
+    }.let { success ->
+        if (success != null) {
             LOG.debug("Password reset successful for ${reset.teacherEmail}")
-            ctx.response().setStatusCode(204).end()
+            respondWithTokens(success, ctx)
         } else {
             LOG.info("Attempt to reuse password reset token: ${reset.teacherEmail} / ${reset.uniqueIdentifier}")
             ctx.response().setStatusCode(409).end()

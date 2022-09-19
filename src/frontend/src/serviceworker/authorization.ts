@@ -49,23 +49,10 @@ export async function handleFetch(ev: FetchEvent) {
     const url = new URL(ev.request.url)
     // TODO: add hostname verification for extra security
 
-    // In case of successful login, store tokens in service worker
-    if (ev.request.url.endsWith("/login")) {
-        const authReq = new Request(ev.request)
-        ev.respondWith(fetch(authReq).then( resp => {
-            if (resp.ok) {
-                return resp.json().then((login: dto.LoginDTO) => {
-                    updateTokens(login)
-                    return messageClients(EVENT_LOGIN_SUCCESS).then ( () => {
-                        return new Response(null, {})
-                    })
-                })
-            } else {
-                sendLog("login", "debug", "Login NOT successful, got status code " + resp.status)
-                return resp;
-            }
-        }))
-    } else if (
+    // In case of successful login or password reset, store tokens in service worker
+    if (ev.request.url.endsWith("/login")) { interceptLogin(ev) }
+    else if (ev.request.url.endsWith("/submit-password-reset")) { interceptPasswordReset(ev) }
+    else if (
         authorizedPathPrefixes.filter(prefix => url.pathname.startsWith(prefix)).length &&
         !noAuthRequired.filter(path => url.pathname === path).length
     ) {
@@ -119,4 +106,42 @@ export async function authorizedFetch(req: Request): Promise<Response> {
             return accessTokenFetch;
         }
     }
+}
+
+/** Intercept a login call & update security tokens if successful */
+function interceptLogin(ev: FetchEvent) {
+    const authReq = new Request(ev.request)
+    ev.respondWith(fetch(authReq).then( resp => {
+        if (resp.ok) {
+            return resp.json().then((login: dto.LoginDTO) => {
+                return installAccessTokens(login).then ( () => {
+                    return new Response(null, {})
+                })
+            })
+        } else {
+            sendLog("login", "debug", "Login NOT successful, got status code " + resp.status)
+            return resp;
+        }
+    }))
+}
+
+/** Intercept a successful password reset, store the tokens & log in with them */
+function interceptPasswordReset(ev: FetchEvent) {
+    ev.respondWith(fetch(ev.request).then(resp => {
+        if (resp.ok) {
+            return resp.json().then((login: dto.LoginDTO) => {
+                return installAccessTokens(login).then(() => {
+                    return new Response(null, {})
+                })
+            })
+        } else {
+            return resp;
+        }
+    }))
+}
+
+/** Store new login token in IndexedDB and let app know we're logged in now */
+function installAccessTokens(tokens: dto.LoginDTO): Promise<void> {
+    updateTokens(tokens);
+    return messageClients(EVENT_LOGIN_SUCCESS);
 }

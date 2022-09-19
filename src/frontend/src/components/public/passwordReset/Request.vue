@@ -26,7 +26,7 @@
               focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500
             ">
         </label>
-        <button type="button" @click="makeRequest" class="mt-8 bg-blue-600 block w-full text-white p-2 rounded">Pošlji zahtevek</button>
+        <button type="button" @click.prevent="makeRequest" class="mt-8 bg-blue-600 block w-full text-white p-2 rounded">Pošlji zahtevek</button>
       </form>
     </div>
   </PublicLayout>

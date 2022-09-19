@@ -47,9 +47,9 @@ object PasswordQueries {
     /**
      * Updates the teacher's password hash and resets the password fail counters.
      * @param resetUniqueIdentifier A blacklist - password reset will fail if this identifier is already in the user's list
-     * @return true if the reset was successful, false otherwise
+     * @return teacher record if successful, null otherwise
      */
-    fun passwordReset(teacherEmail: String, newPassHash: String, resetUniqueIdentifier: Long, trans: DSLContext): Boolean = with(TEACHER) {
+    fun passwordReset(teacherEmail: String, newPassHash: String, resetUniqueIdentifier: Long, trans: DSLContext): TeacherRecord? = with(TEACHER) {
         trans.update(TEACHER)
         .set(PASSWORD_HASH, newPassHash)
         .set(PASSWORD_LAST_ATTEMPT_COUNT, 0)
@@ -58,7 +58,7 @@ object PasswordQueries {
             EMAIL.eq(teacherEmail),
             not( `val`(resetUniqueIdentifier).eq(any(PASSWORD_USED_RESET_IDENTIFIERS)) ),
         )
-        .execute()
-        .let { it > 0 }
+        .returning()
+        .fetchOne()
     }
 }

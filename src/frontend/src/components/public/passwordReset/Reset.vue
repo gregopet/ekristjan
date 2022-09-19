@@ -37,7 +37,7 @@
           </label>
         </div>
 
-        <button @click="resetPassword" type="button" class="mt-6 bg-blue-600 block w-full text-white p-2 rounded">Ponastavi</button>
+        <button @click.prevent="resetPassword" type="button" class="mt-6 bg-blue-600 block w-full text-white p-2 rounded">Ponastavi</button>
 
       </form>
     </div>
