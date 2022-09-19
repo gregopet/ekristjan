@@ -3,7 +3,7 @@
     <h5 class="text-lg text-center text-red-700" v-if="selected.length == 0">Izberite razrede, katerih odhode spremljate</h5>
     <h5 class="text-xl text-center" v-else>Spremljate odhode razredov</h5>
 
-    <p class="text-2xl text-center space-x-8 mt-3">
+    <p class="text-2xl mt-3 flex flex-wrap gap-x-10 gap-y-4 justify-center">
         <span v-for="cls in allClasses.sort()">
           <span class="cursor-pointer opacity-50" :class="{ 'opacity-100 font-bold': isSelected(cls) }" @click.prevent="toggleClass(cls)">
             {{cls}}

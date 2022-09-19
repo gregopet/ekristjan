@@ -3,9 +3,9 @@
 
     <DoorSummonedPupils></DoorSummonedPupils>
 
-    <h5 class="text-xl pl-5">Pokliči učenca iz:</h5>
-    <ul class="block">
-      <li v-for="clazz in allClasses.sort()" class="inline-block p-4 text-2xl text-black pointer">
+    <h5 class="text-xl pl-5 pb-4">Pokliči učenca iz:</h5>
+    <ul class="flex flex-wrap gap-6 justify-center">
+      <li v-for="clazz in allClasses.sort()" class="text-2xl text-black pointer">
         <router-link :to="'/prijavljen/vrata/' + clazz">{{clazz}}</router-link>
       </li>
     </ul>
