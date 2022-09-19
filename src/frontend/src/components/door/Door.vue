@@ -4,7 +4,7 @@
     <DoorSummonedPupils></DoorSummonedPupils>
 
     <h5 class="text-xl pl-5 pb-4">Pokliči učenca iz:</h5>
-    <ul class="flex flex-wrap gap-6 justify-center">
+    <ul class="flex flex-wrap gap-6 justify-center px-5">
       <li v-for="clazz in allClasses.sort()" class="text-2xl text-black pointer">
         <router-link :to="'/prijavljen/vrata/' + clazz">{{clazz}}</router-link>
       </li>
