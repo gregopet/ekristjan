@@ -2,7 +2,10 @@
   <PublicLayout>
 
   <div v-if="resetSuccessful !== null">
-    <div v-if="resetSuccessful" class="text-lg">Geslo je bilo uspešno ponastavljeno!</div>
+    <div v-if="resetSuccessful" class="text-lg">
+      Geslo je bilo uspešno ponastavljeno!
+      Nadaljujete lahko <router-link :to="{ name: 'landing'}" class="text-blue-700 underline">tukaj</router-link>.
+    </div>
     <div v-else class="mb-5 p-2 bg-red-100 text-red-700 border-red-50 border">Pri ponastavitvi je prišlo do težav - prosimo, poizkusite znova!</div>
   </div>
   <div v-else>

@@ -61,9 +61,9 @@ class PasswordQueriesSpec : FreeSpec({
 
         "a password reset should not work with the same unique identifier twice" {
             val uniqueIdentifier = 2L
-            PasswordQueries.passwordReset(fixture.teacherEmail, "random", uniqueIdentifier, jooq) shouldBe true
-            PasswordQueries.passwordReset(fixture.teacherEmail, "random", uniqueIdentifier, jooq) shouldBe false
-            PasswordQueries.passwordReset(fixture.teacherEmail, "random", uniqueIdentifier + 1, jooq) shouldBe true
+            PasswordQueries.passwordReset(fixture.teacherEmail, "random", uniqueIdentifier, jooq) shouldNotBe null
+            PasswordQueries.passwordReset(fixture.teacherEmail, "random", uniqueIdentifier, jooq) shouldBe null
+            PasswordQueries.passwordReset(fixture.teacherEmail, "random", uniqueIdentifier + 1, jooq) shouldNotBe null
         }
 
     }

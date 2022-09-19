@@ -86,12 +86,19 @@ class SecuritySpec : FreeSpec({
                 greenmail.receivedMessages.size shouldBe 1
             }
             val pwdResetToken = extractTokenFromResetEmail(greenmail.receivedMessages.get(0))
+            pwdResetToken shouldNotBe null
+            pwdResetToken shouldNotBe ""
 
             "using the obtained token we can reset the password" - {
                 val pwdChange = client.post("/submit-password-reset").bearerTokenAuthentication(pwdResetToken).sendJson(
                     jsonObjectOf("password" to "very new password")
                 ).await()
-                pwdChange.statusCode() shouldBe 204
+                pwdChange.statusCode() shouldBe 200
+
+                "response should contain tokens so we can log the user right in" {
+                    pwdChange.bodyAsJsonObject().getString("accessToken") shouldNotBe null
+                    pwdChange.bodyAsJsonObject().getString("refreshToken") shouldNotBe null
+                }
 
                 "we can login using the new password" {
                     val login = client
@@ -118,7 +125,7 @@ private fun getPlaintextMailBody(msg: MimeMessage): String {
 // This test will start failing when we change the template, but we'll worry about it later (sorry, later self!!)
 private fun extractTokenFromResetEmail(msg: MimeMessage): String {
     val bodyText = getPlaintextMailBody(msg)
-    val tokenStartPos = "/submit-password-reset/".let { preToken ->
+    val tokenStartPos = "/ponastavi-geslo/".let { preToken ->
         bodyText.indexOf(preToken) + preToken.length
     }
     val tokenEndPos = bodyText.indexOfAny(startIndex = tokenStartPos, chars = charArrayOf(' ', '\r', '\n'))
