@@ -1,7 +1,7 @@
 <template>
   <LoggedInLayout>
     <main>
-      <div v-if="error" class="bg-red-500 text-red-50 p-4 text-xl fixed" style="text-shadow: 1px 1px #9b0101">
+      <div v-if="error" class="bg-red-500 text-red-50 p-4 text-xl fixed" style="text-shadow: 1px 1px #9b0101; z-index: 500">
         Pozor: napaka pri komunikaciji, preverite povezavo!
       </div>
       <div v-if="showSelector" class="min-h-screen flex flex-col justify-center pt-8 pb-16">
