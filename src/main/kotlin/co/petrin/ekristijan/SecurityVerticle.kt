@@ -77,3 +77,10 @@ class SecurityVerticle(val jooq: DSLContext, val jwtProvider: JWTAuth): Configur
     /** A body handler for small JSON payloads */
     private fun smallBodyHandler() = BodyHandler.create(false).setBodyLimit(1000)
 }
+
+
+fun handleAccessToken401(ctx: RoutingContext) {
+    val error = ctx.failure()?.cause?.message?.let { cause -> "error=\"${cause.replace("\"", "\\\"")}\"" } ?: ""
+    if (ctx.statusCode() == 401) ctx.response().setStatusCode(401).putHeader("WWW-Authenticate", "Bearer $error").end()
+    else ctx.next()
+}

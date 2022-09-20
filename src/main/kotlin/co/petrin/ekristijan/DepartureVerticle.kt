@@ -32,7 +32,7 @@ class DepartureVerticle(val jooq: DSLContext, val jwtProvider: JWTAuth) : Config
     router.get("/push/key").handler { ctx -> ctx.end(parsedConfig.vapid.publicKey) }
 
     // All requests below here need to be authenticated!
-    router.route().handler(JWTAuthHandler.create(jwtProvider).withScope(ACCESS_TOKEN_SCOPE))
+    router.route().handler(JWTAuthHandler.create(jwtProvider).withScope(ACCESS_TOKEN_SCOPE)).failureHandler(::handleAccessToken401)
     router.put("/push/subscribe").handler(BodyHandler.create()).coroutineHandler(::registrationHandler)
     router.post("/pupils/leave").handler(BodyHandler.create()).coroutineHandler(::summonHandler)
     router.post("/pupils/left").handler(BodyHandler.create()).coroutineHandler(::summonAckHandler)

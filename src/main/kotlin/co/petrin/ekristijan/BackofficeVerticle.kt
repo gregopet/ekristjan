@@ -22,7 +22,7 @@ class BackofficeVerticle(val jooq: DSLContext, val jwtProvider: JWTAuth) : Confi
      */
     fun createSubrouter(parentRoute: String): Router = Router.router(vertx).apply {
         // All requests below here need to be authenticated!
-        route().handler(JWTAuthHandler.create(jwtProvider).withScope(ACCESS_TOKEN_SCOPE))
+        route().handler(JWTAuthHandler.create(jwtProvider).withScope(ACCESS_TOKEN_SCOPE)).failureHandler(::handleAccessToken401)
         get("/pupils").blockingHandler(::getPupilsHandler)
     }
 
