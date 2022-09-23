@@ -24,15 +24,16 @@ typealias ResetUrlGenerator = (token: String) -> String
 suspend fun SecurityVerticle.passwordResetRequest(ctx: RoutingContext, resetPathProvider: ResetUrlGenerator) {
     // if users start complaining, a rate limiter or CAPTCHA might be in order
     val cmd = ctx.body().asJsonObject().mapTo(ResetPasswordRequestCommand::class.java)
+    val realEmail = awaitBlocking { PasswordQueries.emailExists(cmd.email.trim(), jooq) }
 
-    if (!awaitBlocking { PasswordQueries.emailExists(cmd.email, jooq) }) {
+    if (realEmail == null) {
         LOG.info("User with email ${cmd.email} was not found")
         ctx.response().setStatusCode(404).end()
     } else {
-        LOG.info("User with email ${cmd.email} wants to reset password, sending email with token")
-        generatePasswordResetToken(cmd.email, RESET_TOKEN_EXPIRY_MINUTES, jwtProvider).also { token ->
+        LOG.info("User with email $realEmail wants to reset password, sending email with token")
+        generatePasswordResetToken(realEmail, RESET_TOKEN_EXPIRY_MINUTES, jwtProvider).also { token ->
             mailClient.sendMail(
-                createResetEmail(cmd.email, resetPathProvider(token))
+                createResetEmail(realEmail, resetPathProvider(token))
             )
         }
         ctx.response().setStatusCode(204).end()

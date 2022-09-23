@@ -12,14 +12,15 @@ object PasswordQueries {
 
     /**
      * Detects whether an email exists in our database so we don't spam random people via our password reset form.
+     * Returns the email (in its canonical form, in case it were to differ in e.g. casing) or null if there was none
      */
-    fun emailExists(email: String, trans: DSLContext): Boolean =
-        trans.select(TEACHER.EMAIL).from(TEACHER).where(TEACHER.EMAIL.eq(email)).fetchOne() != null
+    fun emailExists(email: String, trans: DSLContext): String? =
+        trans.select(TEACHER.EMAIL).from(TEACHER).where(TEACHER.EMAIL.likeIgnoreCase(email)).fetchOne(TEACHER.EMAIL)
 
     /** Get a complete teacher record by their email */
     // will probably end up in another file
     fun findByEmail(email: String, trans: DSLContext): TeacherRecord? =
-        trans.selectFrom(TEACHER).where(TEACHER.EMAIL.eq(email)).fetchOne()
+        trans.selectFrom(TEACHER).where(TEACHER.EMAIL.likeIgnoreCase(email)).fetchOne()
 
     /**
      * Attempts to fetch a teacher row for login purposes.
@@ -39,7 +40,7 @@ object PasswordQueries {
         .update(TEACHER)
         .set(PASSWORD_LAST_ATTEMPT, windowCheck(sameWindow = PASSWORD_LAST_ATTEMPT, newWindow = time))
         .set(PASSWORD_LAST_ATTEMPT_COUNT, windowCheck(sameWindow = PASSWORD_LAST_ATTEMPT_COUNT.plus(1), newWindow = 1))
-        .where(EMAIL.eq(email))
+        .where(EMAIL.likeIgnoreCase(email))
         .returning()
         .fetchOne()
     }
@@ -55,7 +56,7 @@ object PasswordQueries {
         .set(PASSWORD_LAST_ATTEMPT_COUNT, 0)
         .set(PASSWORD_USED_RESET_IDENTIFIERS, PostgresDSL.arrayAppend(PASSWORD_USED_RESET_IDENTIFIERS, resetUniqueIdentifier))
         .where(
-            EMAIL.eq(teacherEmail),
+            EMAIL.likeIgnoreCase(teacherEmail),
             not( `val`(resetUniqueIdentifier).eq(any(PASSWORD_USED_RESET_IDENTIFIERS)) ),
         )
         .returning()

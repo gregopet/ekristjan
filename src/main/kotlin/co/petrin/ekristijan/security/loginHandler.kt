@@ -26,7 +26,7 @@ private val LOG = LoggerFactory.getLogger("LoginVerticle.loginHandler")
  */
 suspend fun SecurityVerticle.loginHandler(ctx: RoutingContext) {
     val loginCommand = ctx.body().asJsonObject().mapTo(LoginCommand::class.java)
-    val user = awaitBlocking { PasswordQueries.passwordAttempt(loginCommand.email, LOGIN_ATTEMPT_DURATION_MINUTES, OffsetDateTime.now(), jooq) }
+    val user = awaitBlocking { PasswordQueries.passwordAttempt(loginCommand.email.trim(), LOGIN_ATTEMPT_DURATION_MINUTES, OffsetDateTime.now(), jooq) }
 
     when {
         user == null -> {
