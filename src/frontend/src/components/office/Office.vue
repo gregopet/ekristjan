@@ -11,7 +11,7 @@
       <thead>
         <tr>
           <th>Ime</th>
-          <th class="text-center">Razred</th>
+          <th class="text-center">Skupina</th>
           <th colspan="6" class="text-center">Redni odhodi</th>
           <th class="text-center">Izredni odhodi</th>
         </tr>

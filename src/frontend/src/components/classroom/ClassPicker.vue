@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h5 class="text-lg text-center text-red-700" v-if="selected.length == 0">Izberite razrede, katerih odhode spremljate</h5>
-    <h5 class="text-xl text-center" v-else>Spremljate odhode razredov</h5>
+    <h5 class="text-lg text-center text-red-700" v-if="selected.length == 0">Izberite skupine, katerih odhode spremljate</h5>
+    <h5 class="text-xl text-center" v-else>Spremljate odhode skupin</h5>
 
     <p class="text-2xl mt-3 flex flex-wrap gap-x-10 gap-y-4 justify-center">
         <span v-for="cls in allClasses.sort()">
