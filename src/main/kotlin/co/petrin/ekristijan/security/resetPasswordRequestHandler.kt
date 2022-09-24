@@ -36,7 +36,9 @@ suspend fun SecurityVerticle.passwordResetRequest(ctx: RoutingContext, resetPath
                 LOG.debug("Reset link for email $realEmail is $resetLink")
                 mailClient.sendMail(
                     createResetEmail(realEmail, resetLink)
-                )
+                ).onFailure { th ->
+                    LOG.error("Error sending password reset mail to $realEmail", th)
+                }
             }
         }
         ctx.response().setStatusCode(204).end()
