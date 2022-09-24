@@ -7,7 +7,6 @@ import io.vertx.ext.web.RoutingContext
 import io.vertx.kotlin.coroutines.awaitBlocking
 import org.slf4j.LoggerFactory
 
-private val RESET_TOKEN_EXPIRY_MINUTES = 300
 private val LOG = LoggerFactory.getLogger("LoginVerticle.passwordResetRequest")
 
 typealias ResetUrlGenerator = (token: String) -> String
@@ -31,7 +30,7 @@ suspend fun SecurityVerticle.passwordResetRequest(ctx: RoutingContext, resetPath
         ctx.response().setStatusCode(404).end()
     } else {
         LOG.info("User with email $realEmail wants to reset password, sending email with token")
-        generatePasswordResetToken(realEmail, RESET_TOKEN_EXPIRY_MINUTES, jwtProvider).also { token ->
+        generatePasswordResetToken(realEmail, configuration.refreshTokenExpiryInMinutes, jwtProvider).also { token ->
             resetPathProvider(token).let { resetLink ->
                 LOG.debug("Reset link for email $realEmail is $resetLink")
                 mailClient.sendMail(

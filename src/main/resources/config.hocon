@@ -23,5 +23,6 @@
         password = "password"
         fromAddress = "ekristjan@example.org"
         startTLS = false
-    }
+    },
+    refreshTokenExpiry = "PT300M"
 }

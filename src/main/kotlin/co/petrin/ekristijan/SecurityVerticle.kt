@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 import org.jooq.DSLContext
 import org.slf4j.LoggerFactory
 import si.razum.vertx.config.ConfigurableCoroutineVerticle
+import java.time.Duration
 
 private val LOG = LoggerFactory.getLogger(SecurityVerticle::class.java)
 
@@ -55,6 +56,7 @@ class SecurityVerticle(val jooq: DSLContext, val jwtProvider: JWTAuth): Configur
         conf.mapTo(Config::class.java).also { parsed ->
             configuration = parsed
             mailClient = constructEmailClient(parsed.smtp)
+            LOG.info("Password reset tokens will be valid for ${configuration.refreshTokenExpiry}")
         }
 
     }

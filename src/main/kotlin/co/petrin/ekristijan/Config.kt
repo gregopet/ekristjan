@@ -1,9 +1,9 @@
 package co.petrin.ekristijan
 
-import co.petrin.ekristijan.dto.Pupil
 import co.petrin.ekristijan.email.SmtpConfig
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import si.razum.vertx.db.DbConfig
+import kotlin.time.Duration
 
 /**
  * @property port The port on which the API will be listening
@@ -12,6 +12,7 @@ import si.razum.vertx.db.DbConfig
  * @property db The database connection properties
  * @property jwtSymetricPassword The password used for JWT encryption
  * @property smtpConfig The password sending configuration
+ * @property refreshTokenExpiry How long is the refresh token valid for, in ISO 8601 format
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Config(
@@ -22,4 +23,7 @@ data class Config(
     val jwtSymetricPassword: String,
     val db: DbConfig,
     val smtp: SmtpConfig,
-)
+    val refreshTokenExpiry: String,
+) {
+    val refreshTokenExpiryInMinutes = Duration.parse(refreshTokenExpiry).inWholeMinutes.toInt()
+}
