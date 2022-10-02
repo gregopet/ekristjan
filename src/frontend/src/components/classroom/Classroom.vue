@@ -62,7 +62,8 @@ function callPupil(pupil: dto.Pupil) {
       color: colors.nextColor(),
       random: Math.random(),
     });
-    if (("Notification" in window) && Notification.permission === "granted") {
+    audioHapticFeedback();
+    /*if (("Notification" in window) && Notification.permission === "granted") {
       const title = `${pupil.name} - ${pupil.fromClass}`
       notification(title, {
         icon: logo,
@@ -71,15 +72,17 @@ function callPupil(pupil: dto.Pupil) {
         body: "odhod domov",
         silent: false,
       })
-    } else {
-      const audio = new Audio(notificationSound);
-      audio.play();
-      if (window.navigator?.vibrate) {
-        window.navigator.vibrate(600);
-      }
-    }
+    }*/
   } else {
     console.log("Pupil not from this class")
+  }
+}
+
+function audioHapticFeedback() {
+  const audio = new Audio(notificationSound);
+  audio.play();
+  if (window.navigator?.vibrate) {
+    window.navigator.vibrate(600);
   }
 }
 
