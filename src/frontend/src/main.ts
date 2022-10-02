@@ -11,8 +11,14 @@ import {sendLog} from "@/diagnostics";
 /** Is the user currently logged in? */
 export const loggedIn = ref(false)
 
-/** Install the service worker */
-const wb = new Workbox('/serviceworker.js');
+/*
+ * Install the service worker manually
+ * https://vite-plugin-pwa.netlify.app/guide/development.html
+ */
+const sWorkerLocation = import.meta.env.MODE === "production" ? '/serviceworker.js' : '/dev-sw.js?dev-sw';
+const sWorkerOptions = import.meta.env.MODE === "production" ? {} : { type: 'module' };
+console.log("Service worker ", sWorkerLocation, "with options", sWorkerOptions);
+const wb = new Workbox(sWorkerLocation, sWorkerOptions);
 wb.register().then(determineLoginStatus);
 
 // Recover after hard refreshes (they prevent the service worker from registering)

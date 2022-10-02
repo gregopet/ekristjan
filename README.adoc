@@ -43,8 +43,6 @@ Za delovanje HTTPS povezave je potreben veljaven certifikat, pridobljen z https:
 
 Da bo podatkovna povezava med večimi instancami frontenda delovala, mora biti prižgan tudi zaledni strežnik. Če želite uporabiti zunanji, že delujoči zaledni strežnik, lahko njegov naslov vpišete v datoteko `vite.config.ts` (ključ `server.proxy./sock.target`).
 
-WARNING: aplikacija deluje tudi s pomočjo service workerjev, ki jih trenutni build sistem ne zna izgraditi istočasno z ostalo aplikacijo. Dokler se to ne uredi, morate aplikacijo zagnati z ukazom `yarn preview` in jo odpreti v brskalniku - takrat se bo service worker namestil, vi pa lahko aplikacijo naprej normalno zaganjate z `yarn serve`, kjer je razvoj bistveno hitrejši. Da vam ne bo nagajal cache, lahko še v datoteki `vite.config.ts` disablate PWA plugin - glejte komentarje v tej datoteki.
-
 ==== Pošiljanje email sporočil
 
 Priložena docker-compose datoteka vsebuje testni mail strežnik, do katerega lahko (po zagonu) dostopate preko naslova http://localhost:6080/

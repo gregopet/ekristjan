@@ -31,7 +31,6 @@ export default defineConfig( ({ command, mode }) => {
       devOptions: {
         enabled: true,
       },
-      mode: "development",
       manifest: {
         name: "e-kristijan",
         short_name: 'e-kristijan',
