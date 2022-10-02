@@ -65,7 +65,6 @@ function close() {
 
 
 function showSendHomeButton(): boolean {
-  console.log("So is departed?", props.pupil, pupilDeparted(props.pupil))
   return !pupilDeparted(props.pupil);
 }
 
