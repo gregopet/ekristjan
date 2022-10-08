@@ -13,7 +13,6 @@ object BackofficeQueries {
      * A little experiment: make the DB output JSON directly
      */
     fun allPupils(schoolId: Int, jooq: DSLContext) = with(PUPIL) {
-
         val plannedDepartures = field(select(
             jsonArrayAgg(
                 jsonObject(
@@ -52,4 +51,12 @@ object BackofficeQueries {
         .groupBy()
         .fetchOne()!!
     }
+
+    /** Gets the record of a pupil by ID if the pupil belongs to the given school */
+    fun getPupil(pupilId: Int, schoolId: Int, jooq: DSLContext) =
+        jooq.selectFrom(PUPIL).where(
+            PUPIL.PUPIL_ID.eq(pupilId),
+            PUPIL.SCHOOL_ID.eq(schoolId)
+        )
+        .fetchOne()
 }

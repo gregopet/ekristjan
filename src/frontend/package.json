@@ -24,6 +24,7 @@
     "spark-md5": "^3.0.2",
     "vue": "^3.2.33",
     "vue-router": "4",
+    "vue-toastification": "^2.0.0-rc.5",
     "workbox-core": "^6.5.3",
     "workbox-precaching": "^6.5.3"
   },

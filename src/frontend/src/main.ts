@@ -7,6 +7,9 @@ import '@/tailwind.css';
 import {Workbox} from "workbox-window";
 import {EVENT_LOGIN_FAILED, EVENT_LOGIN_SUCCESS} from "@/serviceworker/authorization";
 import {sendLog} from "@/diagnostics";
+import Toast from "vue-toastification";
+import type {ToastOptions} from "vue-toastification/dist/types/types";
+import "vue-toastification/dist/index.css";
 
 /** Is the user currently logged in? */
 export const loggedIn = ref(false)
@@ -77,6 +80,7 @@ export function logout() {
 function startApp(loggedIn: boolean) {
     const app = createApp(RootComponent)
     app.use(router)
+    registerToastPlugin(app);
     const rootContainer = document.getElementById("app");
     if (!rootContainer) console.error("Could not find root element to mount app on!")
     else app.mount(rootContainer);
@@ -84,4 +88,11 @@ function startApp(loggedIn: boolean) {
     if (loggedIn && router.currentRoute.value.params.pub) {
         router.replace({ name: 'landing' })
     }
+}
+
+function registerToastPlugin(app: any) {
+    const options: ToastOptions = {
+        toastClassName: "toasty"
+    };
+    app.use(Toast, options);
 }

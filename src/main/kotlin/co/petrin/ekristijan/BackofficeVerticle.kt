@@ -9,6 +9,8 @@ import org.jooq.DSLContext
 import org.slf4j.LoggerFactory
 import si.razum.vertx.config.ConfigurableCoroutineVerticle
 import co.petrin.ekristijan.backoffice.getPupilsHandler
+import co.petrin.ekristijan.backoffice.updatePupilHandler
+import io.vertx.ext.web.handler.BodyHandler
 
 private val LOG = LoggerFactory.getLogger(BackofficeVerticle::class.java)
 
@@ -24,6 +26,7 @@ class BackofficeVerticle(val jooq: DSLContext, val jwtProvider: JWTAuth) : Confi
         // All requests below here need to be authenticated!
         route().handler(JWTAuthHandler.create(jwtProvider).withScope(ACCESS_TOKEN_SCOPE)).failureHandler(::handleAccessToken401)
         get("/pupils").blockingHandler(::getPupilsHandler)
+        post("/pupil").handler(BodyHandler.create()).blockingHandler(::updatePupilHandler)
     }
 
     override suspend fun readConfiguration(conf: JsonObject, forceStatusOutput: Boolean) {
