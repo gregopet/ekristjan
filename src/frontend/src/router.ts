@@ -3,6 +3,8 @@ import Door from "@/components/door/Door.vue";
 import DoorPickPupil from "@/components/door/DoorPickPupil.vue";
 import Login from "@/components/public/Login.vue";
 import Office from "@/components/office/Office.vue";
+import OfficePupils from "@/components/office/Pupils.vue";
+import OfficeTeachers from "@/components/office/Teachers.vue";
 import ResetPassword from "@/components/public/passwordReset/Reset.vue";
 import RequestPasswordReset from "@/components/public/passwordReset/Request.vue";
 import LoggedInComponent from "@/components/LoggedInComponent.vue";
@@ -20,7 +22,10 @@ const routes = [
         { path: 'ucilnica', component: Classroom, name: 'classroom' },
         { path: 'vrata', component: Door, name: 'frontDoor' },
         { path: 'vrata/:selectedClass', component: DoorPickPupil, name: 'frontDoorWithClazz', props: true },
-        { path: 'pisarna', component: Office, name: 'office' },
+        { path: 'pisarna', component: Office, name: 'office', children: [
+                { path: 'ucenci', component: OfficePupils, name: 'officePupils' },
+                { path: 'ucitelji', component: OfficeTeachers, name: 'officeTeachers' }
+        ] },
     ]},
 ]
 
