@@ -114,7 +114,9 @@ const sorting = ref((pup1: dto.PupilDTO, pup2: dto.PupilDTO) => {
 // Dialog interaction
 const pupilDialog = ref<dto.PupilDTO | null>(null)
 const pupilHighlighted = ref<dto.PupilDTO | null>(null)
-const allGroups = computed(() => new Set(data.value!.map( (pup: dto.PupilDTO) => pup.clazz)));
+const allGroups = computed(() => uniqueArray(
+    data.value!.map( (pup: dto.PupilDTO) => pup.clazz) as string[]
+));
 
 function newPupil() {
   pupilClicked({
@@ -145,5 +147,10 @@ function pupilUpdated(pupil: dto.PupilDTO) {
     data.value!.push(pupil);
   }
   pupilHighlighted.value = pupil;
+}
+
+/** Leaves only unique elements in the array */
+function uniqueArray<T>(input: Array<T>): Array<T> {
+  return Array.from(new Set(input));
 }
 </script>
