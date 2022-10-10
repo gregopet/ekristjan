@@ -137,12 +137,16 @@ object DepartureQueries {
     fun acknowledgePupilSummonAndRecordDeparture(summonId: Int, teacherId: Int, departure: OffsetDateTime, trans: DSLContext): Boolean {
         // Puzzle suggestion: this could probably be achieved in a single query :)
 
+        val callingTeacher = TEACHER.`as`("calling_teacher");
         val summonRecord = trans.select(SUMMON.PUPIL_ID, SUMMON_ACK.TIME)
             .from(SUMMON)
+            .join(TEACHER).using(SUMMON.TEACHER_ID)
             .leftJoin(SUMMON_ACK).using(SUMMON.SUMMON_ID)
             .where(
                 SUMMON.SUMMON_ID.eq(summonId),
-                SUMMON.TEACHER_ID.eq(teacherId)
+                TEACHER.SCHOOL_ID.eq(
+                    select(callingTeacher.SCHOOL_ID).from(callingTeacher).where(callingTeacher.TEACHER_ID.eq(teacherId))
+                )
             ).fetchOne()
 
         if (summonRecord == null) {

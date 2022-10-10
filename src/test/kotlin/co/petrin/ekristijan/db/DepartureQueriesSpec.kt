@@ -100,4 +100,12 @@ class DepartureQueriesTest : FreeSpec({
             }
         }
     }
+
+    "Teachers can acknowledge pupil departures as long as they are from the same school" {
+        val fifteenHours = thursday.atStartOfDay(fixture.timezone).toOffsetDateTime().plusHours(15)
+        val summonId = DepartureQueries.summonPupil(fixture.janaId, fixture.teacher.id, fifteenHours, jooq)
+        preconditions { summonId != null }
+
+        DepartureQueries.acknowledgePupilSummonAndRecordDeparture(summonId!!, fixture.teacher2.id, fifteenHours.plusMinutes(10), jooq) shouldBe true
+    }
 })

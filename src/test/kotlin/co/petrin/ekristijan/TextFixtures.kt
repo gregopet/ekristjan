@@ -29,6 +29,9 @@ object TextFixtures {
     val timezone = ZoneId.of("Europe/Ljubljana")
 
     val teacher = FixtureTeacher(id = 1, email = "ucitelj@example.org", password = "test", name = "Učiteljica Majda")
+
+    /** A teacher from the same school as "teacher" */
+    val teacher2 = FixtureTeacher(id = 2, email = "uciteljjoze@example.org", password = "test", name = "Učitelj Jože")
 }
 
 data class FixtureTeacher(val id: Int, val email: String, val password: String, val name: String)
