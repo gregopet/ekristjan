@@ -11,5 +11,6 @@ val testConfig = Config(
     vapid = Vapid(subject = "test@example.org", publicKey = "publicKey", privateKey = "privateKey"),
     jwtSymetricPassword = "trla baba lan",
     db = DbConfig(host = "localhost", port = 2345, database = "ekristjan", user = "ekristjan", password = "ekristjan" ),
-    smtp = SmtpConfig(host = "localhost", port = 25, username = "username", password = "password", fromAddress = "test@example.org", startTLS = false)
+    smtp = SmtpConfig(host = "localhost", port = 25, username = "username", password = "password", fromAddress = "test@example.org", startTLS = false),
+    refreshTokenExpiry = "PT2H",
 )
