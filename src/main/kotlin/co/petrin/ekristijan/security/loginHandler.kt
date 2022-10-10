@@ -11,7 +11,6 @@ import java.time.OffsetDateTime
 private val LOGIN_ATTEMPT_DURATION_MINUTES = 1
 private val LOGIN_PASSWORD_ATTEMPTS_MAX = 5
 private val ACCESS_TOKEN_EXPIRY_MINUTES = 2
-private val REFRESH_TOKEN_EXPIRY_DAYS = 5
 private val LOG = LoggerFactory.getLogger("LoginVerticle.loginHandler")
 
 /**
@@ -60,7 +59,7 @@ suspend fun SecurityVerticle.respondWithTokens(teacher: TeacherRecord, ctx: Rout
     awaitBlocking {
         val accessToken = generateAccessToken(teacher, ACCESS_TOKEN_EXPIRY_MINUTES, jwtProvider)
         val refreshToken =
-            generateNewRefreshToken(teacher.email, REFRESH_TOKEN_EXPIRY_DAYS, jwtProvider)
+            generateNewRefreshToken(teacher.email, configuration.refreshTokenExpiryInMinutes, jwtProvider)
         ctx.json(LoginDTO(accessToken, refreshToken))
     }
 }

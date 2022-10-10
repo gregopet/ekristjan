@@ -21,10 +21,10 @@ val REFRESH_TOKEN_SCOPE = "refresh-token"
 /**
  * Generates a new refresh token using the teacher's email address.
  */
-fun generateNewRefreshToken(teacherEmail: String, expirationInDays: Int, jwt: JWTAuth): String {
+fun generateNewRefreshToken(teacherEmail: String, expirationInMinutes: Int, jwt: JWTAuth): String {
     val props = jwtOptionsOf(
         subject = teacherEmail,
-        expiresInMinutes = expirationInDays * 1440,
+        expiresInMinutes = expirationInMinutes,
     )
     return jwt.generateToken(jsonObjectOf(
         "scope" to REFRESH_TOKEN_SCOPE
