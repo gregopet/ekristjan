@@ -18,15 +18,15 @@ class PasswordQueriesSpec : FreeSpec({
     val jooq = ConnectionPool.wrapWithJooq(postgres.openConnection(), true)
 
     fun refreshTeacher() =
-        jooq.selectFrom(TEACHER).where(TEACHER.TEACHER_ID.eq(fixture.teacherId)).fetchOne()!!
+        jooq.selectFrom(TEACHER).where(TEACHER.TEACHER_ID.eq(fixture.teacher.id)).fetchOne()!!
 
     "A teacher making 3 password attempts" - {
         val attemptAt = OffsetDateTime.of(LocalDate.now(), LocalTime.of(8, 0), fixture.timezone.rules.getOffset(Instant.now()))
         val attemptMinutes = 10
 
-        PasswordQueries.passwordAttempt(fixture.teacherEmail, attemptMinutes, attemptAt.plusSeconds(0), jooq)
-        PasswordQueries.passwordAttempt(fixture.teacherEmail, attemptMinutes, attemptAt.plusSeconds(20), jooq)
-        PasswordQueries.passwordAttempt(fixture.teacherEmail, attemptMinutes, attemptAt.plusSeconds(30), jooq)
+        PasswordQueries.passwordAttempt(fixture.teacher.email, attemptMinutes, attemptAt.plusSeconds(0), jooq)
+        PasswordQueries.passwordAttempt(fixture.teacher.email, attemptMinutes, attemptAt.plusSeconds(20), jooq)
+        PasswordQueries.passwordAttempt(fixture.teacher.email, attemptMinutes, attemptAt.plusSeconds(30), jooq)
 
         "successive attempts should be recorded" {
             refreshTeacher().apply {
@@ -37,7 +37,7 @@ class PasswordQueriesSpec : FreeSpec({
 
         "an attempt at a later time should reset the timer" {
             val dayAfter = attemptAt.plusDays(1)
-            PasswordQueries.passwordAttempt(fixture.teacherEmail, attemptMinutes, dayAfter, jooq)
+            PasswordQueries.passwordAttempt(fixture.teacher.email, attemptMinutes, dayAfter, jooq)
             refreshTeacher().apply {
                 passwordLastAttemptCount shouldBe 1
                 passwordLastAttempt shouldBe dayAfter
@@ -52,7 +52,7 @@ class PasswordQueriesSpec : FreeSpec({
                 }
             }
 
-            PasswordQueries.passwordReset(fixture.teacherEmail, "hash", 1L, jooq)
+            PasswordQueries.passwordReset(fixture.teacher.email, "hash", 1L, jooq)
             refreshTeacher().apply {
                 passwordLastAttemptCount shouldBe 0
                 passwordHash shouldBe "hash"
@@ -61,9 +61,9 @@ class PasswordQueriesSpec : FreeSpec({
 
         "a password reset should not work with the same unique identifier twice" {
             val uniqueIdentifier = 2L
-            PasswordQueries.passwordReset(fixture.teacherEmail, "random", uniqueIdentifier, jooq) shouldNotBe null
-            PasswordQueries.passwordReset(fixture.teacherEmail, "random", uniqueIdentifier, jooq) shouldBe null
-            PasswordQueries.passwordReset(fixture.teacherEmail, "random", uniqueIdentifier + 1, jooq) shouldNotBe null
+            PasswordQueries.passwordReset(fixture.teacher.email, "random", uniqueIdentifier, jooq) shouldNotBe null
+            PasswordQueries.passwordReset(fixture.teacher.email, "random", uniqueIdentifier, jooq) shouldBe null
+            PasswordQueries.passwordReset(fixture.teacher.email, "random", uniqueIdentifier + 1, jooq) shouldNotBe null
         }
 
     }

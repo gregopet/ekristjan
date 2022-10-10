@@ -52,7 +52,7 @@ class SecuritySpec : FreeSpec({
         "accepts valid logins and issues access & refresh tokens for them" - {
             val login = client
             .post("/login")
-            .sendJson(LoginCommand(fixture.teacherEmail, fixture.teacherPassword))
+            .sendJson(LoginCommand(fixture.teacher.email, fixture.teacher.password))
             .await()
 
             login.statusCode() shouldBe 200
@@ -79,7 +79,7 @@ class SecuritySpec : FreeSpec({
         }
 
         "allows a password reset request to be made" - {
-            client.post("/request-password-reset").sendJson(ResetPasswordRequestCommand(fixture.teacherEmail)).await().also {
+            client.post("/request-password-reset").sendJson(ResetPasswordRequestCommand(fixture.teacher.email)).await().also {
                 it.statusCode() shouldBe 204
             }
             eventually {
@@ -103,7 +103,7 @@ class SecuritySpec : FreeSpec({
                 "we can login using the new password" {
                     val login = client
                         .post("/login")
-                        .sendJson(LoginCommand(fixture.teacherEmail, "very new password"))
+                        .sendJson(LoginCommand(fixture.teacher.email, "very new password"))
                         .await()
 
                     login.statusCode() shouldBe 200

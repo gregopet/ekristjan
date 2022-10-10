@@ -53,7 +53,7 @@ class DepartureQueriesTest : FreeSpec({
         }
 
         val atFourteenHours = wednesday.atStartOfDay(fixture.timezone).toOffsetDateTime().plusHours(14)
-        DepartureQueries.recordDeparture(fixture.klemenId, fixture.teacherId, atFourteenHours, false, null, jooq) shouldBe true
+        DepartureQueries.recordDeparture(fixture.klemenId, fixture.teacher.id, atFourteenHours, false, null, jooq) shouldBe true
         departureFor(fixture.klemenId, wednesday)!!.apply {
             departure shouldNotBe null
             departure!!.time shouldBe atFourteenHours
@@ -68,13 +68,13 @@ class DepartureQueriesTest : FreeSpec({
 
     "Anita has been summoned to the door on thursday" - {
         val fifteenHours = thursday.atStartOfDay(fixture.timezone).toOffsetDateTime().plusHours(15)
-        DepartureQueries.summonPupil(fixture.anitaId, fixture.teacherId, fifteenHours, jooq)
+        DepartureQueries.summonPupil(fixture.anitaId, fixture.teacher.id, fifteenHours, jooq)
 
         "The daily summary contains the summon for pupils that were called" {
             departureFor(fixture.gasperId, thursday)!!.apply { summon shouldBe null }
             departureFor(fixture.anitaId, thursday)!!.apply {
                 summon shouldNotBe null
-                summon!!.teacherName shouldBe fixture.teacherName
+                summon!!.teacherName shouldBe fixture.teacher.name
             }
         }
 
@@ -92,7 +92,7 @@ class DepartureQueriesTest : FreeSpec({
 
             val tenPastFifteen = fifteenHours.plusMinutes(10)
             val id = departureFor(fixture.anitaId, thursday)!!.summon!!.id
-            DepartureQueries.acknowledgePupilSummonAndRecordDeparture(id, fixture.teacherId, tenPastFifteen, jooq)
+            DepartureQueries.acknowledgePupilSummonAndRecordDeparture(id, fixture.teacher.id, tenPastFifteen, jooq)
             departureFor(fixture.anitaId, thursday)!!.apply {
                 summon shouldNotBe null
                 departure shouldNotBe null
