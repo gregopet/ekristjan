@@ -82,7 +82,7 @@ class DepartureQueriesTest : FreeSpec({
             departureFor(fixture.anitaId, friday)!!.apply { summon shouldBe null }
         }
 
-        "The summon can be acknowleded, thereby recording a departure as well" {
+        "The summon can be acknowledged, thereby recording a departure as well" {
             preconditions {
                 departureFor(fixture.anitaId, thursday)!!.apply {
                     summon shouldNotBe null
