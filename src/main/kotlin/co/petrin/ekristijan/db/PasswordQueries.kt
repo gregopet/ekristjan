@@ -47,17 +47,19 @@ object PasswordQueries {
 
     /**
      * Updates the teacher's password hash and resets the password fail counters.
-     * @param resetUniqueIdentifier A blacklist - password reset will fail if this identifier is already in the user's list
+     * @param resetGeneration The generation of this password reset - if the reset succeeds, this & all older
+     *                        generations of resets will stop working. This prevents token reuse and users abusing
+     *                        misplaced tokens.
      * @return teacher record if successful, null otherwise
      */
-    fun passwordReset(teacherEmail: String, newPassHash: String, resetUniqueIdentifier: Long, trans: DSLContext): TeacherRecord? = with(TEACHER) {
+    fun passwordReset(teacherEmail: String, newPassHash: String, resetGeneration: Int, trans: DSLContext): TeacherRecord? = with(TEACHER) {
         trans.update(TEACHER)
         .set(PASSWORD_HASH, newPassHash)
         .set(PASSWORD_LAST_ATTEMPT_COUNT, 0)
-        .set(PASSWORD_USED_RESET_IDENTIFIERS, PostgresDSL.arrayAppend(PASSWORD_USED_RESET_IDENTIFIERS, resetUniqueIdentifier))
+        .set(PASSWORD_RESET_GENERATION, resetGeneration + 1)
         .where(
             EMAIL.likeIgnoreCase(teacherEmail),
-            not( `val`(resetUniqueIdentifier).eq(any(PASSWORD_USED_RESET_IDENTIFIERS)) ),
+            PASSWORD_RESET_GENERATION.le(resetGeneration),
         )
         .returning()
         .fetchOne()

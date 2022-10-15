@@ -44,7 +44,7 @@ class PasswordQueriesSpec : FreeSpec({
             }
         }
 
-        "a password reset should update the hash & reset the fail timer" {
+        "a password reset should update the hash, reset the fail timer and increment the pw reset generation" {
             preconditions {
                 refreshTeacher().apply {
                     passwordLastAttemptCount shouldBeGreaterThan 0
@@ -52,18 +52,18 @@ class PasswordQueriesSpec : FreeSpec({
                 }
             }
 
-            PasswordQueries.passwordReset(fixture.teacher.email, "hash", 1L, jooq)
+            PasswordQueries.passwordReset(fixture.teacher.email, "hash", 1, jooq)
             refreshTeacher().apply {
                 passwordLastAttemptCount shouldBe 0
                 passwordHash shouldBe "hash"
+                passwordResetGeneration shouldBe 2
             }
         }
 
-        "a password reset should not work with the same unique identifier twice" {
-            val uniqueIdentifier = 2L
-            PasswordQueries.passwordReset(fixture.teacher.email, "random", uniqueIdentifier, jooq) shouldNotBe null
-            PasswordQueries.passwordReset(fixture.teacher.email, "random", uniqueIdentifier, jooq) shouldBe null
-            PasswordQueries.passwordReset(fixture.teacher.email, "random", uniqueIdentifier + 1, jooq) shouldNotBe null
+        "only one password reset of a generation work" {
+            PasswordQueries.passwordReset(fixture.teacher.email, "random", 2, jooq) shouldNotBe null
+            PasswordQueries.passwordReset(fixture.teacher.email, "random", 2, jooq) shouldBe null
+            PasswordQueries.passwordReset(fixture.teacher.email, "random", 3, jooq) shouldNotBe null
         }
 
     }

@@ -23,20 +23,20 @@ typealias ResetUrlGenerator = (token: String) -> String
 suspend fun SecurityVerticle.passwordResetRequest(ctx: RoutingContext, resetPathProvider: ResetUrlGenerator) {
     // if users start complaining, a rate limiter or CAPTCHA might be in order
     val cmd = ctx.body().asJsonObject().mapTo(ResetPasswordRequestCommand::class.java)
-    val realEmail = awaitBlocking { PasswordQueries.emailExists(cmd.email.trim(), jooq) }
+    val user = awaitBlocking { PasswordQueries.findByEmail(cmd.email.trim(), jooq) }
 
-    if (realEmail == null) {
+    if (user == null) {
         LOG.info("User with email ${cmd.email} was not found")
         ctx.response().setStatusCode(404).end()
     } else {
-        LOG.info("User with email $realEmail wants to reset password, sending email with token")
-        generatePasswordResetToken(realEmail, configuration.refreshTokenExpiryInMinutes, jwtProvider).also { token ->
+        LOG.info("User with email $user wants to reset password, sending email with token")
+        generatePasswordResetToken(user.email, user.passwordResetGeneration, configuration.refreshTokenExpiryInMinutes, jwtProvider).also { token ->
             resetPathProvider(token).let { resetLink ->
-                LOG.debug("Reset link for email $realEmail is $resetLink")
+                LOG.debug("Reset link for email $user is $resetLink")
                 mailClient.sendMail(
-                    createResetEmail(realEmail, resetLink)
+                    createResetEmail(user.email, resetLink)
                 ).onFailure { th ->
-                    LOG.error("Error sending password reset mail to $realEmail", th)
+                    LOG.error("Error sending password reset mail to $user", th)
                 }
             }
         }

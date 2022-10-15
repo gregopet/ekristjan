@@ -98,10 +98,11 @@ public class Teacher extends TableImpl<TeacherRecord> {
     public final TableField<TeacherRecord, Integer> PASSWORD_LAST_ATTEMPT_COUNT = createField(DSL.name("password_last_attempt_count"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.field("0", SQLDataType.INTEGER)), this, "Number of times wrong password was entered in current attempt timeframe (the timeframe's length is application defined)");
 
     /**
-     * The column <code>public.teacher.password_used_reset_identifiers</code>.
-     * Contains identifiers of user password reset tokens
+     * The column <code>public.teacher.password_reset_generation</code>. A
+     * counter on the current generation of password resets (no older
+     * generations are valid)
      */
-    public final TableField<TeacherRecord, Long[]> PASSWORD_USED_RESET_IDENTIFIERS = createField(DSL.name("password_used_reset_identifiers"), SQLDataType.BIGINT.getArrayDataType(), this, "Contains identifiers of user password reset tokens");
+    public final TableField<TeacherRecord, Integer> PASSWORD_RESET_GENERATION = createField(DSL.name("password_reset_generation"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.field("0", SQLDataType.INTEGER)), this, "A counter on the current generation of password resets (no older generations are valid)");
 
     private Teacher(Name alias, Table<TeacherRecord> aliased) {
         this(alias, aliased, null);
@@ -229,14 +230,14 @@ public class Teacher extends TableImpl<TeacherRecord> {
 
     @Override
     @Nonnull
-    public Row8<Integer, Integer, String, String, String, OffsetDateTime, Integer, Long[]> fieldsRow() {
+    public Row8<Integer, Integer, String, String, String, OffsetDateTime, Integer, Integer> fieldsRow() {
         return (Row8) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function8<? super Integer, ? super Integer, ? super String, ? super String, ? super String, ? super OffsetDateTime, ? super Integer, ? super Long[], ? extends U> from) {
+    public <U> SelectField<U> mapping(Function8<? super Integer, ? super Integer, ? super String, ? super String, ? super String, ? super OffsetDateTime, ? super Integer, ? super Integer, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -244,7 +245,7 @@ public class Teacher extends TableImpl<TeacherRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function8<? super Integer, ? super Integer, ? super String, ? super String, ? super String, ? super OffsetDateTime, ? super Integer, ? super Long[], ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function8<? super Integer, ? super Integer, ? super String, ? super String, ? super String, ? super OffsetDateTime, ? super Integer, ? super Integer, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }
