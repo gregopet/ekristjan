@@ -16,16 +16,3 @@ fun createJwtProvider(vertx: Vertx, secretKey: String) = JWTAuth.create(vertx, j
         PubSecKeyOptions().setAlgorithm("HS256").setBuffer(secretKey)
     )
 ))
-
-/**
- * Gets the bearer token from the request or returns status 401.
- */
-fun RoutingContext.demandBearerToken(): String =
-    (request().getHeader("Authorization") ?: "").let { headerValue ->
-        if (!headerValue.trim().startsWith("bearer ", ignoreCase = true)) {
-            throw HttpException(401, "Missing bearer token")
-        }
-        headerValue.substring("bearer".length).trim()
-    }
-
-
