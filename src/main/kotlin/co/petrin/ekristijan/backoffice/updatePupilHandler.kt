@@ -26,9 +26,7 @@ private fun updatePupil(pupil: PupilDTO, ctx: RoutingContext, jooq: DSLContext) 
         ctx.response().setStatusCode(404).end()
     } else {
         with(pupilRecord) {
-            name = pupil.name
-            clazz = pupil.clazz
-            leavesAlone = pupil.leavesAlone
+            updateFromDTO(pupil)
             update()
         }
         ctx.end()
@@ -38,11 +36,20 @@ private fun updatePupil(pupil: PupilDTO, ctx: RoutingContext, jooq: DSLContext) 
 private fun insertPupil(pupil: PupilDTO, ctx: RoutingContext, jooq: DSLContext) {
     with(PupilRecord()) {
         schoolId = ctx.schoolId
-        name = pupil.name
-        clazz = pupil.clazz
-        leavesAlone = pupil.leavesAlone
+        updateFromDTO(pupil)
         attach(jooq.configuration())
         insert()
         ctx.end(pupilId.toString())
     }
+}
+
+private fun PupilRecord.updateFromDTO(pupil: PupilDTO) {
+    name = pupil.name
+    clazz = pupil.clazz
+    leavesAlone = pupil.leavesAlone
+    leaveMon = pupil.departure.monday
+    leaveTue = pupil.departure.tuesday
+    leaveWed = pupil.departure.wednesday
+    leaveThu = pupil.departure.thursday
+    leaveFri = pupil.departure.friday
 }
