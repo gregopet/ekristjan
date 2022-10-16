@@ -1,6 +1,7 @@
 package co.petrin.ekristijan.dto
 
 import co.petrin.ekristijan.backoffice.PupilDTO
+import co.petrin.ekristijan.backoffice.TeacherDTO
 import co.petrin.ekristijan.db.DailyDeparture
 import co.petrin.ekristijan.departure.DepartureHandlerCommand
 import co.petrin.ekristijan.dto.event.SendPupilEvent
@@ -25,6 +26,7 @@ fun main(args: Array<String>) {
             LoginDTO::class,
             DepartureHandlerCommand::class,
             PupilDTO::class,
+            TeacherDTO::class,
         )
     ).definitionsText
     val namespacedDefinition = listOf("namespace dto {", definitions, "}").joinToString("\n")

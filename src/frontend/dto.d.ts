@@ -125,4 +125,10 @@ interface PupilDTO {
     name: string;
     plannedDepartures: ExtraordinaryDeparture[];
 }
+
+interface TeacherDTO {
+    email: string;
+    id: number;
+    name: string;
+}
 }
