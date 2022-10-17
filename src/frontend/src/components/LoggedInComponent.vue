@@ -18,7 +18,7 @@
             <div class="w-3 basis-[30px] rounded-r-[20px] bg-gradient-to-r from-sandy to-sandy-light"> </div>
           </router-link>
 
-          <router-link :to="{ name: 'officePupils' }" class="rounded-r-[20px] w-[70%] m-auto cursor-pointer drop-shadow-lg flex justify-between items-stretch bg-gradient-to-r from-gray-100 to-white mt-8">
+          <router-link :to="{ name: 'officePupils' }" v-if="showOffice" class="rounded-r-[20px] w-[70%] m-auto cursor-pointer drop-shadow-lg flex justify-between items-stretch bg-gradient-to-r from-gray-100 to-white mt-8">
             <div class="block py-3 basis-[80%] text-right">Pisarna</div>
             <div class="w-3 basis-[30px] rounded-r-[20px] bg-gradient-to-r from-my-blue to-my-blue-light"> </div>
           </router-link>
@@ -43,12 +43,15 @@ import {useRoute} from "vue-router";
 import {pupils} from "@/data";
 import Header from "@/components/Header.vue";
 import {useInterval, useIntervalFn} from "@vueuse/core";
-import { logout as doLogout } from "@/main";
+import {loggedIn, logout as doLogout} from "@/main";
 import LoggedInLayout from './LoggedInLayout.vue';
+import {hasBackofficePermission} from "@/AccessToken";
 
 const route = useRoute()
 const showSelector = computed(() => route.name === 'landing');
 
+/** Show the office navigation link? */
+const showOffice = computed(() => hasBackofficePermission(loggedIn.value))
 
 // fetch pupils repeatedly
 const error = ref(false)

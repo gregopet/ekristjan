@@ -10,9 +10,11 @@ import {sendLog} from "@/diagnostics";
 import Toast from "vue-toastification";
 import type {ToastOptions} from "vue-toastification/dist/types/types";
 import "vue-toastification/dist/index.css";
+import type {AccessToken} from "@/AccessToken";
+import {isMessageLoginFailed, isMessageLoginSuccess} from "@/serviceworker/messaging";
 
 /** Is the user currently logged in? */
-export const loggedIn = ref(false)
+export const loggedIn = ref<null | AccessToken>(null)
 
 /*
  * Install the service worker manually
@@ -39,14 +41,14 @@ navigator.serviceWorker.getRegistration().then( reg => {
 navigator.serviceWorker.onmessage = (ev) => {
     if (isSendPupilEvent(ev.data)) {
         eventBus.emit("SendPupil", ev.data)
-    } else if (ev.data === EVENT_LOGIN_FAILED) {
-        loggedIn.value = false;
+    } else if (isMessageLoginFailed(ev.data)) {
+        loggedIn.value = null;
         if (isOnProtectedRoute()) {
             sendLog("login", "debug", "Login failed, sending to login page!")
             forceLoginScreen();
         }
-    } else if (ev.data === EVENT_LOGIN_SUCCESS) {
-        loggedIn.value = true;
+    } else if (isMessageLoginSuccess(ev.data)) {
+        loggedIn.value = ev.data;
         if (!isOnProtectedRoute()) {
             sendLog("login", "debug", "Somebody logged us in, sending user to logged in page")
             forceLoggedInLanding(); // is this OK? Is there a valid thing they could be doing somewhere else while logged in?
@@ -60,10 +62,10 @@ navigator.serviceWorker.onmessage = (ev) => {
 function determineLoginStatus() {
     console.debug("Asking the service worker what our login status is")
     wb.messageSW({ type: 'loginStatus' }).then(
-        (loginStatus: boolean) => {
+        (loginStatus: null | AccessToken) => {
             console.debug("Detected initial login state as", loginStatus);
             loggedIn.value = loginStatus;
-            startApp(loginStatus);
+            startApp(loginStatus !== null);
         },
         (error) => {
             console.error("Error determining whether user is already logged in, aborting app startup", error)

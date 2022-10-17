@@ -1,6 +1,8 @@
 import {restoreTokens, storeTokens} from "@/serviceworker/credentialStore";
 import {messageClients} from "@/serviceworker/messaging";
 import {sendLog} from "@/diagnostics";
+import type {AccessToken} from "@/AccessToken";
+import jwtDecode from "jwt-decode";
 
 
 /** Event fired when good credentials have been entered into the system */
@@ -23,10 +25,19 @@ const noAuthRequired = ['/departures/push/key']
  */
 let mostRecentTokens: undefined | null | dto.LoginDTO = undefined;
 
-/** Do we currently have valid tokens? */
-export async function loggedIn(): Promise<Boolean> {
+
+/** Returns the currently valid token or null if user is not logged in. */
+export async function loggedIn(): Promise<AccessToken | null> {
+    const tokensOrNull = (token: null | dto.LoginDTO) => {
+        if (token == null) {
+            return null;
+        } else {
+            return jwtDecode(token.accessToken) as AccessToken
+        }
+    }
+
     if (mostRecentTokens !== undefined) {
-        return mostRecentTokens !== null;
+        return tokensOrNull(mostRecentTokens);
     } else {
         // WARN: there is no protection from multiple parts of code calling this at once during the period between
         // the function invocation & promise being resolved. This is _probably_ not a problem as indexedDb query should
@@ -34,7 +45,7 @@ export async function loggedIn(): Promise<Boolean> {
         return restoreTokens().then( tokens => {
             sendLog("login", "trace", "Restoring security tokens: " + JSON.stringify(tokens))
             mostRecentTokens = tokens;
-            return mostRecentTokens !== null;
+            return tokensOrNull(mostRecentTokens);
         })
     }
 }
@@ -143,5 +154,5 @@ function interceptPasswordReset(ev: FetchEvent) {
 /** Store new login token in IndexedDB and let app know we're logged in now */
 function installAccessTokens(tokens: dto.LoginDTO): Promise<void> {
     updateTokens(tokens);
-    return messageClients(EVENT_LOGIN_SUCCESS);
+    return messageClients(jwtDecode(tokens.accessToken) as AccessToken);
 }
