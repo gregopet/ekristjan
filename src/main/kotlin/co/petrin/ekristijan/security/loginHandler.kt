@@ -19,6 +19,7 @@ private val LOG = LoggerFactory.getLogger("LoginVerticle.loginHandler")
  * Responses:
  *  - 200: Ok ()
  *  - 401: Invalid password
+ *  - 403: User was disabled (not allowed to log in)
  *  - 404: User not found
  *  - 412: User has no password set
  *  - 429: Too many attempts
@@ -31,6 +32,10 @@ suspend fun SecurityVerticle.loginHandler(ctx: RoutingContext) {
         user == null -> {
             LOG.info("User tried to log in with non-existing email ${loginCommand.email}")
             ctx.end(404)
+        }
+        !user.enabled -> {
+            LOG.info("User ${loginCommand.email} tried logging in despite being disabled")
+            ctx.end(403)
         }
         user.passwordLastAttemptCount > LOGIN_PASSWORD_ATTEMPTS_MAX -> {
             LOG.info("User ${loginCommand.email} exceeded max password attempts")

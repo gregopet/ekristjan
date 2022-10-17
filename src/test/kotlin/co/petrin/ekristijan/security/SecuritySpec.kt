@@ -1,8 +1,9 @@
 package co.petrin.ekristijan.security
 
-import co.petrin.ekristijan.SecurityVerticle
-import co.petrin.ekristijan.TestSetup
-import co.petrin.ekristijan.testConfig
+import co.petrin.ekristijan.*
+import co.petrin.ekristijan.db.BackofficeQueries
+import co.petrin.ekristijan.db.Tables.TEACHER
+import co.petrin.ekristijan.preconditions
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -19,6 +20,8 @@ import com.icegreen.greenmail.util.GreenMail
 import com.icegreen.greenmail.util.ServerSetup
 import com.icegreen.greenmail.util.ServerSetup.PROTOCOL_SMTP
 import io.kotest.assertions.timing.eventually
+import io.vertx.core.buffer.Buffer
+import io.vertx.ext.web.client.HttpResponse
 import io.vertx.kotlin.core.json.jsonObjectOf
 import javax.mail.internet.MimeMessage
 import javax.mail.internet.MimeMultipart
@@ -79,6 +82,12 @@ class SecuritySpec : FreeSpec({
         }
 
         "allows a password reset request to be made" - {
+            val teacher = BackofficeQueries.getTeacher(fixture.teacher.id, fixture.schoolId, jooq)!!
+            afterContainer {
+                teacher.changed(TEACHER.PASSWORD_HASH, true)
+                teacher.update()
+            }
+
             client.post("/request-password-reset").sendJson(ResetPasswordRequestCommand(fixture.teacher.email)).await().also {
                 it.statusCode() shouldBe 204
             }
@@ -108,6 +117,70 @@ class SecuritySpec : FreeSpec({
 
                     login.statusCode() shouldBe 200
                 }
+            }
+        }
+
+        "does not allow disabled users to" - {
+
+            val teacher = BackofficeQueries.getTeacher(fixture.teacher.id, fixture.schoolId, jooq)!!
+            afterContainer {
+                teacher.enabled = true
+                teacher.update()
+            }
+
+            "refresh access tokens" {
+                val login = preconditions {
+                    client.post("/login")
+                    .sendJson(LoginCommand(fixture.teacher.email, fixture.teacher.password))
+                    .await()
+                    .also {
+                        it.statusCode() shouldBe 200
+                    }
+                    .bodyAsJsonObject()
+                    .mapTo(LoginDTO::class.java)
+                }
+
+                teacher.enabled = false
+                teacher.update()
+
+                client
+                .post("/refresh-token")
+                .bearerTokenAuthentication(login.refreshToken)
+                .send()
+                .await()
+                .statusCode() shouldBe 403
+            }
+
+            "log in" {
+                client.post("/login")
+                .sendJson(LoginCommand(fixture.teacher.email, fixture.teacher.password))
+                .await()
+                .assertWithClue("Teacher is forbidden from logging in") {
+                    it.statusCode() shouldBe 403
+                }
+            }
+        }
+
+        "special permission is needed to access backoffice data" - {
+            val teacher = BackofficeQueries.getTeacher(fixture.teacher.id, fixture.schoolId, jooq)!!
+
+            suspend fun requestTeacherData(): HttpResponse<Buffer> {
+                val login = preconditions {
+                    client.post("/login")
+                    .sendJson(LoginCommand(fixture.teacher.email, fixture.teacher.password))
+                    .await()
+                    .assertWithClue("login") {
+                        it.statusCode() shouldBe 200
+                    }
+                    .bodyAsJsonObject()
+                    .mapTo(LoginDTO::class.java)
+                }
+
+                return client
+                    .get("/backoffice/teachers")
+                    .putHeader("Authorization", "Bearer ${login.accessToken}")
+                    .send()
+                    .await()
             }
         }
     }

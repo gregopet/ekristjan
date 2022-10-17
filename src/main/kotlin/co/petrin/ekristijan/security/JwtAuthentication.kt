@@ -14,5 +14,6 @@ val IAT_UNIQUE_PARAM = "iat"
 fun createJwtProvider(vertx: Vertx, secretKey: String) = JWTAuth.create(vertx, jwtAuthOptionsOf(
     pubSecKeys = listOf(
         PubSecKeyOptions().setAlgorithm("HS256").setBuffer(secretKey)
-    )
+    ),
+    permissionsClaimKey = "permissions", // read this part of JWT to get a list of permissions
 ))

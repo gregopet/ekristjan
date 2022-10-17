@@ -70,6 +70,8 @@ object BackofficeQueries {
                     key("id").value(TEACHER_ID),
                     key("email").value(EMAIL),
                     key("name").value(NAME),
+                    key("enabled").value(ENABLED),
+                    key("backofficeAccess").value(BACKOFFICE_ACCESS),
                 )
             ).cast(String::class.java)
         )

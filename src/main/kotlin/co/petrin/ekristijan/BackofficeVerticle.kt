@@ -12,6 +12,7 @@ import co.petrin.ekristijan.backoffice.getPupilsHandler
 import co.petrin.ekristijan.backoffice.updatePupilHandler
 import co.petrin.ekristijan.backoffice.getTeachersHandler
 import co.petrin.ekristijan.backoffice.updateTeacherHandler
+import co.petrin.ekristijan.security.OFFICE_PERMISSION
 import io.vertx.ext.web.handler.BodyHandler
 
 private val LOG = LoggerFactory.getLogger(BackofficeVerticle::class.java)
@@ -25,8 +26,15 @@ class BackofficeVerticle(val jooq: DSLContext, val jwtProvider: JWTAuth) : Confi
      * @param parentRoute The route under which this router is located (useful for generating URLs)
      */
     fun createSubrouter(parentRoute: String): Router = Router.router(vertx).apply {
-        // All requests below here need to be authenticated!
+        // All requests below here need to be authenticated, users need the proper permission!
         route().handler(JWTAuthHandler.create(jwtProvider).withScope(ACCESS_TOKEN_SCOPE)).failureHandler(::handleAccessToken401)
+        route().handler { ctx ->
+            if (OFFICE_PERMISSION.match(ctx.user())) {
+                ctx.next()
+            } else {
+                ctx.response().setStatusCode(403).end("Permission for backoffice was denied")
+            }
+        }
 
         get("/pupils").blockingHandler(::getPupilsHandler)
         post("/pupil").handler(BodyHandler.create()).blockingHandler(::updatePupilHandler)

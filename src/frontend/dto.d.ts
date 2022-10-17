@@ -127,7 +127,9 @@ interface PupilDTO {
 }
 
 interface TeacherDTO {
+    backofficeAccess: boolean;
     email: string;
+    enabled: boolean;
     id: number;
     name: string;
 }

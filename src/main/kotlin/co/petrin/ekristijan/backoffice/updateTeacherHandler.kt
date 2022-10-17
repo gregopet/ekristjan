@@ -26,8 +26,7 @@ private fun updateTeacher(teacher: TeacherDTO, ctx: RoutingContext, jooq: DSLCon
         ctx.response().setStatusCode(404).end()
     } else {
         with(teacherRecord) {
-            name = teacher.name
-            email = teacher.email
+            updateFromDTO(teacher)
             update()
         }
         ctx.end()
@@ -37,10 +36,16 @@ private fun updateTeacher(teacher: TeacherDTO, ctx: RoutingContext, jooq: DSLCon
 private fun insertTeacher(teacher: TeacherDTO, ctx: RoutingContext, jooq: DSLContext) {
     with(TeacherRecord()) {
         schoolId = ctx.schoolId
-        name = teacher.name
-        email = teacher.email
+        updateFromDTO(teacher)
         attach(jooq.configuration())
         insert()
         ctx.end(teacherId.toString())
     }
+}
+
+private fun TeacherRecord.updateFromDTO(teacher: TeacherDTO) {
+    name = teacher.name
+    email = teacher.email
+    enabled = teacher.enabled
+    backofficeAccess = teacher.backofficeAccess
 }

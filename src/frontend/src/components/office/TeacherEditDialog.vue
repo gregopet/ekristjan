@@ -10,11 +10,22 @@
         <div class="grid grid-cols-[auto_auto] h-[fit-content] items-center justify-items-end gap-2">
           <label class="label" for="name">Ime:</label>
           <input class="h-8 border border-slate-300 rounded-md text-sm shadow-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 px-1" v-model="teacher.name" id="name">
-        </div>
-        <div class="grid grid-cols-[auto_auto] h-[fit-content] items-center justify-items-end gap-2">
+
           <label class="label" for="email">Email:</label>
           <input class="h-8 border border-slate-300 rounded-md text-sm shadow-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 px-1" v-model="teacher.email" id="email">
+
+          <label class="label cursor-pointer" for="enabled">Dostop:</label>
+          <label class="h-8 border border-slate-300 bg-slate-50 justify-self-stretch rounded-md text-center flex justify-center items-center">
+            <input type="checkbox" v-model="teacher.enabled" id="enabled" class="mx-0.5">
+          </label>
+
+          <label class="label cursor-pointer" for="backofficeAccess">Pisarna:</label>
+          <label class="h-8 border border-slate-300 bg-slate-50 justify-self-stretch rounded-md text-center flex justify-center items-center">
+            <input type="checkbox" v-model="teacher.backofficeAccess" id="backofficeAccess" class="mx-0.5">
+          </label>
+
         </div>
+
       </div>
     </div>
 

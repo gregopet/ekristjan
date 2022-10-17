@@ -3,6 +3,7 @@ package co.petrin.ekristijan.security
 import co.petrin.ekristijan.db.tables.records.TeacherRecord
 import io.vertx.core.Future
 import io.vertx.ext.auth.User
+import io.vertx.ext.auth.authorization.Authorization
 import io.vertx.ext.auth.authorization.PermissionBasedAuthorization
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.RoutingContext
@@ -19,11 +20,18 @@ import io.vertx.kotlin.ext.auth.jwtOptionsOf
 
 val ACCESS_TOKEN_SCOPE = "access-token"
 
+
+/** Does a user have permission to access the backoffice? */
+val OFFICE_PERMISSION = PermissionBasedAuthorization.create("backOfficePermission")
+
 /** Generates a new access token that can be used with the application. Currently gives out all roles! */
 fun generateAccessToken(teacher: TeacherRecord, expiresInMinutes: Int, jwt: JWTAuth): String {
+    val permissions = mutableListOf<String>()
+    if (teacher.backofficeAccess) permissions.add(OFFICE_PERMISSION.permission)
     val props = jwtOptionsOf(
         subject = teacher.email,
         expiresInMinutes = expiresInMinutes,
+        permissions = if (permissions.isEmpty()) null else permissions,
     )
     return jwt.generateToken(jsonObjectOf(
         "teacherId" to teacher.teacherId,

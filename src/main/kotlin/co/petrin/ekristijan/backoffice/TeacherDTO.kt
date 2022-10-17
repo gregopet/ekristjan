@@ -4,4 +4,6 @@ data class TeacherDTO(
     val id: Int,
     val name: String,
     val email: String,
+    val enabled: Boolean,
+    val backofficeAccess: Boolean,
 )

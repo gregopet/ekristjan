@@ -11,7 +11,7 @@ private val LOG = LoggerFactory.getLogger("LoginVerticle.refreshTokenHandler")
 /**
  * Takes a refresh token & issues a new access token if it is valid.
  * - 200: done, password was reset (LoginSuccess)
- * - 403: refresh not allowed (session terminated forcefully?)
+ * - 403: refresh not allowed (session terminated forcefully? access disabled?)
  */
 suspend fun SecurityVerticle.refreshTokenHandler(ctx: RoutingContext) {
     val teacherEmail = ctx.user().subject()
@@ -19,6 +19,9 @@ suspend fun SecurityVerticle.refreshTokenHandler(ctx: RoutingContext) {
     val teacher = awaitBlocking { PasswordQueries.findByEmail(teacherEmail, jooq) }
     if (teacher == null) {
         LOG.info("Could not refresh tokens, teacher $teacherEmail not found")
+        ctx.response().setStatusCode(403).end()
+    } else if (!teacher.enabled) {
+        LOG.info("Could not refresh tokens, access was disabled for teacher $teacherEmail")
         ctx.response().setStatusCode(403).end()
     } else {
         respondWithTokens(teacher, ctx)

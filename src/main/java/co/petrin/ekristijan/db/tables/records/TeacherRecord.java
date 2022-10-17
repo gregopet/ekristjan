@@ -13,8 +13,8 @@ import javax.annotation.Nullable;
 
 import org.jooq.Field;
 import org.jooq.Record1;
-import org.jooq.Record8;
-import org.jooq.Row8;
+import org.jooq.Record10;
+import org.jooq.Row10;
 import org.jooq.impl.UpdatableRecordImpl;
 
 
@@ -22,7 +22,7 @@ import org.jooq.impl.UpdatableRecordImpl;
  * A teacher authorized to supervise children
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
-public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements Record8<Integer, Integer, String, String, String, OffsetDateTime, Integer, Integer> {
+public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements Record10<Integer, Integer, String, String, String, OffsetDateTime, Integer, Integer, Boolean, Boolean> {
 
     private static final long serialVersionUID = 1L;
 
@@ -162,6 +162,40 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
         return (Integer) get(7);
     }
 
+    /**
+     * Setter for <code>public.teacher.enabled</code>. If not true, the teacher
+     * cannot log in
+     */
+    public void setEnabled(@Nonnull Boolean value) {
+        set(8, value);
+    }
+
+    /**
+     * Getter for <code>public.teacher.enabled</code>. If not true, the teacher
+     * cannot log in
+     */
+    @Nonnull
+    public Boolean getEnabled() {
+        return (Boolean) get(8);
+    }
+
+    /**
+     * Setter for <code>public.teacher.backoffice_access</code>. If true, the
+     * teacher may access the backoffice part of the application
+     */
+    public void setBackofficeAccess(@Nonnull Boolean value) {
+        set(9, value);
+    }
+
+    /**
+     * Getter for <code>public.teacher.backoffice_access</code>. If true, the
+     * teacher may access the backoffice part of the application
+     */
+    @Nonnull
+    public Boolean getBackofficeAccess() {
+        return (Boolean) get(9);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -173,19 +207,19 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
     }
 
     // -------------------------------------------------------------------------
-    // Record8 type implementation
+    // Record10 type implementation
     // -------------------------------------------------------------------------
 
     @Override
     @Nonnull
-    public Row8<Integer, Integer, String, String, String, OffsetDateTime, Integer, Integer> fieldsRow() {
-        return (Row8) super.fieldsRow();
+    public Row10<Integer, Integer, String, String, String, OffsetDateTime, Integer, Integer, Boolean, Boolean> fieldsRow() {
+        return (Row10) super.fieldsRow();
     }
 
     @Override
     @Nonnull
-    public Row8<Integer, Integer, String, String, String, OffsetDateTime, Integer, Integer> valuesRow() {
-        return (Row8) super.valuesRow();
+    public Row10<Integer, Integer, String, String, String, OffsetDateTime, Integer, Integer, Boolean, Boolean> valuesRow() {
+        return (Row10) super.valuesRow();
     }
 
     @Override
@@ -238,6 +272,18 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
 
     @Override
     @Nonnull
+    public Field<Boolean> field9() {
+        return Teacher.TEACHER.ENABLED;
+    }
+
+    @Override
+    @Nonnull
+    public Field<Boolean> field10() {
+        return Teacher.TEACHER.BACKOFFICE_ACCESS;
+    }
+
+    @Override
+    @Nonnull
     public Integer component1() {
         return getTeacherId();
     }
@@ -286,6 +332,18 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
 
     @Override
     @Nonnull
+    public Boolean component9() {
+        return getEnabled();
+    }
+
+    @Override
+    @Nonnull
+    public Boolean component10() {
+        return getBackofficeAccess();
+    }
+
+    @Override
+    @Nonnull
     public Integer value1() {
         return getTeacherId();
     }
@@ -330,6 +388,18 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
     @Nonnull
     public Integer value8() {
         return getPasswordResetGeneration();
+    }
+
+    @Override
+    @Nonnull
+    public Boolean value9() {
+        return getEnabled();
+    }
+
+    @Override
+    @Nonnull
+    public Boolean value10() {
+        return getBackofficeAccess();
     }
 
     @Override
@@ -390,7 +460,21 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
 
     @Override
     @Nonnull
-    public TeacherRecord values(@Nonnull Integer value1, @Nonnull Integer value2, @Nonnull String value3, @Nonnull String value4, @Nullable String value5, @Nullable OffsetDateTime value6, @Nonnull Integer value7, @Nonnull Integer value8) {
+    public TeacherRecord value9(@Nonnull Boolean value) {
+        setEnabled(value);
+        return this;
+    }
+
+    @Override
+    @Nonnull
+    public TeacherRecord value10(@Nonnull Boolean value) {
+        setBackofficeAccess(value);
+        return this;
+    }
+
+    @Override
+    @Nonnull
+    public TeacherRecord values(@Nonnull Integer value1, @Nonnull Integer value2, @Nonnull String value3, @Nonnull String value4, @Nullable String value5, @Nullable OffsetDateTime value6, @Nonnull Integer value7, @Nonnull Integer value8, @Nonnull Boolean value9, @Nonnull Boolean value10) {
         value1(value1);
         value2(value2);
         value3(value3);
@@ -399,6 +483,8 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
         value6(value6);
         value7(value7);
         value8(value8);
+        value9(value9);
+        value10(value10);
         return this;
     }
 
@@ -416,7 +502,7 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
     /**
      * Create a detached, initialised TeacherRecord
      */
-    public TeacherRecord(@Nonnull Integer teacherId, @Nonnull Integer schoolId, @Nonnull String name, @Nonnull String email, @Nullable String passwordHash, @Nullable OffsetDateTime passwordLastAttempt, @Nonnull Integer passwordLastAttemptCount, @Nonnull Integer passwordResetGeneration) {
+    public TeacherRecord(@Nonnull Integer teacherId, @Nonnull Integer schoolId, @Nonnull String name, @Nonnull String email, @Nullable String passwordHash, @Nullable OffsetDateTime passwordLastAttempt, @Nonnull Integer passwordLastAttemptCount, @Nonnull Integer passwordResetGeneration, @Nonnull Boolean enabled, @Nonnull Boolean backofficeAccess) {
         super(Teacher.TEACHER);
 
         setTeacherId(teacherId);
@@ -427,5 +513,7 @@ public class TeacherRecord extends UpdatableRecordImpl<TeacherRecord> implements
         setPasswordLastAttempt(passwordLastAttempt);
         setPasswordLastAttemptCount(passwordLastAttemptCount);
         setPasswordResetGeneration(passwordResetGeneration);
+        setEnabled(enabled);
+        setBackofficeAccess(backofficeAccess);
     }
 }

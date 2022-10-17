@@ -2,6 +2,7 @@ package co.petrin.ekristijan.backoffice
 
 import co.petrin.ekristijan.BackofficeVerticle
 import co.petrin.ekristijan.db.BackofficeQueries
+import co.petrin.ekristijan.security.OFFICE_PERMISSION
 import co.petrin.ekristijan.security.schoolId
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject

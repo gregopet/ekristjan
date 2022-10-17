@@ -17,12 +17,12 @@ import javax.annotation.Nonnull;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function8;
+import org.jooq.Function10;
 import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row8;
+import org.jooq.Row10;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -103,6 +103,18 @@ public class Teacher extends TableImpl<TeacherRecord> {
      * generations are valid)
      */
     public final TableField<TeacherRecord, Integer> PASSWORD_RESET_GENERATION = createField(DSL.name("password_reset_generation"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.field("0", SQLDataType.INTEGER)), this, "A counter on the current generation of password resets (no older generations are valid)");
+
+    /**
+     * The column <code>public.teacher.enabled</code>. If not true, the teacher
+     * cannot log in
+     */
+    public final TableField<TeacherRecord, Boolean> ENABLED = createField(DSL.name("enabled"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field("true", SQLDataType.BOOLEAN)), this, "If not true, the teacher cannot log in");
+
+    /**
+     * The column <code>public.teacher.backoffice_access</code>. If true, the
+     * teacher may access the backoffice part of the application
+     */
+    public final TableField<TeacherRecord, Boolean> BACKOFFICE_ACCESS = createField(DSL.name("backoffice_access"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field("false", SQLDataType.BOOLEAN)), this, "If true, the teacher may access the backoffice part of the application");
 
     private Teacher(Name alias, Table<TeacherRecord> aliased) {
         this(alias, aliased, null);
@@ -225,19 +237,19 @@ public class Teacher extends TableImpl<TeacherRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row8 type methods
+    // Row10 type methods
     // -------------------------------------------------------------------------
 
     @Override
     @Nonnull
-    public Row8<Integer, Integer, String, String, String, OffsetDateTime, Integer, Integer> fieldsRow() {
-        return (Row8) super.fieldsRow();
+    public Row10<Integer, Integer, String, String, String, OffsetDateTime, Integer, Integer, Boolean, Boolean> fieldsRow() {
+        return (Row10) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function8<? super Integer, ? super Integer, ? super String, ? super String, ? super String, ? super OffsetDateTime, ? super Integer, ? super Integer, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function10<? super Integer, ? super Integer, ? super String, ? super String, ? super String, ? super OffsetDateTime, ? super Integer, ? super Integer, ? super Boolean, ? super Boolean, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -245,7 +257,7 @@ public class Teacher extends TableImpl<TeacherRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function8<? super Integer, ? super Integer, ? super String, ? super String, ? super String, ? super OffsetDateTime, ? super Integer, ? super Integer, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function10<? super Integer, ? super Integer, ? super String, ? super String, ? super String, ? super OffsetDateTime, ? super Integer, ? super Integer, ? super Boolean, ? super Boolean, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

@@ -13,17 +13,27 @@
 
     <hr class="my-4">
 
-    <table class="table mt-1 w-full">
+    <table class="table mt-1 w-full [&>*>tr>*]:pb-2">
       <thead>
         <tr>
-          <th class="text-left pb-2  pl-3">Ime</th>
-          <th class="text-left pb-2">Email naslov</th>
+          <th class="text-left pl-3">Ime</th>
+          <th class="text-center pl-3">Pisarna</th>
+          <th class="text-left">Email naslov</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="teacher in teachers.sort(sorting)" @click="teacherClicked(teacher)" class="hover:bg-sandy-light cursor-pointer pb-4" :class="{ 'animate-flash-sandy': teacherHighlighted && teacher.id === teacherHighlighted.id }">
-          <td class="pb-2 pl-3">{{ teacher.name }}</td>
-          <td class="pb-2 tracking-wide">{{ teacher.email}}</td>
+        <tr
+            v-for="teacher in teachers.sort(sorting)"
+            @click="teacherClicked(teacher)"
+            class="hover:bg-sandy-light cursor-pointer pb-4"
+            :class="{
+              'animate-flash-sandy': teacherHighlighted && teacher.id === teacherHighlighted.id,
+              'text-gray-400': !teacher.enabled
+            }"
+        >
+          <td class="pl-3">{{ teacher.name }}</td>
+          <td class="text-center p-0 text-xl text-my-green"><span v-if="teacher.backofficeAccess">✓</span></td>
+          <td class="tracking-wide">{{ teacher.email}}</td>
         </tr>
       </tbody>
     </table>
@@ -46,6 +56,8 @@ function newTeacher() {
     id: 0,
     name: '',
     email: '',
+    enabled: true,
+    backofficeAccess: false,
   })
 }
 

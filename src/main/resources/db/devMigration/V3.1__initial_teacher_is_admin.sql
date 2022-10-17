@@ -1,0 +1,1 @@
+UPDATE teacher SET backoffice_access = true WHERE email = 'ucitelj@example.org';
