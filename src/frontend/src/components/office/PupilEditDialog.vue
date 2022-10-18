@@ -2,15 +2,18 @@
   <div>
     <BackofficeDialog @close="close">
       <template v-slot:heading>
-        <h3 v-if="props.pupil.id">{{ props.pupil.name }}, {{ props.pupil.clazz }}</h3>
+        <h3 v-if="props.pupil.id">{{ props.pupil.givenName }} {{ props.pupil.familyName }}, {{ props.pupil.clazz }}</h3>
         <h3 v-else>Nov učenec</h3>
       </template>
 
       <div class="flex gap-10">
 
         <div class="grid grid-cols-[auto_auto] h-[fit-content] items-center justify-items-end gap-2">
-          <label class="label" for="name">Ime:</label>
-          <input class="h-8 border border-slate-300 rounded-md text-sm shadow-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 px-1" v-model="pupil.name" id="name">
+          <label class="label" for="givenName">Ime:</label>
+          <input class="h-8 border border-slate-300 rounded-md text-sm shadow-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 px-1" v-model="pupil.givenName" id="givenName">
+
+          <label class="label" for="familyName">Priimek:</label>
+          <input class="h-8 border border-slate-300 rounded-md text-sm shadow-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 px-1" v-model="pupil.familyName" id="familyName">
 
           <label class="label" for="group">Skupina:</label>
           <input class="h-8 border border-slate-300 rounded-md text-sm shadow-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 px-1" v-model="pupil.clazz" id="group" list="group-list">

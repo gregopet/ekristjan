@@ -41,11 +41,12 @@ object DepartureQueries {
                 .orderBy(SUMMON.CREATED_AT.desc())
                 .limit(1)
         )
+        val nameField = GIVEN_NAME.concat(`val`(" "), FAMILY_NAME)
 
         trans
             .select(
                 PUPIL_ID,
-                NAME,
+                nameField,
                 CLAZZ,
                 LEAVES_ALONE,
                 dailyDepartureTime,
@@ -67,7 +68,7 @@ object DepartureQueries {
                     rec.into(EXTRAORDINARY_DEPARTURE)
                 } else null
                 DailyDeparture(
-                    pupil = Pupil(rec.get(PUPIL_ID), rec.get(NAME), rec.get(CLAZZ)),
+                    pupil = Pupil(rec.get(PUPIL_ID), rec.get(nameField), rec.get(CLAZZ)),
                     day = day,
                     leavesAlone = rec.get(LEAVES_ALONE),
                     departurePlan = DailyDeparture.DeparturePlan(

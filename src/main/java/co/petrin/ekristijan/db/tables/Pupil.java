@@ -17,12 +17,12 @@ import javax.annotation.Nonnull;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function10;
+import org.jooq.Function11;
 import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row10;
+import org.jooq.Row11;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -67,11 +67,6 @@ public class Pupil extends TableImpl<PupilRecord> {
     public final TableField<PupilRecord, Integer> SCHOOL_ID = createField(DSL.name("school_id"), SQLDataType.INTEGER.nullable(false), this, "School this pupil is from");
 
     /**
-     * The column <code>public.pupil.name</code>. Pupil's name
-     */
-    public final TableField<PupilRecord, String> NAME = createField(DSL.name("name"), SQLDataType.CLOB.nullable(false), this, "Pupil's name");
-
-    /**
      * The column <code>public.pupil.clazz</code>. The class this pupil belongs
      * to (class is a reserved word in languages, thus clazz)
      */
@@ -112,6 +107,16 @@ public class Pupil extends TableImpl<PupilRecord> {
      * pupil will leave school every friday
      */
     public final TableField<PupilRecord, LocalTime> LEAVE_FRI = createField(DSL.name("leave_fri"), SQLDataType.LOCALTIME(6), this, "The time at which this pupil will leave school every friday");
+
+    /**
+     * The column <code>public.pupil.given_name</code>. First name of pupil
+     */
+    public final TableField<PupilRecord, String> GIVEN_NAME = createField(DSL.name("given_name"), SQLDataType.CLOB.nullable(false), this, "First name of pupil");
+
+    /**
+     * The column <code>public.pupil.family_name</code>. Last name of pupil
+     */
+    public final TableField<PupilRecord, String> FAMILY_NAME = createField(DSL.name("family_name"), SQLDataType.CLOB.nullable(false), this, "Last name of pupil");
 
     private Pupil(Name alias, Table<PupilRecord> aliased) {
         this(alias, aliased, null);
@@ -228,19 +233,19 @@ public class Pupil extends TableImpl<PupilRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row10 type methods
+    // Row11 type methods
     // -------------------------------------------------------------------------
 
     @Override
     @Nonnull
-    public Row10<Integer, Integer, String, String, Boolean, LocalTime, LocalTime, LocalTime, LocalTime, LocalTime> fieldsRow() {
-        return (Row10) super.fieldsRow();
+    public Row11<Integer, Integer, String, Boolean, LocalTime, LocalTime, LocalTime, LocalTime, LocalTime, String, String> fieldsRow() {
+        return (Row11) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function10<? super Integer, ? super Integer, ? super String, ? super String, ? super Boolean, ? super LocalTime, ? super LocalTime, ? super LocalTime, ? super LocalTime, ? super LocalTime, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function11<? super Integer, ? super Integer, ? super String, ? super Boolean, ? super LocalTime, ? super LocalTime, ? super LocalTime, ? super LocalTime, ? super LocalTime, ? super String, ? super String, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -248,7 +253,7 @@ public class Pupil extends TableImpl<PupilRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function10<? super Integer, ? super Integer, ? super String, ? super String, ? super Boolean, ? super LocalTime, ? super LocalTime, ? super LocalTime, ? super LocalTime, ? super LocalTime, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function11<? super Integer, ? super Integer, ? super String, ? super Boolean, ? super LocalTime, ? super LocalTime, ? super LocalTime, ? super LocalTime, ? super LocalTime, ? super String, ? super String, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

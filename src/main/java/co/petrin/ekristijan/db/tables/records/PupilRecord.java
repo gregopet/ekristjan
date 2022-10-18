@@ -13,8 +13,8 @@ import javax.annotation.Nullable;
 
 import org.jooq.Field;
 import org.jooq.Record1;
-import org.jooq.Record10;
-import org.jooq.Row10;
+import org.jooq.Record11;
+import org.jooq.Row11;
 import org.jooq.impl.UpdatableRecordImpl;
 
 
@@ -22,7 +22,7 @@ import org.jooq.impl.UpdatableRecordImpl;
  * A pupil whose departures we are tracking
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
-public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Record10<Integer, Integer, String, String, Boolean, LocalTime, LocalTime, LocalTime, LocalTime, LocalTime> {
+public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Record11<Integer, Integer, String, Boolean, LocalTime, LocalTime, LocalTime, LocalTime, LocalTime, String, String> {
 
     private static final long serialVersionUID = 1L;
 
@@ -57,26 +57,11 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
     }
 
     /**
-     * Setter for <code>public.pupil.name</code>. Pupil's name
-     */
-    public void setName(@Nonnull String value) {
-        set(2, value);
-    }
-
-    /**
-     * Getter for <code>public.pupil.name</code>. Pupil's name
-     */
-    @Nonnull
-    public String getName() {
-        return (String) get(2);
-    }
-
-    /**
      * Setter for <code>public.pupil.clazz</code>. The class this pupil belongs
      * to (class is a reserved word in languages, thus clazz)
      */
     public void setClazz(@Nonnull String value) {
-        set(3, value);
+        set(2, value);
     }
 
     /**
@@ -85,7 +70,7 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
      */
     @Nonnull
     public String getClazz() {
-        return (String) get(3);
+        return (String) get(2);
     }
 
     /**
@@ -93,7 +78,7 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
      * school on their own?
      */
     public void setLeavesAlone(@Nonnull Boolean value) {
-        set(4, value);
+        set(3, value);
     }
 
     /**
@@ -102,7 +87,7 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
      */
     @Nonnull
     public Boolean getLeavesAlone() {
-        return (Boolean) get(4);
+        return (Boolean) get(3);
     }
 
     /**
@@ -110,7 +95,7 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
      * pupil will leave school every monday
      */
     public void setLeaveMon(@Nullable LocalTime value) {
-        set(5, value);
+        set(4, value);
     }
 
     /**
@@ -119,7 +104,7 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
      */
     @Nullable
     public LocalTime getLeaveMon() {
-        return (LocalTime) get(5);
+        return (LocalTime) get(4);
     }
 
     /**
@@ -127,7 +112,7 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
      * pupil will leave school every tuesday
      */
     public void setLeaveTue(@Nullable LocalTime value) {
-        set(6, value);
+        set(5, value);
     }
 
     /**
@@ -136,7 +121,7 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
      */
     @Nullable
     public LocalTime getLeaveTue() {
-        return (LocalTime) get(6);
+        return (LocalTime) get(5);
     }
 
     /**
@@ -144,7 +129,7 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
      * pupil will leave school every wednesday
      */
     public void setLeaveWed(@Nullable LocalTime value) {
-        set(7, value);
+        set(6, value);
     }
 
     /**
@@ -153,7 +138,7 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
      */
     @Nullable
     public LocalTime getLeaveWed() {
-        return (LocalTime) get(7);
+        return (LocalTime) get(6);
     }
 
     /**
@@ -161,7 +146,7 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
      * pupil will leave school every thursday
      */
     public void setLeaveThu(@Nullable LocalTime value) {
-        set(8, value);
+        set(7, value);
     }
 
     /**
@@ -170,7 +155,7 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
      */
     @Nullable
     public LocalTime getLeaveThu() {
-        return (LocalTime) get(8);
+        return (LocalTime) get(7);
     }
 
     /**
@@ -178,7 +163,7 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
      * pupil will leave school every friday
      */
     public void setLeaveFri(@Nullable LocalTime value) {
-        set(9, value);
+        set(8, value);
     }
 
     /**
@@ -187,7 +172,37 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
      */
     @Nullable
     public LocalTime getLeaveFri() {
-        return (LocalTime) get(9);
+        return (LocalTime) get(8);
+    }
+
+    /**
+     * Setter for <code>public.pupil.given_name</code>. First name of pupil
+     */
+    public void setGivenName(@Nonnull String value) {
+        set(9, value);
+    }
+
+    /**
+     * Getter for <code>public.pupil.given_name</code>. First name of pupil
+     */
+    @Nonnull
+    public String getGivenName() {
+        return (String) get(9);
+    }
+
+    /**
+     * Setter for <code>public.pupil.family_name</code>. Last name of pupil
+     */
+    public void setFamilyName(@Nonnull String value) {
+        set(10, value);
+    }
+
+    /**
+     * Getter for <code>public.pupil.family_name</code>. Last name of pupil
+     */
+    @Nonnull
+    public String getFamilyName() {
+        return (String) get(10);
     }
 
     // -------------------------------------------------------------------------
@@ -201,19 +216,19 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
     }
 
     // -------------------------------------------------------------------------
-    // Record10 type implementation
+    // Record11 type implementation
     // -------------------------------------------------------------------------
 
     @Override
     @Nonnull
-    public Row10<Integer, Integer, String, String, Boolean, LocalTime, LocalTime, LocalTime, LocalTime, LocalTime> fieldsRow() {
-        return (Row10) super.fieldsRow();
+    public Row11<Integer, Integer, String, Boolean, LocalTime, LocalTime, LocalTime, LocalTime, LocalTime, String, String> fieldsRow() {
+        return (Row11) super.fieldsRow();
     }
 
     @Override
     @Nonnull
-    public Row10<Integer, Integer, String, String, Boolean, LocalTime, LocalTime, LocalTime, LocalTime, LocalTime> valuesRow() {
-        return (Row10) super.valuesRow();
+    public Row11<Integer, Integer, String, Boolean, LocalTime, LocalTime, LocalTime, LocalTime, LocalTime, String, String> valuesRow() {
+        return (Row11) super.valuesRow();
     }
 
     @Override
@@ -231,49 +246,55 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
     @Override
     @Nonnull
     public Field<String> field3() {
-        return Pupil.PUPIL.NAME;
-    }
-
-    @Override
-    @Nonnull
-    public Field<String> field4() {
         return Pupil.PUPIL.CLAZZ;
     }
 
     @Override
     @Nonnull
-    public Field<Boolean> field5() {
+    public Field<Boolean> field4() {
         return Pupil.PUPIL.LEAVES_ALONE;
     }
 
     @Override
     @Nonnull
-    public Field<LocalTime> field6() {
+    public Field<LocalTime> field5() {
         return Pupil.PUPIL.LEAVE_MON;
     }
 
     @Override
     @Nonnull
-    public Field<LocalTime> field7() {
+    public Field<LocalTime> field6() {
         return Pupil.PUPIL.LEAVE_TUE;
     }
 
     @Override
     @Nonnull
-    public Field<LocalTime> field8() {
+    public Field<LocalTime> field7() {
         return Pupil.PUPIL.LEAVE_WED;
     }
 
     @Override
     @Nonnull
-    public Field<LocalTime> field9() {
+    public Field<LocalTime> field8() {
         return Pupil.PUPIL.LEAVE_THU;
     }
 
     @Override
     @Nonnull
-    public Field<LocalTime> field10() {
+    public Field<LocalTime> field9() {
         return Pupil.PUPIL.LEAVE_FRI;
+    }
+
+    @Override
+    @Nonnull
+    public Field<String> field10() {
+        return Pupil.PUPIL.GIVEN_NAME;
+    }
+
+    @Override
+    @Nonnull
+    public Field<String> field11() {
+        return Pupil.PUPIL.FAMILY_NAME;
     }
 
     @Override
@@ -291,49 +312,55 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
     @Override
     @Nonnull
     public String component3() {
-        return getName();
-    }
-
-    @Override
-    @Nonnull
-    public String component4() {
         return getClazz();
     }
 
     @Override
     @Nonnull
-    public Boolean component5() {
+    public Boolean component4() {
         return getLeavesAlone();
     }
 
     @Override
     @Nullable
-    public LocalTime component6() {
+    public LocalTime component5() {
         return getLeaveMon();
     }
 
     @Override
     @Nullable
-    public LocalTime component7() {
+    public LocalTime component6() {
         return getLeaveTue();
     }
 
     @Override
     @Nullable
-    public LocalTime component8() {
+    public LocalTime component7() {
         return getLeaveWed();
     }
 
     @Override
     @Nullable
-    public LocalTime component9() {
+    public LocalTime component8() {
         return getLeaveThu();
     }
 
     @Override
     @Nullable
-    public LocalTime component10() {
+    public LocalTime component9() {
         return getLeaveFri();
+    }
+
+    @Override
+    @Nonnull
+    public String component10() {
+        return getGivenName();
+    }
+
+    @Override
+    @Nonnull
+    public String component11() {
+        return getFamilyName();
     }
 
     @Override
@@ -351,49 +378,55 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
     @Override
     @Nonnull
     public String value3() {
-        return getName();
-    }
-
-    @Override
-    @Nonnull
-    public String value4() {
         return getClazz();
     }
 
     @Override
     @Nonnull
-    public Boolean value5() {
+    public Boolean value4() {
         return getLeavesAlone();
     }
 
     @Override
     @Nullable
-    public LocalTime value6() {
+    public LocalTime value5() {
         return getLeaveMon();
     }
 
     @Override
     @Nullable
-    public LocalTime value7() {
+    public LocalTime value6() {
         return getLeaveTue();
     }
 
     @Override
     @Nullable
-    public LocalTime value8() {
+    public LocalTime value7() {
         return getLeaveWed();
     }
 
     @Override
     @Nullable
-    public LocalTime value9() {
+    public LocalTime value8() {
         return getLeaveThu();
     }
 
     @Override
     @Nullable
-    public LocalTime value10() {
+    public LocalTime value9() {
         return getLeaveFri();
+    }
+
+    @Override
+    @Nonnull
+    public String value10() {
+        return getGivenName();
+    }
+
+    @Override
+    @Nonnull
+    public String value11() {
+        return getFamilyName();
     }
 
     @Override
@@ -413,62 +446,69 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
     @Override
     @Nonnull
     public PupilRecord value3(@Nonnull String value) {
-        setName(value);
-        return this;
-    }
-
-    @Override
-    @Nonnull
-    public PupilRecord value4(@Nonnull String value) {
         setClazz(value);
         return this;
     }
 
     @Override
     @Nonnull
-    public PupilRecord value5(@Nonnull Boolean value) {
+    public PupilRecord value4(@Nonnull Boolean value) {
         setLeavesAlone(value);
         return this;
     }
 
     @Override
     @Nonnull
-    public PupilRecord value6(@Nullable LocalTime value) {
+    public PupilRecord value5(@Nullable LocalTime value) {
         setLeaveMon(value);
         return this;
     }
 
     @Override
     @Nonnull
-    public PupilRecord value7(@Nullable LocalTime value) {
+    public PupilRecord value6(@Nullable LocalTime value) {
         setLeaveTue(value);
         return this;
     }
 
     @Override
     @Nonnull
-    public PupilRecord value8(@Nullable LocalTime value) {
+    public PupilRecord value7(@Nullable LocalTime value) {
         setLeaveWed(value);
         return this;
     }
 
     @Override
     @Nonnull
-    public PupilRecord value9(@Nullable LocalTime value) {
+    public PupilRecord value8(@Nullable LocalTime value) {
         setLeaveThu(value);
         return this;
     }
 
     @Override
     @Nonnull
-    public PupilRecord value10(@Nullable LocalTime value) {
+    public PupilRecord value9(@Nullable LocalTime value) {
         setLeaveFri(value);
         return this;
     }
 
     @Override
     @Nonnull
-    public PupilRecord values(@Nonnull Integer value1, @Nonnull Integer value2, @Nonnull String value3, @Nonnull String value4, @Nonnull Boolean value5, @Nullable LocalTime value6, @Nullable LocalTime value7, @Nullable LocalTime value8, @Nullable LocalTime value9, @Nullable LocalTime value10) {
+    public PupilRecord value10(@Nonnull String value) {
+        setGivenName(value);
+        return this;
+    }
+
+    @Override
+    @Nonnull
+    public PupilRecord value11(@Nonnull String value) {
+        setFamilyName(value);
+        return this;
+    }
+
+    @Override
+    @Nonnull
+    public PupilRecord values(@Nonnull Integer value1, @Nonnull Integer value2, @Nonnull String value3, @Nonnull Boolean value4, @Nullable LocalTime value5, @Nullable LocalTime value6, @Nullable LocalTime value7, @Nullable LocalTime value8, @Nullable LocalTime value9, @Nonnull String value10, @Nonnull String value11) {
         value1(value1);
         value2(value2);
         value3(value3);
@@ -479,6 +519,7 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
         value8(value8);
         value9(value9);
         value10(value10);
+        value11(value11);
         return this;
     }
 
@@ -496,12 +537,11 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
     /**
      * Create a detached, initialised PupilRecord
      */
-    public PupilRecord(@Nonnull Integer pupilId, @Nonnull Integer schoolId, @Nonnull String name, @Nonnull String clazz, @Nonnull Boolean leavesAlone, @Nullable LocalTime leaveMon, @Nullable LocalTime leaveTue, @Nullable LocalTime leaveWed, @Nullable LocalTime leaveThu, @Nullable LocalTime leaveFri) {
+    public PupilRecord(@Nonnull Integer pupilId, @Nonnull Integer schoolId, @Nonnull String clazz, @Nonnull Boolean leavesAlone, @Nullable LocalTime leaveMon, @Nullable LocalTime leaveTue, @Nullable LocalTime leaveWed, @Nullable LocalTime leaveThu, @Nullable LocalTime leaveFri, @Nonnull String givenName, @Nonnull String familyName) {
         super(Pupil.PUPIL);
 
         setPupilId(pupilId);
         setSchoolId(schoolId);
-        setName(name);
         setClazz(clazz);
         setLeavesAlone(leavesAlone);
         setLeaveMon(leaveMon);
@@ -509,5 +549,7 @@ public class PupilRecord extends UpdatableRecordImpl<PupilRecord> implements Rec
         setLeaveWed(leaveWed);
         setLeaveThu(leaveThu);
         setLeaveFri(leaveFri);
+        setGivenName(givenName);
+        setFamilyName(familyName);
     }
 }

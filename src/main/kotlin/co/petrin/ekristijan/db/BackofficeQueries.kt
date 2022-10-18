@@ -31,7 +31,8 @@ object BackofficeQueries {
             jsonArrayAgg(
                 jsonObject(
                     key("id").value(PUPIL_ID),
-                    key("name").value(NAME),
+                    key("givenName").value(GIVEN_NAME),
+                    key("familyName").value(FAMILY_NAME),
                     key("clazz").value(CLAZZ),
                     key("leavesAlone").value(LEAVES_ALONE),
                     key("departure").value(jsonObject(

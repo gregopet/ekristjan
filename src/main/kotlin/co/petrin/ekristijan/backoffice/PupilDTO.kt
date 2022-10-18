@@ -5,7 +5,8 @@ import java.time.LocalTime
 
 data class PupilDTO(
     val id: Int,
-    val name: String,
+    val givenName: String,
+    val familyName: String,
     val clazz: String,
     val leavesAlone: Boolean,
     val departure: PupilLeaveDays,

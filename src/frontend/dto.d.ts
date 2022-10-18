@@ -120,9 +120,10 @@ interface ExtraordinaryDeparture {
 interface PupilDTO {
     clazz: string;
     departure: PupilLeaveDays;
+    familyName: string;
+    givenName: string;
     id: number;
     leavesAlone: boolean;
-    name: string;
     plannedDepartures: ExtraordinaryDeparture[];
 }
 

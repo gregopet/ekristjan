@@ -44,7 +44,8 @@ private fun insertPupil(pupil: PupilDTO, ctx: RoutingContext, jooq: DSLContext) 
 }
 
 private fun PupilRecord.updateFromDTO(pupil: PupilDTO) {
-    name = pupil.name
+    givenName = pupil.givenName
+    familyName = pupil.familyName
     clazz = pupil.clazz
     leavesAlone = pupil.leavesAlone
     leaveMon = pupil.departure.monday

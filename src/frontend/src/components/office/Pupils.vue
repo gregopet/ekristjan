@@ -48,7 +48,7 @@
           </tr>
         </template>
         <tr @click="pupilClicked(pupil)" class="hover:bg-sandy-light cursor-pointer pb-4" :class="{ 'animate-flash-sandy': pupilHighlighted && pupil.id == pupilHighlighted.id }">
-          <td class="pb-2 pl-3">{{ pupil.name }}</td>
+          <td class="pb-2 pl-3">{{ pupil.familyName}} {{ pupil.givenName }}</td>
           <td class="pb-2 "></td>
           <td class="pb-2 text-center p-0 text-xl text-my-green"><span v-if="pupil.leavesAlone">✓</span></td>
           <td class="pb-2 ">{{ time(pupil.departure.monday) }}</td>
@@ -101,7 +101,7 @@ const filteredStudents = computed<dto.PupilDTO[]>(() => {
   else {
     return data.value.filter((pup: dto.PupilDTO) => {
       return filterParts.value.some(filterPart =>
-          pup.clazz.toUpperCase().indexOf(filterPart) >= 0 || pup.name.toUpperCase().indexOf(filterPart) >= 0
+          pup.clazz.toUpperCase().indexOf(filterPart) >= 0 || (pup.givenName + ' ' + pup.familyName).toUpperCase().indexOf(filterPart) >= 0
       )
     })
   }
@@ -109,7 +109,7 @@ const filteredStudents = computed<dto.PupilDTO[]>(() => {
 
 /** A sorting algorithm for the pupils */
 const sorting = ref((pup1: dto.PupilDTO, pup2: dto.PupilDTO) => {
-  return pup1.clazz.localeCompare(pup2.clazz) || pup1.name.localeCompare(pup2.name)
+  return pup1.clazz.localeCompare(pup2.clazz) || pup1.familyName.localeCompare(pup2.familyName)  || pup1.givenName.localeCompare(pup2.givenName)
 })
 
 // Dialog interaction
@@ -122,7 +122,8 @@ const allGroups = computed(() => uniqueArray(
 function newPupil() {
   pupilClicked({
     id: 0,
-    name: '',
+    givenName: '',
+    familyName: '',
     clazz: '',
     departure: {
       friday: null,
