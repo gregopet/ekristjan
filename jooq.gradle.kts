@@ -75,6 +75,7 @@ buildscript {
 tasks.create(name = "jooqModel") {
   group = "Build"
   description = "Generates the jOOQ model from the local database"
+  mustRunAfter("flywayMigrate")
 
   doLast {
       GenerationTool.generate(config)
