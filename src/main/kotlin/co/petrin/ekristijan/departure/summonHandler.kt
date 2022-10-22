@@ -49,10 +49,3 @@ suspend fun DepartureVerticle.summonHandler(ctx: RoutingContext) {
         }
     }
 }
-
-/**
- * Accepts the request that a summon notification was confirmed.
- */
-suspend fun DepartureVerticle.processSummonNotification(ctx: RoutingContext) {
-
-}
