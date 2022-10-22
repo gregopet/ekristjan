@@ -7,7 +7,7 @@
     </h5>
     <ul class="px-5 pt-2">
       <li v-for="pupil in scheduledOrSummonedPupils.sort(departureSorting)" :key="leavingPupilUIKey(pupil)" @click="pupilWithDialog = pupil" class="
-        flex justify-between text-xl
+        flex justify-between text-xl leading-10
         animate-[bounce_1s_ease-in-out_3]
       ">
         <span>{{ pupil.pupil.name }}</span>
@@ -23,7 +23,7 @@
     Prisotni
   </h5>
   <ul class="px-5 pt-1">
-    <li v-for="pupil in presentPupils.sort(sorting)" @click="pupilWithDialog = pupil" :class="{ 'text-red-500': pupil.summon }" class="flex justify-between">
+    <li v-for="pupil in presentPupils.sort(sorting)" @click="pupilWithDialog = pupil" :class="{ 'text-red-500': pupil.summon }" class="flex justify-between leading-7">
       <span>{{ pupil.pupil.name }}</span>
       <span class="flex items-center">
         <img v-if="leavesAlone(pupil)" src="../../assets/otrok.svg" title="Odide sam" class="h-4 inline mr-1 opacity-75">
@@ -36,7 +36,7 @@
     Odšli / odsotni
   </h5>
   <ul class="px-5 pt-1">
-    <li v-for="pupil in departedPupils.sort(sorting)" @click="pupilWithDialog = pupil" :class="{ 'text-gray-500': pupil.departure }" class="flex justify-between">
+    <li v-for="pupil in departedPupils.sort(sorting)" @click="pupilWithDialog = pupil" :class="{ 'text-gray-500': pupil.departure }" class="flex justify-between leading-7">
       <span>{{ pupil.pupil.name }}</span>
       <span>
         {{ formatDate(pupil.departure.time) }}
