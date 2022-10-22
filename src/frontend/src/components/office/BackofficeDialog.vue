@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div @click="close()" class="fixed left-0 right-0 top-0 bottom-0 bg-gray-300 opacity-80 z-20" id="sss"></div>
+    <div @click="close()" class="fixed left-0 right-0 top-0 bottom-0 bg-gray-300 opacity-80 z-20"></div>
     <div class="fixed flex flex-col justify-center left-0 right-0 top-0 bottom-0 z-20">
       <div class="bg-white mx-auto shadow-lg rounded">
 
