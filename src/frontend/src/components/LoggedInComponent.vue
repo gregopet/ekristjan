@@ -82,7 +82,7 @@ function mergePupils(newPupils: dto.DailyDeparture[]) {
       pupils[pos].summon = newVersion.summon
       pos++
     } else {
-      newPupils.splice(pos, 1)
+      pupils.splice(pos, 1)
     }
   }
 
