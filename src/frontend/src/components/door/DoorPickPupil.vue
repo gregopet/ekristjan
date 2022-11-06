@@ -26,8 +26,9 @@ import {useFetch} from "@vueuse/core";
 import LoggedInLayout from '../LoggedInLayout.vue';
 import {date2Time} from "@/dateAndTime";
 import {requestPupilSummon} from "@/pupil";
+import {useToast} from "vue-toastification";
 
-
+const toast = useToast();
 const formatTime = date2Time;
 
 const props = defineProps({
@@ -54,14 +55,26 @@ const shownPupils = computed(() => {
 })
 
 
-/** Sends notification that this pupil should come to the door */
+/**
+ * Sends notification that this pupil should come to the door. Allow a short grace period during which the summon can
+ * be cancelled in case the person at the door misclicked.
+ */
 async function sendPupil(pupil: dto.Pupil) {
-  const req = await fetch(requestPupilSummon(pupil))
-  if (req.ok) {
-    router.go(-1);
-  } else {
-    // TODO: let the caller know there was an error
-  }
+  let aborted = false;
+  toast.info(`Kličem učenca ${pupil.name} iz ${pupil.fromClass} - prekliči poziv?`, {
+    onClick: (() => aborted = true),
+    onClose: (async () => {
+      if (!aborted) {
+        const req = await fetch(requestPupilSummon(pupil))
+        if (!req.ok) {
+          toast.error("Napaka pri pozivu učenca!");
+        }
+      }
+    }),
+    closeButton: false,
+    timeout: 3500,
+  });
+  router.go(-1);
 }
 
 </script>
