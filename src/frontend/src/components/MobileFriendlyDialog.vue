@@ -55,7 +55,9 @@ onMounted(() => {
     }
     resizeCallback(undefined);
     window.visualViewport.addEventListener("scroll", resizeCallback);
+    window.visualViewport.addEventListener("resize", resizeCallback);
     cleanups.push(() => window.visualViewport.removeEventListener("scroll", resizeCallback))
+    cleanups.push(() => window.visualViewport.removeEventListener("resize", resizeCallback))
   }
 })
 
