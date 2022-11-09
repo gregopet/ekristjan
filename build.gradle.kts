@@ -15,11 +15,6 @@ apply(from = "jooq.gradle.kts")
 group = "co.petrin"
 version = "1.0.0-SNAPSHOT"
 
-repositories {
-  mavenCentral()
-  maven("https://jitpack.io")
-}
-
 val jooqVersion: String by project.properties
 val vertxVersion = "4.3.1"
 val junitJupiterVersion = "5.7.0"
