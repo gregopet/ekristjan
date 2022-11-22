@@ -47,6 +47,8 @@ object DepartureQueries {
             .select(
                 PUPIL_ID,
                 nameField,
+                GIVEN_NAME,
+                FAMILY_NAME,
                 CLAZZ,
                 LEAVES_ALONE,
                 dailyDepartureTime,
@@ -68,7 +70,7 @@ object DepartureQueries {
                     rec.into(EXTRAORDINARY_DEPARTURE)
                 } else null
                 DailyDeparture(
-                    pupil = Pupil(rec.get(PUPIL_ID), rec.get(nameField), rec.get(CLAZZ)),
+                    pupil = Pupil(rec.get(PUPIL_ID), rec.get(nameField), rec.get(GIVEN_NAME), rec.get(FAMILY_NAME), rec.get(CLAZZ)),
                     day = day,
                     leavesAlone = rec.get(LEAVES_ALONE),
                     departurePlan = DailyDeparture.DeparturePlan(

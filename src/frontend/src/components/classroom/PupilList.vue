@@ -10,7 +10,7 @@
         flex justify-between text-xl leading-10
         animate-[bounce_1s_ease-in-out_3]
       ">
-        <span>{{ pupil.pupil.name }}</span>
+        <span>{{ pupilName(pupil) }}</span>
         <span class="flex items-center">
           <img src="../../assets/otrok.svg" title="Odide sam" v-if="leavesAlone(pupil)" class="h-4 inline mr-1 opacity-75">
           {{ scheduledOrSummonedTime(pupil) }}
@@ -24,7 +24,7 @@
   </h5>
   <ul class="px-5 pt-1">
     <li v-for="pupil in presentPupils.sort(sorting)" @click="pupilWithDialog = pupil" :class="{ 'text-red-500': pupil.summon }" class="flex justify-between leading-7">
-      <span>{{ pupil.pupil.name }}</span>
+      <span>{{ pupilName(pupil) }}</span>
       <span class="flex items-center">
         <img v-if="leavesAlone(pupil)" src="../../assets/otrok.svg" title="Odide sam" class="h-4 inline mr-1 opacity-75">
         {{ formatSeconds(pupil.departurePlan.time) }}
@@ -37,7 +37,7 @@
   </h5>
   <ul class="px-5 pt-1">
     <li v-for="pupil in departedPupils.sort(sorting)" @click="pupilWithDialog = pupil" :class="{ 'text-gray-500': pupil.departure }" class="flex justify-between leading-7">
-      <span>{{ pupil.pupil.name }}</span>
+      <span>{{ pupilName(pupil) }}</span>
       <span>
         {{ formatDate(pupil.departure.time) }}
       </span>
@@ -76,13 +76,18 @@ const pupilWithDialog = ref<dto.DailyDeparture | null>(null)
 
 /** Defines the sort order of pupils */
 const sorting = ref((pup1: dto.DailyDeparture, pup2: dto.DailyDeparture) => {
-  return pup1.pupil.name.localeCompare(pup2.pupil.name)
+  return pup1.pupil.familyName.localeCompare(pup2.pupil.familyName) || pup1.pupil.givenName.localeCompare(pup2.pupil.givenName);
 })
 
 /** Defines the sort order of pupils in the 'need to leave!' section. Sorts in reverse, so most recent entry is at top */
 const departureSorting = ref((pup1: dto.DailyDeparture, pup2: dto.DailyDeparture) => {
   return scheduledOrSummonedTime(pup2).localeCompare(scheduledOrSummonedTime(pup1))
 })
+
+/** Composes a pupil name from given & family names */
+function pupilName(pupil: dto.DailyDeparture): string {
+  return `${pupil.pupil.familyName} ${pupil.pupil.givenName}`
+}
 
 /** All the pupils we are even interested in */
 const watchedPupils = computed(() => {
@@ -101,6 +106,7 @@ const departedPupils = computed( ()=> {
 
 /** Pupils that were summoned or scheduled to depart */
 const scheduledOrSummonedPupils = computed(() => watchedPupils.value.filter( (pup) => pupilNeedsToDepart(pup) || pupilIsSummoned(pup)));
+
 
 /**
  * A function that calculates Vue's tracking key for pupils that need to depart. When the most recent summon changes the

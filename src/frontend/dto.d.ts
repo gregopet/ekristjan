@@ -24,7 +24,9 @@ interface SendPupilEvent extends PushEvent {
 }
 
 interface Pupil {
+    familyName: string;
     fromClass: string;
+    givenName: string;
     id: number;
     name: string;
 }
