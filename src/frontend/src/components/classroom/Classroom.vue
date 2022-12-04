@@ -1,7 +1,7 @@
 <template>
   <Header />
+  <ClassPicker v-model:selected="selectedClasses" class="mt-5" />
   <PupilList :selectedClasses="selectedClasses" />
-  <ClassPicker v-model:selected="selectedClasses" class="mt-10" />
 </template>
 
 <script setup lang="ts">
