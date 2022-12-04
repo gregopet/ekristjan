@@ -28,6 +28,7 @@
 
       <p class="text-center space-y-3 md:space-x-3 mb-3">
         <button @click="sendHome" v-if="showSendHomeButton()" class="bg-my-blue text-white rounded p-2 w-[150px]">Poslan/a domov</button>
+        <button @click="cancelDeparture" v-if="showCancelDepartureButton()" class="bg-my-blue text-white rounded p-2 w-[150px]">Prekliči odhod</button>
         <button @click="close" class="bg-sandy text-white rounded p-2 w-[150px]">Zapri</button>
       </p>
     </div>
@@ -36,7 +37,7 @@
 <script lang="ts" setup>
 
 import {date2Time, stripSeconds} from "@/dateAndTime";
-import {pupilDeparted, requestPupilLeaveAlone, requestPupilSummonAck} from "@/pupil";
+import {cancelTodaysDepartures, pupilDeparted, requestPupilLeaveAlone, requestPupilSummonAck} from "@/pupil";
 import {DateTime} from "luxon";
 import MobileFriendlyDialog from "../MobileFriendlyDialog.vue";
 
@@ -59,6 +60,10 @@ function showSendHomeButton(): boolean {
   return !pupilDeparted(props.pupil);
 }
 
+function showCancelDepartureButton(): boolean {
+  return pupilDeparted(props.pupil);
+}
+
 async function sendHome() {
   const req = props.pupil.summon ? requestPupilSummonAck(props.pupil.summon.id) : requestPupilLeaveAlone({
     pupilId: props.pupil.pupil.id,
@@ -66,6 +71,21 @@ async function sendHome() {
   })
   const reply = await fetch(req)
   if (reply.ok) close();
+  else {
+    // TODO notify there was an exception
+  }
+}
+
+async function cancelDeparture() {
+  const req = cancelTodaysDepartures({
+    pupilId: props.pupil.pupil.id,
+    time: (DateTime.now().toISO() as any) as dto.OffsetDateTime,
+  })
+  const reply = await fetch(req)
+  if (reply.ok) {
+    props.pupil.departure = null; //optimization so the UI updates at once
+    close();
+  }
   else {
     // TODO notify there was an exception
   }

@@ -210,6 +210,7 @@ object DepartureQueries {
             .where(
                 PUPIL_ID.eq(pupilId),
                 CANCELLED_AT.isNull,
+                TIME.le(time), // guard against events coming in with a delay -
                 trunc(TIME, DatePart.DAY).cast(SQLDataType.LOCALDATE).eq(time.toLocalDate()),
                 pupilBelongingToSameSchoolAsTeacher(pupilId, teacherId).isNotNull
             )

@@ -49,3 +49,11 @@ export function requestPupilLeaveAlone(departure: dto.PupilAndTimeCommand): Requ
         body: JSON.stringify(departure)
     })
 }
+
+/** Cancels the pupil's existing departures for today */
+export function cancelTodaysDepartures(departure: dto.PupilAndTimeCommand): Request {
+    return new Request("/departures/pupils/cancelDeparture", {
+        method: 'POST',
+        body: JSON.stringify(departure),
+    })
+}
