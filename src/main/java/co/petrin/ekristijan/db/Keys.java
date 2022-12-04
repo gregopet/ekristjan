@@ -59,6 +59,7 @@ public class Keys {
     // FOREIGN KEY definitions
     // -------------------------------------------------------------------------
 
+    public static final ForeignKey<DepartureRecord, TeacherRecord> DEPARTURE__DEPARTURE_CANCELLED_BY_TEACHER_ID_FKEY = Internal.createForeignKey(Departure.DEPARTURE, DSL.name("departure_cancelled_by_teacher_id_fkey"), new TableField[] { Departure.DEPARTURE.CANCELLED_BY_TEACHER_ID }, Keys.TEACHER_PKEY, new TableField[] { Teacher.TEACHER.TEACHER_ID }, true);
     public static final ForeignKey<DepartureRecord, PupilRecord> DEPARTURE__DEPARTURE_PUPIL_ID_FKEY = Internal.createForeignKey(Departure.DEPARTURE, DSL.name("departure_pupil_id_fkey"), new TableField[] { Departure.DEPARTURE.PUPIL_ID }, Keys.PUPIL_PKEY, new TableField[] { Pupil.PUPIL.PUPIL_ID }, true);
     public static final ForeignKey<DepartureRecord, TeacherRecord> DEPARTURE__DEPARTURE_TEACHER_ID_FKEY = Internal.createForeignKey(Departure.DEPARTURE, DSL.name("departure_teacher_id_fkey"), new TableField[] { Departure.DEPARTURE.TEACHER_ID }, Keys.TEACHER_PKEY, new TableField[] { Teacher.TEACHER.TEACHER_ID }, true);
     public static final ForeignKey<ExtraordinaryDepartureRecord, PupilRecord> EXTRAORDINARY_DEPARTURE__EXTRAORDINARY_DEPARTURE_PUPIL_ID_FKEY = Internal.createForeignKey(ExtraordinaryDeparture.EXTRAORDINARY_DEPARTURE, DSL.name("extraordinary_departure_pupil_id_fkey"), new TableField[] { ExtraordinaryDeparture.EXTRAORDINARY_DEPARTURE.PUPIL_ID }, Keys.PUPIL_PKEY, new TableField[] { Pupil.PUPIL.PUPIL_ID }, true);

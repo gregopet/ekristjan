@@ -197,6 +197,25 @@ object DepartureQueries {
         rowsAffected > 0
     }
 
+    /**
+     * Cancels all (not already cancelled) departures for [pupilId] on [time]'s day. Checks that the pupil belongs to the
+     * same school as teacher!
+     * @param teacherId The teacher who cancelled the departures
+     */
+    fun cancelTodaysDepartures(pupilId: Int, teacherId: Int, time: OffsetDateTime, trans: DSLContext) = with(DEPARTURE) {
+        trans
+            .update(DEPARTURE)
+            .set(CANCELLED_AT, time)
+            .set(CANCELLED_BY_TEACHER_ID, teacherId)
+            .where(
+                PUPIL_ID.eq(pupilId),
+                CANCELLED_AT.isNull,
+                trunc(TIME, DatePart.DAY).cast(SQLDataType.LOCALDATE).eq(time.toLocalDate()),
+                pupilBelongingToSameSchoolAsTeacher(pupilId, teacherId).isNotNull
+            )
+            .execute()
+    }
+
     /** Returns a pupil_id field that is only non-null if the pupil belongs to the school as teacher */
     private fun pupilBelongingToSameSchoolAsTeacher(pupilId: Int, teacherId: Int): Field<Int> =
         field(
@@ -230,7 +249,8 @@ object DepartureQueries {
             .from(DEPARTURE)
             .where(
                 DEPARTURE.PUPIL_ID.eq(pupilId),
-                trunc(DEPARTURE.TIME, DatePart.DAY).cast(SQLDataType.LOCALDATE).eq(day)
+                trunc(DEPARTURE.TIME, DatePart.DAY).cast(SQLDataType.LOCALDATE).eq(day),
+                DEPARTURE.CANCELLED_AT.isNull,
             )
             .orderBy(DEPARTURE.TIME.desc())
             .limit(1)

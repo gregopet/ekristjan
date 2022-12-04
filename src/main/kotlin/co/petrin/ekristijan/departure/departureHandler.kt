@@ -11,7 +11,7 @@ private val LOG = LoggerFactory.getLogger("DepartureVerticle.departureHandler")
 
 /** Stores departures that weren't a result of an acknowledgement (e.g. pupils leaving alone). */
 suspend fun DepartureVerticle.departureHandler(ctx: RoutingContext) {
-    val departure = ctx.body().asJsonObject().mapTo(DepartureHandlerCommand::class.java)
+    val departure = ctx.body().asJsonObject().mapTo(PupilAndTimeCommand::class.java)
 
     LOG.info("Teacher ${ctx.teacherId} sent pupil ${departure.pupilId} home at ${departure.time}")
     val success = awaitBlocking {

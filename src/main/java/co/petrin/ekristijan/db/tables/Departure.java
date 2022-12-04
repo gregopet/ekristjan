@@ -18,13 +18,13 @@ import javax.annotation.Nonnull;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function6;
+import org.jooq.Function8;
 import org.jooq.Identity;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row6;
+import org.jooq.Row8;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -92,6 +92,20 @@ public class Departure extends TableImpl<DepartureRecord> {
      */
     public final TableField<DepartureRecord, String> REMARK = createField(DSL.name("remark"), SQLDataType.CLOB, this, "Any extra remarks about the departure (e.g. sick that day, on vacation)");
 
+    /**
+     * The column <code>public.departure.cancelled_at</code>. If the departure
+     * was later invalidated, the date at which it was cancelled is given here.
+     * Serves as the discriminator for invalid departures
+     */
+    public final TableField<DepartureRecord, OffsetDateTime> CANCELLED_AT = createField(DSL.name("cancelled_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "If the departure was later invalidated, the date at which it was cancelled is given here. Serves as the discriminator for invalid departures");
+
+    /**
+     * The column <code>public.departure.cancelled_by_teacher_id</code>. If the
+     * departure was later invalidated, the teacher who invalidated it is given
+     * here
+     */
+    public final TableField<DepartureRecord, Integer> CANCELLED_BY_TEACHER_ID = createField(DSL.name("cancelled_by_teacher_id"), SQLDataType.INTEGER, this, "If the departure was later invalidated, the teacher who invalidated it is given here");
+
     private Departure(Name alias, Table<DepartureRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -152,11 +166,12 @@ public class Departure extends TableImpl<DepartureRecord> {
     @Override
     @Nonnull
     public List<ForeignKey<DepartureRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.DEPARTURE__DEPARTURE_PUPIL_ID_FKEY, Keys.DEPARTURE__DEPARTURE_TEACHER_ID_FKEY);
+        return Arrays.asList(Keys.DEPARTURE__DEPARTURE_PUPIL_ID_FKEY, Keys.DEPARTURE__DEPARTURE_TEACHER_ID_FKEY, Keys.DEPARTURE__DEPARTURE_CANCELLED_BY_TEACHER_ID_FKEY);
     }
 
     private transient Pupil _pupil;
-    private transient Teacher _teacher;
+    private transient Teacher _departureTeacherIdFkey;
+    private transient Teacher _departureCancelledByTeacherIdFkey;
 
     /**
      * Get the implicit join path to the <code>public.pupil</code> table.
@@ -169,13 +184,25 @@ public class Departure extends TableImpl<DepartureRecord> {
     }
 
     /**
-     * Get the implicit join path to the <code>public.teacher</code> table.
+     * Get the implicit join path to the <code>public.teacher</code> table, via
+     * the <code>departure_teacher_id_fkey</code> key.
      */
-    public Teacher teacher() {
-        if (_teacher == null)
-            _teacher = new Teacher(this, Keys.DEPARTURE__DEPARTURE_TEACHER_ID_FKEY);
+    public Teacher departureTeacherIdFkey() {
+        if (_departureTeacherIdFkey == null)
+            _departureTeacherIdFkey = new Teacher(this, Keys.DEPARTURE__DEPARTURE_TEACHER_ID_FKEY);
 
-        return _teacher;
+        return _departureTeacherIdFkey;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.teacher</code> table, via
+     * the <code>departure_cancelled_by_teacher_id_fkey</code> key.
+     */
+    public Teacher departureCancelledByTeacherIdFkey() {
+        if (_departureCancelledByTeacherIdFkey == null)
+            _departureCancelledByTeacherIdFkey = new Teacher(this, Keys.DEPARTURE__DEPARTURE_CANCELLED_BY_TEACHER_ID_FKEY);
+
+        return _departureCancelledByTeacherIdFkey;
     }
 
     @Override
@@ -224,19 +251,19 @@ public class Departure extends TableImpl<DepartureRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row6 type methods
+    // Row8 type methods
     // -------------------------------------------------------------------------
 
     @Override
     @Nonnull
-    public Row6<Integer, Integer, Integer, OffsetDateTime, Boolean, String> fieldsRow() {
-        return (Row6) super.fieldsRow();
+    public Row8<Integer, Integer, Integer, OffsetDateTime, Boolean, String, OffsetDateTime, Integer> fieldsRow() {
+        return (Row8) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function6<? super Integer, ? super Integer, ? super Integer, ? super OffsetDateTime, ? super Boolean, ? super String, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function8<? super Integer, ? super Integer, ? super Integer, ? super OffsetDateTime, ? super Boolean, ? super String, ? super OffsetDateTime, ? super Integer, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -244,7 +271,7 @@ public class Departure extends TableImpl<DepartureRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function6<? super Integer, ? super Integer, ? super Integer, ? super OffsetDateTime, ? super Boolean, ? super String, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function8<? super Integer, ? super Integer, ? super Integer, ? super OffsetDateTime, ? super Boolean, ? super String, ? super OffsetDateTime, ? super Integer, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

@@ -15,6 +15,7 @@ import co.petrin.ekristijan.departure.departureStateHandler
 import co.petrin.ekristijan.departure.summonAckHandler
 import co.petrin.ekristijan.departure.summonHandler
 import co.petrin.ekristijan.departure.departureHandler
+import co.petrin.ekristijan.departure.cancelDepartureHandler
 
 private val LOG = LoggerFactory.getLogger(DepartureVerticle::class.java)
 
@@ -37,6 +38,7 @@ class DepartureVerticle(val jooq: DSLContext, val jwtProvider: JWTAuth) : Config
     router.post("/pupils/leave").handler(BodyHandler.create()).coroutineHandler(::summonHandler)
     router.post("/pupils/left").handler(BodyHandler.create()).coroutineHandler(::summonAckHandler)
     router.post("/pupils/leftAlone").handler(BodyHandler.create()).coroutineHandler(::departureHandler)
+    router.post("/pupils/cancelDeparture").handler(BodyHandler.create()).coroutineHandler(::cancelDepartureHandler)
     router.get("/pupils/:classes?").coroutineHandler { ctx ->
       departureStateHandler(ctx, ctx.pathParam("classes")?.split(",")?.toTypedArray())
     }

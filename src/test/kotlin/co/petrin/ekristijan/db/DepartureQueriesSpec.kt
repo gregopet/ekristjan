@@ -64,6 +64,13 @@ class DepartureQueriesTest : FreeSpec({
                 departure shouldBe null
             }
         }
+
+        "the wednesday departure can be invalidated" {
+            DepartureQueries.cancelTodaysDepartures(fixture.klemenId, fixture.teacher.id, atFourteenHours.plusMinutes(2), jooq)
+            departureFor(fixture.klemenId, wednesday)!!.apply {
+                departure shouldBe null
+            }
+        }
     }
 
     "Anita has been summoned to the door on thursday" - {

@@ -43,7 +43,7 @@ export function requestPupilSummonAck(summonId: number): Request {
 }
 
 /** Assert that a pupil was sent to the door to leave alone */
-export function requestPupilLeaveAlone(departure: dto.DepartureHandlerCommand): Request {
+export function requestPupilLeaveAlone(departure: dto.PupilAndTimeCommand): Request {
     return new Request("/departures/pupils/leftAlone", {
         method: 'POST',
         body: JSON.stringify(departure)

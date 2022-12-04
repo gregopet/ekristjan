@@ -3,7 +3,7 @@ package co.petrin.ekristijan.dto
 import co.petrin.ekristijan.backoffice.PupilDTO
 import co.petrin.ekristijan.backoffice.TeacherDTO
 import co.petrin.ekristijan.db.DailyDeparture
-import co.petrin.ekristijan.departure.DepartureHandlerCommand
+import co.petrin.ekristijan.departure.PupilAndTimeCommand
 import co.petrin.ekristijan.dto.event.SendPupilEvent
 import co.petrin.ekristijan.security.LoginDTO
 import me.ntrrgc.tsGenerator.TypeScriptGenerator
@@ -24,7 +24,7 @@ fun main(args: Array<String>) {
             LoginDTO::class,
             DailyDeparture::class,
             LoginDTO::class,
-            DepartureHandlerCommand::class,
+            PupilAndTimeCommand::class,
             PupilDTO::class,
             TeacherDTO::class,
         )

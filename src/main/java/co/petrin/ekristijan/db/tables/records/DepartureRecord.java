@@ -13,8 +13,8 @@ import javax.annotation.Nullable;
 
 import org.jooq.Field;
 import org.jooq.Record1;
-import org.jooq.Record6;
-import org.jooq.Row6;
+import org.jooq.Record8;
+import org.jooq.Row8;
 import org.jooq.impl.UpdatableRecordImpl;
 
 
@@ -22,7 +22,7 @@ import org.jooq.impl.UpdatableRecordImpl;
  * A record of when a pupil had left school
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
-public class DepartureRecord extends UpdatableRecordImpl<DepartureRecord> implements Record6<Integer, Integer, Integer, OffsetDateTime, Boolean, String> {
+public class DepartureRecord extends UpdatableRecordImpl<DepartureRecord> implements Record8<Integer, Integer, Integer, OffsetDateTime, Boolean, String, OffsetDateTime, Integer> {
 
     private static final long serialVersionUID = 1L;
 
@@ -124,6 +124,44 @@ public class DepartureRecord extends UpdatableRecordImpl<DepartureRecord> implem
         return (String) get(5);
     }
 
+    /**
+     * Setter for <code>public.departure.cancelled_at</code>. If the departure
+     * was later invalidated, the date at which it was cancelled is given here.
+     * Serves as the discriminator for invalid departures
+     */
+    public void setCancelledAt(@Nullable OffsetDateTime value) {
+        set(6, value);
+    }
+
+    /**
+     * Getter for <code>public.departure.cancelled_at</code>. If the departure
+     * was later invalidated, the date at which it was cancelled is given here.
+     * Serves as the discriminator for invalid departures
+     */
+    @Nullable
+    public OffsetDateTime getCancelledAt() {
+        return (OffsetDateTime) get(6);
+    }
+
+    /**
+     * Setter for <code>public.departure.cancelled_by_teacher_id</code>. If the
+     * departure was later invalidated, the teacher who invalidated it is given
+     * here
+     */
+    public void setCancelledByTeacherId(@Nullable Integer value) {
+        set(7, value);
+    }
+
+    /**
+     * Getter for <code>public.departure.cancelled_by_teacher_id</code>. If the
+     * departure was later invalidated, the teacher who invalidated it is given
+     * here
+     */
+    @Nullable
+    public Integer getCancelledByTeacherId() {
+        return (Integer) get(7);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -135,19 +173,19 @@ public class DepartureRecord extends UpdatableRecordImpl<DepartureRecord> implem
     }
 
     // -------------------------------------------------------------------------
-    // Record6 type implementation
+    // Record8 type implementation
     // -------------------------------------------------------------------------
 
     @Override
     @Nonnull
-    public Row6<Integer, Integer, Integer, OffsetDateTime, Boolean, String> fieldsRow() {
-        return (Row6) super.fieldsRow();
+    public Row8<Integer, Integer, Integer, OffsetDateTime, Boolean, String, OffsetDateTime, Integer> fieldsRow() {
+        return (Row8) super.fieldsRow();
     }
 
     @Override
     @Nonnull
-    public Row6<Integer, Integer, Integer, OffsetDateTime, Boolean, String> valuesRow() {
-        return (Row6) super.valuesRow();
+    public Row8<Integer, Integer, Integer, OffsetDateTime, Boolean, String, OffsetDateTime, Integer> valuesRow() {
+        return (Row8) super.valuesRow();
     }
 
     @Override
@@ -188,6 +226,18 @@ public class DepartureRecord extends UpdatableRecordImpl<DepartureRecord> implem
 
     @Override
     @Nonnull
+    public Field<OffsetDateTime> field7() {
+        return Departure.DEPARTURE.CANCELLED_AT;
+    }
+
+    @Override
+    @Nonnull
+    public Field<Integer> field8() {
+        return Departure.DEPARTURE.CANCELLED_BY_TEACHER_ID;
+    }
+
+    @Override
+    @Nonnull
     public Integer component1() {
         return getDepartureId();
     }
@@ -220,6 +270,18 @@ public class DepartureRecord extends UpdatableRecordImpl<DepartureRecord> implem
     @Nullable
     public String component6() {
         return getRemark();
+    }
+
+    @Override
+    @Nullable
+    public OffsetDateTime component7() {
+        return getCancelledAt();
+    }
+
+    @Override
+    @Nullable
+    public Integer component8() {
+        return getCancelledByTeacherId();
     }
 
     @Override
@@ -256,6 +318,18 @@ public class DepartureRecord extends UpdatableRecordImpl<DepartureRecord> implem
     @Nullable
     public String value6() {
         return getRemark();
+    }
+
+    @Override
+    @Nullable
+    public OffsetDateTime value7() {
+        return getCancelledAt();
+    }
+
+    @Override
+    @Nullable
+    public Integer value8() {
+        return getCancelledByTeacherId();
     }
 
     @Override
@@ -302,13 +376,29 @@ public class DepartureRecord extends UpdatableRecordImpl<DepartureRecord> implem
 
     @Override
     @Nonnull
-    public DepartureRecord values(@Nonnull Integer value1, @Nonnull Integer value2, @Nullable Integer value3, @Nonnull OffsetDateTime value4, @Nonnull Boolean value5, @Nullable String value6) {
+    public DepartureRecord value7(@Nullable OffsetDateTime value) {
+        setCancelledAt(value);
+        return this;
+    }
+
+    @Override
+    @Nonnull
+    public DepartureRecord value8(@Nullable Integer value) {
+        setCancelledByTeacherId(value);
+        return this;
+    }
+
+    @Override
+    @Nonnull
+    public DepartureRecord values(@Nonnull Integer value1, @Nonnull Integer value2, @Nullable Integer value3, @Nonnull OffsetDateTime value4, @Nonnull Boolean value5, @Nullable String value6, @Nullable OffsetDateTime value7, @Nullable Integer value8) {
         value1(value1);
         value2(value2);
         value3(value3);
         value4(value4);
         value5(value5);
         value6(value6);
+        value7(value7);
+        value8(value8);
         return this;
     }
 
@@ -326,7 +416,7 @@ public class DepartureRecord extends UpdatableRecordImpl<DepartureRecord> implem
     /**
      * Create a detached, initialised DepartureRecord
      */
-    public DepartureRecord(@Nonnull Integer departureId, @Nonnull Integer pupilId, @Nullable Integer teacherId, @Nonnull OffsetDateTime time, @Nonnull Boolean entireDay, @Nullable String remark) {
+    public DepartureRecord(@Nonnull Integer departureId, @Nonnull Integer pupilId, @Nullable Integer teacherId, @Nonnull OffsetDateTime time, @Nonnull Boolean entireDay, @Nullable String remark, @Nullable OffsetDateTime cancelledAt, @Nullable Integer cancelledByTeacherId) {
         super(Departure.DEPARTURE);
 
         setDepartureId(departureId);
@@ -335,5 +425,7 @@ public class DepartureRecord extends UpdatableRecordImpl<DepartureRecord> implem
         setTime(time);
         setEntireDay(entireDay);
         setRemark(remark);
+        setCancelledAt(cancelledAt);
+        setCancelledByTeacherId(cancelledByTeacherId);
     }
 }
