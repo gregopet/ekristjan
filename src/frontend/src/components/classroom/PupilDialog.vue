@@ -4,7 +4,7 @@
       {{ props.pupil.pupil.name }}, {{ props.pupil.pupil.fromClass }}
     </template>
 
-    <div class="p-3" v-if="props.pupil.departure && props.pupil.departure.entireDay">
+    <div class="p-3" v-if="pupilAbsentToday">
       Otrok danes manjka cel dan.
       <span v-if="props.pupil.departure.remark" class="block">
         Opomba: {{props.pupil.departure.remark}}
@@ -25,13 +25,18 @@
           Po otroka pridejo predvidoma ob {{ formatTime(props.pupil.departurePlan.time) }}.
         </span>
       </div>
-
-      <p class="text-center space-y-3 md:space-x-3 mb-3">
-        <button @click="sendHome" v-if="showSendHomeButton()" class="bg-my-blue text-white rounded p-2 w-[150px]">Poslan/a domov</button>
-        <button @click="cancelDeparture" v-if="showCancelDepartureButton()" class="bg-my-blue text-white rounded p-2 w-[150px]">Prekliči odhod</button>
-        <button @click="close" class="bg-sandy text-white rounded p-2 w-[150px]">Zapri</button>
-      </p>
     </div>
+    <div>
+      <Activities :pupil-id="props.pupil.pupil.id" class="p-3" />
+      <div v-if="!pupilAbsentToday">
+        <p class="text-center space-y-3 md:space-x-3 mb-3">
+          <button @click="sendHome" v-if="showSendHomeButton()" class="bg-my-blue text-white rounded p-2 w-[150px]">Poslan/a domov</button>
+          <button @click="cancelDeparture" v-if="showCancelDepartureButton()" class="bg-my-blue text-white rounded p-2 w-[150px]">Prekliči odhod</button>
+          <button @click="close" class="bg-sandy text-white rounded p-2 w-[150px]">Zapri</button>
+        </p>
+      </div>
+    </div>
+
   </MobileFriendlyDialog>
 </template>
 <script lang="ts" setup>
@@ -40,6 +45,8 @@ import {date2Time, stripSeconds} from "@/dateAndTime";
 import {cancelTodaysDepartures, pupilDeparted, requestPupilLeaveAlone, requestPupilSummonAck} from "@/pupil";
 import {DateTime} from "luxon";
 import MobileFriendlyDialog from "../MobileFriendlyDialog.vue";
+import Activities from "./PupilActivities.vue"
+import {computed} from "vue";
 
 const formatDate = date2Time;
 const formatTime = stripSeconds;
@@ -55,6 +62,7 @@ function close() {
   emit('close');
 }
 
+const pupilAbsentToday = computed(() => props.pupil.departure && props.pupil.departure.entireDay)
 
 function showSendHomeButton(): boolean {
   return !pupilDeparted(props.pupil);

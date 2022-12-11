@@ -4,10 +4,12 @@
 package co.petrin.ekristijan.db;
 
 
+import co.petrin.ekristijan.db.tables.Activity;
 import co.petrin.ekristijan.db.tables.Departure;
 import co.petrin.ekristijan.db.tables.ExtraordinaryDeparture;
 import co.petrin.ekristijan.db.tables.PasswordReset;
 import co.petrin.ekristijan.db.tables.Pupil;
+import co.petrin.ekristijan.db.tables.PupilActivity;
 import co.petrin.ekristijan.db.tables.RegisteredDevice;
 import co.petrin.ekristijan.db.tables.School;
 import co.petrin.ekristijan.db.tables.Summon;
@@ -20,6 +22,11 @@ import co.petrin.ekristijan.db.tables.Teacher;
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Tables {
+
+    /**
+     * An after-school activity pupils may have on their schedule
+     */
+    public static final Activity ACTIVITY = Activity.ACTIVITY;
 
     /**
      * A record of when a pupil had left school
@@ -42,6 +49,11 @@ public class Tables {
      * A pupil whose departures we are tracking
      */
     public static final Pupil PUPIL = Pupil.PUPIL;
+
+    /**
+     * The mapping between pupils and their activities
+     */
+    public static final PupilActivity PUPIL_ACTIVITY = PupilActivity.PUPIL_ACTIVITY;
 
     /**
      * A device registered to receive notifications, 

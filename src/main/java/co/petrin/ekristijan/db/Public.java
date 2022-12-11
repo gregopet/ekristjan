@@ -4,10 +4,12 @@
 package co.petrin.ekristijan.db;
 
 
+import co.petrin.ekristijan.db.tables.Activity;
 import co.petrin.ekristijan.db.tables.Departure;
 import co.petrin.ekristijan.db.tables.ExtraordinaryDeparture;
 import co.petrin.ekristijan.db.tables.PasswordReset;
 import co.petrin.ekristijan.db.tables.Pupil;
+import co.petrin.ekristijan.db.tables.PupilActivity;
 import co.petrin.ekristijan.db.tables.RegisteredDevice;
 import co.petrin.ekristijan.db.tables.School;
 import co.petrin.ekristijan.db.tables.Summon;
@@ -38,6 +40,11 @@ public class Public extends SchemaImpl {
     public static final Public PUBLIC = new Public();
 
     /**
+     * An after-school activity pupils may have on their schedule
+     */
+    public final Activity ACTIVITY = Activity.ACTIVITY;
+
+    /**
      * A record of when a pupil had left school
      */
     public final Departure DEPARTURE = Departure.DEPARTURE;
@@ -58,6 +65,11 @@ public class Public extends SchemaImpl {
      * A pupil whose departures we are tracking
      */
     public final Pupil PUPIL = Pupil.PUPIL;
+
+    /**
+     * The mapping between pupils and their activities
+     */
+    public final PupilActivity PUPIL_ACTIVITY = PupilActivity.PUPIL_ACTIVITY;
 
     /**
      * A device registered to receive notifications, 
@@ -102,10 +114,12 @@ public class Public extends SchemaImpl {
     @Nonnull
     public final List<Table<?>> getTables() {
         return Arrays.asList(
+            Activity.ACTIVITY,
             Departure.DEPARTURE,
             ExtraordinaryDeparture.EXTRAORDINARY_DEPARTURE,
             PasswordReset.PASSWORD_RESET,
             Pupil.PUPIL,
+            PupilActivity.PUPIL_ACTIVITY,
             RegisteredDevice.REGISTERED_DEVICE,
             School.SCHOOL,
             Summon.SUMMON,

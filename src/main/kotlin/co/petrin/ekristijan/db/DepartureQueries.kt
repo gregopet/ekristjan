@@ -218,7 +218,7 @@ object DepartureQueries {
     }
 
     /** Returns a pupil_id field that is only non-null if the pupil belongs to the school as teacher */
-    private fun pupilBelongingToSameSchoolAsTeacher(pupilId: Int, teacherId: Int): Field<Int> =
+    fun pupilBelongingToSameSchoolAsTeacher(pupilId: Int, teacherId: Int): Field<Int> =
         field(
             select(PUPIL.PUPIL_ID).from(PUPIL).where(
                 PUPIL.PUPIL_ID.eq(pupilId),

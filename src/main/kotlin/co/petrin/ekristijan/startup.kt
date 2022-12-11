@@ -54,6 +54,10 @@ fun main(args: Array<String>) {
                 vertx.deployVerticle(verticle).await()
                 router.route("/backoffice/*").subRouter(verticle.createSubrouter("/security"))
             }
+            ActivityVerticle(jooq, jwtProvider).let { verticle ->
+                vertx.deployVerticle(verticle).await()
+                router.route("/activities/*").subRouter(verticle.createSubrouter())
+            }
             router.route("/log/*").subRouter(registerFrontendLoggingRouter(vertx))
 
             vertx

@@ -1,0 +1,3 @@
+### Gets the activities of pupil 1
+GET {{host}}/activities/pupil/7
+Authorization: Bearer {{accessToken}}
