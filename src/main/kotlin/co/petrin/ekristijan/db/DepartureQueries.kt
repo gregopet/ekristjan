@@ -30,12 +30,13 @@ object DepartureQueries {
     fun dailyDepartures(schoolId: Int, day: LocalDate, classes: Array<String>?, trans: DSLContext) = with(PUPIL) {
         val dailyDepartureTime = pupilLeaveField(day)
         val departure = field(row(lastDailyDepartureField(day, PUPIL_ID)))
-        val summonTeacher = SUMMON.teacher().NAME
+        val summonTeacher = SUMMON.summonTeacherIdFkey().NAME
         val mostRecentSummon = field(
             select(field(row(SUMMON.SUMMON_ID, SUMMON.CREATED_AT, summonTeacher)))
                 .from(SUMMON)
                 .where(
                     SUMMON.PUPIL_ID.eq(PUPIL.PUPIL_ID),
+                    SUMMON.CANCELLED_AT.isNull(),
                     trunc(SUMMON.CREATED_AT, DatePart.DAY).cast(SQLDataType.LOCALDATE).eq(day)
                 )
                 .orderBy(SUMMON.CREATED_AT.desc())
@@ -86,7 +87,7 @@ object DepartureQueries {
                         )
                     },
                     summon = rec.get(mostRecentSummon)?.let { DailyDeparture.Summon(
-                        it.get(SUMMON.SUMMON_ID), it.get(SUMMON.teacher().NAME), it.get(SUMMON.CREATED_AT)
+                        it.get(SUMMON.SUMMON_ID), it.get(SUMMON.summonTeacherIdFkey().NAME), it.get(SUMMON.CREATED_AT)
                     ) }
                 )
             }
@@ -195,6 +196,26 @@ object DepartureQueries {
             .execute()
 
         rowsAffected > 0
+    }
+
+    /**
+     * Cancels all (not already cancelled) summons for [pupilId] on [time]'s day. Checks that the pupil belongs to the
+     * same school as teacher!
+     * @param teacherId The teacher who cancelled the summons
+     */
+    fun cancelTodaysSummons(pupilId: Int, teacherId: Int, time: OffsetDateTime, trans: DSLContext) = with(SUMMON) {
+        trans
+            .update(SUMMON)
+            .set(CANCELLED_AT, time)
+            .set(CANCELLED_BY_TEACHER_ID, teacherId)
+            .where(
+                PUPIL_ID.eq(pupilId),
+                CANCELLED_AT.isNull,
+                CREATED_AT.le(time), // guard against events coming in with a delay -
+                trunc(CREATED_AT, DatePart.DAY).cast(SQLDataType.LOCALDATE).eq(time.toLocalDate()),
+                pupilBelongingToSameSchoolAsTeacher(pupilId, teacherId).isNotNull
+            )
+            .execute()
     }
 
     /**

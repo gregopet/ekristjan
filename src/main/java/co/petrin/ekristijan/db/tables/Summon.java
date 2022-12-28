@@ -4,6 +4,7 @@
 package co.petrin.ekristijan.db.tables;
 
 
+import co.petrin.ekristijan.db.Indexes;
 import co.petrin.ekristijan.db.Keys;
 import co.petrin.ekristijan.db.Public;
 import co.petrin.ekristijan.db.tables.records.SummonRecord;
@@ -17,12 +18,13 @@ import javax.annotation.Nonnull;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function4;
+import org.jooq.Function6;
 import org.jooq.Identity;
+import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row4;
+import org.jooq.Row6;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -78,6 +80,20 @@ public class Summon extends TableImpl<SummonRecord> {
      */
     public final TableField<SummonRecord, OffsetDateTime> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(DSL.field("CURRENT_TIMESTAMP", SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "Time at which the summon was triggered");
 
+    /**
+     * The column <code>public.summon.cancelled_at</code>. If the summon was
+     * later invalidated, the date at which it was cancelled is given here.
+     * Serves as the discriminator for invalid departures
+     */
+    public final TableField<SummonRecord, OffsetDateTime> CANCELLED_AT = createField(DSL.name("cancelled_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "If the summon was later invalidated, the date at which it was cancelled is given here. Serves as the discriminator for invalid departures");
+
+    /**
+     * The column <code>public.summon.cancelled_by_teacher_id</code>. If the
+     * summon was later invalidated, the teacher who invalidated it is given
+     * here
+     */
+    public final TableField<SummonRecord, Integer> CANCELLED_BY_TEACHER_ID = createField(DSL.name("cancelled_by_teacher_id"), SQLDataType.INTEGER, this, "If the summon was later invalidated, the teacher who invalidated it is given here");
+
     private Summon(Name alias, Table<SummonRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -119,6 +135,12 @@ public class Summon extends TableImpl<SummonRecord> {
 
     @Override
     @Nonnull
+    public List<Index> getIndexes() {
+        return Arrays.asList(Indexes.IDX_SUMMON_PUPIL);
+    }
+
+    @Override
+    @Nonnull
     public Identity<SummonRecord, Integer> getIdentity() {
         return (Identity<SummonRecord, Integer>) super.getIdentity();
     }
@@ -132,11 +154,12 @@ public class Summon extends TableImpl<SummonRecord> {
     @Override
     @Nonnull
     public List<ForeignKey<SummonRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.SUMMON__SUMMON_PUPIL_ID_FKEY, Keys.SUMMON__SUMMON_TEACHER_ID_FKEY);
+        return Arrays.asList(Keys.SUMMON__SUMMON_PUPIL_ID_FKEY, Keys.SUMMON__SUMMON_TEACHER_ID_FKEY, Keys.SUMMON__SUMMON_CANCELLED_BY_TEACHER_ID_FKEY);
     }
 
     private transient Pupil _pupil;
-    private transient Teacher _teacher;
+    private transient Teacher _summonTeacherIdFkey;
+    private transient Teacher _summonCancelledByTeacherIdFkey;
 
     /**
      * Get the implicit join path to the <code>public.pupil</code> table.
@@ -149,13 +172,25 @@ public class Summon extends TableImpl<SummonRecord> {
     }
 
     /**
-     * Get the implicit join path to the <code>public.teacher</code> table.
+     * Get the implicit join path to the <code>public.teacher</code> table, via
+     * the <code>summon_teacher_id_fkey</code> key.
      */
-    public Teacher teacher() {
-        if (_teacher == null)
-            _teacher = new Teacher(this, Keys.SUMMON__SUMMON_TEACHER_ID_FKEY);
+    public Teacher summonTeacherIdFkey() {
+        if (_summonTeacherIdFkey == null)
+            _summonTeacherIdFkey = new Teacher(this, Keys.SUMMON__SUMMON_TEACHER_ID_FKEY);
 
-        return _teacher;
+        return _summonTeacherIdFkey;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.teacher</code> table, via
+     * the <code>summon_cancelled_by_teacher_id_fkey</code> key.
+     */
+    public Teacher summonCancelledByTeacherIdFkey() {
+        if (_summonCancelledByTeacherIdFkey == null)
+            _summonCancelledByTeacherIdFkey = new Teacher(this, Keys.SUMMON__SUMMON_CANCELLED_BY_TEACHER_ID_FKEY);
+
+        return _summonCancelledByTeacherIdFkey;
     }
 
     @Override
@@ -204,19 +239,19 @@ public class Summon extends TableImpl<SummonRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row4 type methods
+    // Row6 type methods
     // -------------------------------------------------------------------------
 
     @Override
     @Nonnull
-    public Row4<Integer, Integer, Integer, OffsetDateTime> fieldsRow() {
-        return (Row4) super.fieldsRow();
+    public Row6<Integer, Integer, Integer, OffsetDateTime, OffsetDateTime, Integer> fieldsRow() {
+        return (Row6) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function4<? super Integer, ? super Integer, ? super Integer, ? super OffsetDateTime, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function6<? super Integer, ? super Integer, ? super Integer, ? super OffsetDateTime, ? super OffsetDateTime, ? super Integer, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -224,7 +259,7 @@ public class Summon extends TableImpl<SummonRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function4<? super Integer, ? super Integer, ? super Integer, ? super OffsetDateTime, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function6<? super Integer, ? super Integer, ? super Integer, ? super OffsetDateTime, ? super OffsetDateTime, ? super Integer, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

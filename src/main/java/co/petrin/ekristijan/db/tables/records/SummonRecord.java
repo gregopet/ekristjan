@@ -9,11 +9,12 @@ import co.petrin.ekristijan.db.tables.Summon;
 import java.time.OffsetDateTime;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.jooq.Field;
 import org.jooq.Record1;
-import org.jooq.Record4;
-import org.jooq.Row4;
+import org.jooq.Record6;
+import org.jooq.Row6;
 import org.jooq.impl.UpdatableRecordImpl;
 
 
@@ -21,7 +22,7 @@ import org.jooq.impl.UpdatableRecordImpl;
  * A request for the pupil to come to the door
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
-public class SummonRecord extends UpdatableRecordImpl<SummonRecord> implements Record4<Integer, Integer, Integer, OffsetDateTime> {
+public class SummonRecord extends UpdatableRecordImpl<SummonRecord> implements Record6<Integer, Integer, Integer, OffsetDateTime, OffsetDateTime, Integer> {
 
     private static final long serialVersionUID = 1L;
 
@@ -89,6 +90,44 @@ public class SummonRecord extends UpdatableRecordImpl<SummonRecord> implements R
         return (OffsetDateTime) get(3);
     }
 
+    /**
+     * Setter for <code>public.summon.cancelled_at</code>. If the summon was
+     * later invalidated, the date at which it was cancelled is given here.
+     * Serves as the discriminator for invalid departures
+     */
+    public void setCancelledAt(@Nullable OffsetDateTime value) {
+        set(4, value);
+    }
+
+    /**
+     * Getter for <code>public.summon.cancelled_at</code>. If the summon was
+     * later invalidated, the date at which it was cancelled is given here.
+     * Serves as the discriminator for invalid departures
+     */
+    @Nullable
+    public OffsetDateTime getCancelledAt() {
+        return (OffsetDateTime) get(4);
+    }
+
+    /**
+     * Setter for <code>public.summon.cancelled_by_teacher_id</code>. If the
+     * summon was later invalidated, the teacher who invalidated it is given
+     * here
+     */
+    public void setCancelledByTeacherId(@Nullable Integer value) {
+        set(5, value);
+    }
+
+    /**
+     * Getter for <code>public.summon.cancelled_by_teacher_id</code>. If the
+     * summon was later invalidated, the teacher who invalidated it is given
+     * here
+     */
+    @Nullable
+    public Integer getCancelledByTeacherId() {
+        return (Integer) get(5);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -100,19 +139,19 @@ public class SummonRecord extends UpdatableRecordImpl<SummonRecord> implements R
     }
 
     // -------------------------------------------------------------------------
-    // Record4 type implementation
+    // Record6 type implementation
     // -------------------------------------------------------------------------
 
     @Override
     @Nonnull
-    public Row4<Integer, Integer, Integer, OffsetDateTime> fieldsRow() {
-        return (Row4) super.fieldsRow();
+    public Row6<Integer, Integer, Integer, OffsetDateTime, OffsetDateTime, Integer> fieldsRow() {
+        return (Row6) super.fieldsRow();
     }
 
     @Override
     @Nonnull
-    public Row4<Integer, Integer, Integer, OffsetDateTime> valuesRow() {
-        return (Row4) super.valuesRow();
+    public Row6<Integer, Integer, Integer, OffsetDateTime, OffsetDateTime, Integer> valuesRow() {
+        return (Row6) super.valuesRow();
     }
 
     @Override
@@ -141,6 +180,18 @@ public class SummonRecord extends UpdatableRecordImpl<SummonRecord> implements R
 
     @Override
     @Nonnull
+    public Field<OffsetDateTime> field5() {
+        return Summon.SUMMON.CANCELLED_AT;
+    }
+
+    @Override
+    @Nonnull
+    public Field<Integer> field6() {
+        return Summon.SUMMON.CANCELLED_BY_TEACHER_ID;
+    }
+
+    @Override
+    @Nonnull
     public Integer component1() {
         return getSummonId();
     }
@@ -161,6 +212,18 @@ public class SummonRecord extends UpdatableRecordImpl<SummonRecord> implements R
     @Nonnull
     public OffsetDateTime component4() {
         return getCreatedAt();
+    }
+
+    @Override
+    @Nullable
+    public OffsetDateTime component5() {
+        return getCancelledAt();
+    }
+
+    @Override
+    @Nullable
+    public Integer component6() {
+        return getCancelledByTeacherId();
     }
 
     @Override
@@ -185,6 +248,18 @@ public class SummonRecord extends UpdatableRecordImpl<SummonRecord> implements R
     @Nonnull
     public OffsetDateTime value4() {
         return getCreatedAt();
+    }
+
+    @Override
+    @Nullable
+    public OffsetDateTime value5() {
+        return getCancelledAt();
+    }
+
+    @Override
+    @Nullable
+    public Integer value6() {
+        return getCancelledByTeacherId();
     }
 
     @Override
@@ -217,11 +292,27 @@ public class SummonRecord extends UpdatableRecordImpl<SummonRecord> implements R
 
     @Override
     @Nonnull
-    public SummonRecord values(@Nonnull Integer value1, @Nonnull Integer value2, @Nonnull Integer value3, @Nonnull OffsetDateTime value4) {
+    public SummonRecord value5(@Nullable OffsetDateTime value) {
+        setCancelledAt(value);
+        return this;
+    }
+
+    @Override
+    @Nonnull
+    public SummonRecord value6(@Nullable Integer value) {
+        setCancelledByTeacherId(value);
+        return this;
+    }
+
+    @Override
+    @Nonnull
+    public SummonRecord values(@Nonnull Integer value1, @Nonnull Integer value2, @Nonnull Integer value3, @Nonnull OffsetDateTime value4, @Nullable OffsetDateTime value5, @Nullable Integer value6) {
         value1(value1);
         value2(value2);
         value3(value3);
         value4(value4);
+        value5(value5);
+        value6(value6);
         return this;
     }
 
@@ -239,12 +330,14 @@ public class SummonRecord extends UpdatableRecordImpl<SummonRecord> implements R
     /**
      * Create a detached, initialised SummonRecord
      */
-    public SummonRecord(@Nonnull Integer summonId, @Nonnull Integer pupilId, @Nonnull Integer teacherId, @Nonnull OffsetDateTime createdAt) {
+    public SummonRecord(@Nonnull Integer summonId, @Nonnull Integer pupilId, @Nonnull Integer teacherId, @Nonnull OffsetDateTime createdAt, @Nullable OffsetDateTime cancelledAt, @Nullable Integer cancelledByTeacherId) {
         super(Summon.SUMMON);
 
         setSummonId(summonId);
         setPupilId(pupilId);
         setTeacherId(teacherId);
         setCreatedAt(createdAt);
+        setCancelledAt(cancelledAt);
+        setCancelledByTeacherId(cancelledByTeacherId);
     }
 }

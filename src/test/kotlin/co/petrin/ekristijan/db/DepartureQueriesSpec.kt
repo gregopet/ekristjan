@@ -106,6 +106,19 @@ class DepartureQueriesTest : FreeSpec({
                 departure!!.time
             }
         }
+
+        "The summon can be cancelled" {
+            preconditions {
+                departureFor(fixture.anitaId, thursday)!!.apply {
+                    summon shouldNotBe null
+                }
+            }
+
+            DepartureQueries.cancelTodaysSummons(fixture.anitaId, fixture.teacher.id, fifteenHours.plusMinutes(123), jooq)
+            departureFor(fixture.anitaId, thursday)!!.apply {
+                summon shouldBe null
+            }
+        }
     }
 
     "Teachers can acknowledge pupil departures as long as they are from the same school" {

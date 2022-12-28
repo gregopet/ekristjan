@@ -13,9 +13,13 @@
     <div v-else>
       <div class="p-3" v-if="props.pupil.departure">
         Otrok je odšel domov ob {{ formatDate(props.pupil.departure.time) }}
+        <br>
+        <button @click="cancelDeparture" v-if="showCancelDepartureButton()" class="bg-red-500 text-white rounded p-2 w-[150px]">Prekliči odhod</button>
       </div>
       <div class="p-3" v-else-if="props.pupil.summon">
         Otrok je bil poklican k vratom ob {{ formatDate(props.pupil.summon.time) }}
+        <br>
+        <button @click="cancelDeparture" v-if="showCancelSummonButton()" class="bg-red-500 text-white rounded p-2 w-[150px]">Prekliči poziv</button>
       </div>
       <div class="p-3" v-else>
         <span v-if="props.pupil.departurePlan.leavesAlone">
@@ -31,7 +35,6 @@
       <div v-if="!pupilAbsentToday">
         <p class="text-center space-y-3 md:space-x-3 mb-3">
           <button @click="sendHome" v-if="showSendHomeButton()" class="bg-my-blue text-white rounded p-2 w-[150px]">Poslan/a domov</button>
-          <button @click="cancelDeparture" v-if="showCancelDepartureButton()" class="bg-my-blue text-white rounded p-2 w-[150px]">Prekliči odhod</button>
           <button @click="close" class="bg-sandy text-white rounded p-2 w-[150px]">Zapri</button>
         </p>
       </div>
@@ -42,7 +45,13 @@
 <script lang="ts" setup>
 
 import {date2Time, stripSeconds} from "@/dateAndTime";
-import {cancelTodaysDepartures, pupilDeparted, requestPupilLeaveAlone, requestPupilSummonAck} from "@/pupil";
+import {
+  cancelTodaysDepartures,
+  pupilDeparted,
+  pupilIsSummoned,
+  requestPupilLeaveAlone,
+  requestPupilSummonAck
+} from "@/pupil";
 import {DateTime} from "luxon";
 import MobileFriendlyDialog from "../MobileFriendlyDialog.vue";
 import Activities from "./PupilActivities.vue"
@@ -70,6 +79,10 @@ function showSendHomeButton(): boolean {
 
 function showCancelDepartureButton(): boolean {
   return pupilDeparted(props.pupil);
+}
+
+function showCancelSummonButton(): boolean {
+  return pupilIsSummoned(props.pupil)
 }
 
 async function sendHome() {
